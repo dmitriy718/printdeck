@@ -23,11 +23,11 @@ Before sending, replace:
 - `[INSERT SOCIAL LINKS]`
 - All five image placeholders listed in `PROTOTYPE_IMAGE_GUIDE.md`
 
-Also confirm whether you want to share a public repository link. The current
-repository still has no commits, author identity, or license. A source/security
-review removed the known device-specific production defaults and found no
-literal credentials, but create an intentional public history and choose a
-license before publishing it.
+Also confirm whether you want to share a public repository link. The repository
+now has a local reviewed baseline commit and author identity, but no remote or
+license. A source/security review removed known device-specific production
+defaults and found no literal credentials. Choose a license and intentionally
+review what will be public before creating or sharing a remote repository.
 
 ## Inserting prototype images in Word
 

@@ -18,6 +18,7 @@ typedef struct {
     size_t internal_free_bytes;
     size_t internal_minimum_bytes;
     size_t psram_free_bytes;
+    size_t coredump_partition_bytes;
     size_t minimum_task_stack_bytes;
     uint8_t tracked_task_count;
     char minimum_stack_task[NH_DIAGNOSTICS_TASK_NAME_LENGTH];

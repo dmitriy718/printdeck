@@ -5,6 +5,7 @@
 
 #include "esp_heap_caps.h"
 #include "esp_ota_ops.h"
+#include "esp_partition.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -36,6 +37,9 @@ void nh_diagnostics_snapshot(nh_diagnostics_snapshot_t *snapshot)
         heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL);
     snapshot->psram_free_bytes =
         heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
+    const esp_partition_t *coredump = esp_partition_find_first(
+        ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_COREDUMP, NULL);
+    snapshot->coredump_partition_bytes = coredump ? coredump->size : 0;
     snapshot->reset_reason = esp_reset_reason();
     strlcpy(snapshot->minimum_stack_task, "unavailable",
             sizeof(snapshot->minimum_stack_task));

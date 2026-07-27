@@ -4,7 +4,7 @@
 
 **Independent Bambu Lab Controller Development Project**<br>
 Prepared by **Dima**<br>
-Firmware reviewed: **v0.6.0 source build** | July 2026
+Firmware reviewed: **v0.7.0 source build** | July 2026
 
 > **IMAGE PLACEHOLDER — Current physical prototype**
 > Replace with a clean landscape photograph of the powered controller.
@@ -24,7 +24,7 @@ The project is local-first: the working P1S integration communicates over the lo
 | Category | Factual status |
 | --- | --- |
 | **Completed and verified** | Firmware builds for the JC4880P443 ESP32-P4 board; the 4.3-inch display, landscape LVGL interface, aligned capacitive touch, ESP32-C6 Wi-Fi connection, local P1S authentication, live print reporting, chamber-light control, local P1 camera liveview, and physically enabled LAN OTA have been exercised on the current prototype. |
-| **Functional but still being refined** | P1S telemetry parsing and presentation, on-screen Wi-Fi/P1S setup, reconnect behavior, SD-card mounting, camera lifecycle, and UI status/error messaging. v0.6.0 adds host-tested parser and connection hardening; on-device regression of that build remains pending. |
+| **Functional but still being refined** | P1S telemetry parsing and presentation, on-screen Wi-Fi/P1S setup, reconnect behavior, SD-card mounting, camera lifecycle, and UI status/error messaging. v0.7.0 adds signed-update verification, configurable timezones, and runtime health instrumentation; on-device regression of that build remains pending. |
 | **In active development** | Safe validation of pause/resume/cancel, credential-storage hardening, local file indexing and print initiation, and broader regression testing. |
 | **Planned** | AMS/filament workflows, multi-printer profiles, optional Nova Horizon backend/dashboard connectivity, Jetson Orin Nano vision verification, and broader diagnostics. No current code claims these features are complete. |
 | **Requires additional printer testing** | X-series and H-series discovery, authentication, telemetry, cameras, AMS generations, command behavior, firmware differences, error handling, and UI adaptation. |
@@ -45,13 +45,13 @@ The project is local-first: the working P1S integration communicates over the lo
 | Camera and AI-assisted verification | **P1 camera working; AI planned:** an on-demand encrypted P1-family liveview is implemented with hardware JPEG decode and PPA scaling. No vision model or Jetson integration is present. |
 | AMS / filament management | **Planned compatibility work:** no AMS parser or control workflow is currently implemented. |
 | Multi-printer and remote management | **Planned:** current code is P1S-specific and stores one printer profile. Optional Nova Horizon backend/dashboard integration is a roadmap item, not a current capability. |
-| Diagnostics | **Partial:** authentication, TLS/identity, offline, and general connection states are represented; full printer error/HMS interpretation and troubleshooting guidance remain planned. |
+| Diagnostics | **Partial:** authentication, TLS/identity, offline, and general connection states are represented. v0.7.0 adds heap, task-stack, reset, uptime, and OTA-state instrumentation; hardware stress measurements and full printer error/HMS interpretation remain pending. |
 
 ## 4. Hardware and software architecture
 
 The prototype uses a Guition JC4880P443 controller with an ESP32-P4NRW32, 32 MB PSRAM, 16 MB flash, an ESP32-C6 Wi-Fi coprocessor, a 4.3-inch 480 × 800 ST7701S MIPI-DSI display, GT911 capacitive touch, and a native SDMMC slot. The firmware is written for ESP-IDF 6.0.2 and FreeRTOS, with LVGL 9.5 rendering a landscape 800 × 480 interface.
 
-The working printer path uses authenticated local TLS/MQTT. The controller checks the Bambu Lab certificate authority and the configured printer identity, subscribes to printer reports, and sends only the command types currently enabled by its safety gate. Wi-Fi and printer credentials are stored in NVS on the prototype; encrypted-at-rest storage is a stated hardening milestone.
+The working printer path uses authenticated local TLS/MQTT. The controller checks the Bambu Lab certificate authority and the configured printer identity, subscribes to printer reports, and sends only the command types currently enabled by its safety gate. Release builds use RSA-signed OTA verification without enabling irreversible hardware Secure Boot. Wi-Fi and printer credentials are stored in NVS on the prototype; encrypted-at-rest storage requires a separately approved device-provisioning step.
 
 ![Nova Horizon architecture diagram](assets/architecture_diagram.png)
 
@@ -132,7 +132,7 @@ These are potential outcomes, not claims of endorsement or guaranteed commercial
 
 | Phase | Scope and exit condition |
 | --- | --- |
-| **Current — P1S prototype** | Hardware-regression test v0.6.0 telemetry, reconnect, camera lifecycle, SD refresh, and guarded actions. |
+| **Current — P1S prototype** | Hardware-regression test v0.7.0 telemetry, reconnect, camera lifecycle, SD refresh, runtime health reporting, and guarded actions. |
 | **Next technical milestone** | Safely validate supported job commands, harden credential storage, and implement a real local file browser/print-start path. |
 | **Multi-printer compatibility** | Introduce model capability profiles; characterize X1 Carbon and H2D authentication, telemetry, cameras, AMS behavior, commands, and UI differences. |
 | **Reliability and hardening** | Run reconnect, malformed/error-state, firmware-regression, long-duration, and safe-command tests; document known limitations. |

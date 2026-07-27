@@ -281,7 +281,9 @@ class ReleaseInvariants(unittest.TestCase):
         )
         self.assertIn("CONFIG_FREERTOS_USE_TRACE_FACILITY=n", defaults)
         self.assertIn("uxTaskGetStackHighWaterMark", diagnostics)
+        self.assertIn("ESP_PARTITION_SUBTYPE_DATA_COREDUMP", diagnostics)
         self.assertIn(r'\"minimum_free\"', ota)
+        self.assertIn(r'\"coredump\"', ota)
 
 
 if __name__ == "__main__":

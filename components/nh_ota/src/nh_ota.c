@@ -74,6 +74,7 @@ static esp_err_t ota_status_handler(httpd_req_t *request)
              "\"window_seconds\":%lu,\"upload\":\"POST /api/v1/ota\","
              "\"uptime_seconds\":%lu,\"reset_reason\":%d,"
              "\"partition\":\"%s\",\"ota_pending_verification\":%s,"
+             "\"coredump\":{\"partition_bytes\":%u},"
              "\"heap\":{\"internal_free\":%u,\"internal_minimum\":%u,"
              "\"psram_free\":%u},"
              "\"stack\":{\"minimum_free\":%u,\"task\":\"%s\","
@@ -84,6 +85,7 @@ static esp_err_t ota_status_handler(httpd_req_t *request)
              (int)health.reset_reason,
              health.running_partition,
              health.ota_pending_verification ? "true" : "false",
+             (unsigned)health.coredump_partition_bytes,
              (unsigned)health.internal_free_bytes,
              (unsigned)health.internal_minimum_bytes,
              (unsigned)health.psram_free_bytes,
