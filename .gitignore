@@ -1,0 +1,24 @@
+# Project-local toolchains and generated ESP-IDF state
+.tools/
+build/
+managed_components/
+sdkconfig
+sdkconfig.old
+backups/
+board.jpg
+
+# Device-specific secrets and local overrides
+secrets.h
+secrets.c
+sdkconfig.local
+*.local.json
+*.local.yaml
+security/private/
+
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+__pycache__/
+*.py[cod]
