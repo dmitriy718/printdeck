@@ -95,7 +95,7 @@ pdftoppm -png -r 90 \
   /tmp/nh-overview-pages/page
 ```
 
-The DOCX archive passed its integrity test and reopened through `python-docx` with editable paragraphs, tables, and inline images. The PDF reports six US Letter pages. Text extraction found every required numbered section. Bounding-box inspection found no words outside page boundaries. Six embedded images were identified: five labeled photograph placeholders and one architecture diagram. Rendered page images were reviewed as a contact sheet for overflow, clipping, table fit, and placeholder visibility. A scan for private network ranges, the development printer identifier, private-key headers, and common API-token patterns returned no matches in the outreach package.
+The DOCX archive passed its integrity test and reopened through `python-docx` with editable paragraphs, tables, and inline images. The PDF reports six US Letter pages. Text extraction found every required numbered section. Bounding-box inspection found no words outside page boundaries. Six embedded images were identified: five labeled photograph placeholders and one architecture diagram. All six rendered page images were reviewed individually for overflow, clipping, table fit, and placeholder visibility. A scan for private network ranges, the development printer identifier, private-key headers, and common API-token patterns returned no matches in the outreach package.
 
 ## Which file to attach
 

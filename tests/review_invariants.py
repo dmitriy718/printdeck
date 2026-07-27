@@ -30,7 +30,7 @@ def production_text() -> str:
 class ReleaseInvariants(unittest.TestCase):
     def test_release_version_is_current(self) -> None:
         cmake = (ROOT / "CMakeLists.txt").read_text(encoding="utf-8")
-        self.assertIn('set(PROJECT_VER "0.7.0")', cmake)
+        self.assertIn('set(PROJECT_VER "0.7.1")', cmake)
 
     def test_no_development_device_defaults_are_compiled(self) -> None:
         text = production_text()
@@ -72,6 +72,36 @@ class ReleaseInvariants(unittest.TestCase):
         )
         self.assertIn(".format_if_mount_failed = false", board)
         self.assertIn("sdmmc_get_status(s_sd_card)", board)
+        self.assertIn("esp_vfs_fat_sdmmc_mount(", board)
+        self.assertNotIn("esp_vfs_fat_sdspi_mount(", board)
+        self.assertIn("host.init = use_hosted_sdmmc_controller", board)
+        self.assertIn("host.slot = SDMMC_HOST_SLOT_0", board)
+        self.assertIn("NH_SD_CLK_GPIO = GPIO_NUM_43", board)
+        self.assertIn("NH_SD_CMD_GPIO = GPIO_NUM_44", board)
+        self.assertIn("NH_SD_D0_GPIO = GPIO_NUM_39", board)
+        self.assertIn("NH_SD_D1_GPIO = GPIO_NUM_40", board)
+        self.assertIn("NH_SD_D2_GPIO = GPIO_NUM_41", board)
+        self.assertIn("NH_SD_D3_GPIO = GPIO_NUM_42", board)
+
+    def test_sd_mount_runs_after_hosted_network_init(self) -> None:
+        main = (ROOT / "main" / "app_main.c").read_text(encoding="utf-8")
+        self.assertLess(
+            main.index("nh_network_init(&network_cfg)"),
+            main.index("refresh_controller_sd();", main.index("void app_main")),
+        )
+
+    def test_boya_flash_driver_is_enabled_for_the_prototype(self) -> None:
+        defaults = (ROOT / "sdkconfig.defaults").read_text(encoding="utf-8")
+        self.assertIn("CONFIG_SPI_FLASH_SUPPORT_BOYA_CHIP=y", defaults)
+
+    def test_ota_disconnect_reports_returned_device_state(self) -> None:
+        uploader = (ROOT / "scripts" / "ota-update.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("diagnose_upload_disconnect", uploader)
+        self.assertIn('data.get("reset_reason", "unknown")', uploader)
+        self.assertIn('data.get("partition", "unknown")', uploader)
+        self.assertIn("Do not retry", uploader)
 
     def test_time_sync_starts_only_after_network_address(self) -> None:
         network = (ROOT / "components/nh_network/src/nh_network.c").read_text(

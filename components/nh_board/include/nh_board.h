@@ -41,7 +41,9 @@ esp_err_t nh_board_display_init(nh_board_handles_t *out);
 esp_err_t nh_board_backlight_set(uint8_t percent);
 
 /**
- * Mounts a FAT32 volume in the native four-bit SDMMC slot at /sdcard.
+ * Mounts a FAT32 volume from the board's native four-bit SDMMC slot at
+ * /sdcard. ESP-Hosted owns the shared controller while this component owns
+ * only the card's slot, allowing the card and ESP32-C6 Wi-Fi to coexist.
  * Mount failure is non-destructive: the card is never formatted automatically.
  */
 esp_err_t nh_board_sd_mount(nh_sd_info_t *out);

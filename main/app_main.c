@@ -13,6 +13,7 @@
 #include "nh_ui.h"
 
 static const char *TAG = "nh_main";
+static bool s_ui_ready;
 
 static nh_printer_snapshot_t s_snapshot = {
     .connection = NH_CONNECTION_UNCONFIGURED,
@@ -43,9 +44,7 @@ static esp_err_t refresh_controller_sd(void)
     nh_sd_info_t sd_info = {0};
     esp_err_t err = nh_board_sd_mount(&sd_info);
     bool mounted = err == ESP_OK && sd_info.mounted;
-    esp_err_t ui_err = nh_ui_storage_update(
-        mounted, err, sd_info.capacity_bytes, sd_info.free_bytes);
-    if (ui_err == ESP_ERR_INVALID_STATE) {
+    if (!s_ui_ready) {
         /*
          * Boot-time mount runs before UI/task creation and is the only safe
          * point at which main writes the shared initial snapshot directly.
@@ -55,7 +54,12 @@ static esp_err_t refresh_controller_sd(void)
         s_snapshot.sd_capacity_bytes =
             mounted ? sd_info.capacity_bytes : 0;
         s_snapshot.sd_free_bytes = mounted ? sd_info.free_bytes : 0;
-    } else if (ui_err != ESP_OK) {
+        return err;
+    }
+
+    esp_err_t ui_err = nh_ui_storage_update(
+        mounted, err, sd_info.capacity_bytes, sd_info.free_bytes);
+    if (ui_err != ESP_OK) {
         ESP_LOGW(TAG, "SD status UI update failed: %s",
                  esp_err_to_name(ui_err));
     }
@@ -196,11 +200,6 @@ void app_main(void)
     nh_board_handles_t board = {0};
     ESP_ERROR_CHECK(nh_board_display_init(&board));
 
-    esp_err_t sd_err = refresh_controller_sd();
-    if (sd_err != ESP_OK) {
-        ESP_LOGW(TAG, "SD card unavailable: %s", esp_err_to_name(sd_err));
-    }
-
     const nh_ui_config_t ui_cfg = {
         .display = board.display,
         .snapshot = &s_snapshot,
@@ -221,6 +220,7 @@ void app_main(void)
     };
 
     ESP_ERROR_CHECK(nh_ui_create(&ui_cfg));
+    s_ui_ready = true;
 
     /*
      * Initialize the on-demand camera service before the display becomes
@@ -246,6 +246,16 @@ void app_main(void)
     if (network_err != ESP_OK) {
         ESP_LOGE(TAG, "ESP32-C6 hosted Wi-Fi failed: %s",
                  esp_err_to_name(network_err));
+    }
+
+    /*
+     * ESP-Hosted owns the P4's shared SDMMC controller (C6 on slot 1). Mount
+     * the card on slot 0 only after network initialization has created that
+     * controller. A failed card mount remains non-fatal to the UI and Wi-Fi.
+     */
+    esp_err_t sd_err = refresh_controller_sd();
+    if (sd_err != ESP_OK) {
+        ESP_LOGW(TAG, "SD card unavailable: %s", esp_err_to_name(sd_err));
     }
 
     const nh_printer_config_t printer_cfg = {

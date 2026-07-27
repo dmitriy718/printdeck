@@ -691,7 +691,7 @@ def build_document() -> None:
     add_text(document, "Prepared by Dima", size=12, color=TEXT, bold=True, before=10, after=1)
     add_text(
         document,
-        "Firmware reviewed: v0.7.0 source build  /  July 2026",
+        "Firmware reviewed: v0.7.1 deployed prototype build  /  July 2026",
         size=8.8,
         color=MID,
         after=8,
@@ -731,7 +731,7 @@ def build_document() -> None:
         ),
         (
             "Functional, refining",
-            "P1S telemetry presentation, on-screen setup, reconnect behavior, SD mounting, camera lifecycle, and UI messaging. v0.7.0 adds signed updates, configurable timezones, and runtime health data; on-device regression remains pending.",
+            "P1S telemetry, on-screen setup, reconnect behavior, SD mounting, camera lifecycle, and UI messaging. Signed v0.7.1 is deployed with stable short health samples; full regression remains pending.",
         ),
         (
             "In active development",
@@ -774,7 +774,7 @@ def build_document() -> None:
         (
             "Files / print start",
             "UI scaffold only",
-            "SD can mount; indexing, transfer, queueing, and print initiation are not implemented.",
+            "Non-destructive SD mount is implemented; media confirmation, indexing, transfer, queueing, and print initiation remain pending.",
         ),
         (
             "Motion / thermal / fan",
@@ -799,7 +799,7 @@ def build_document() -> None:
         (
             "Diagnostics",
             "Partial",
-            "Auth, TLS/identity, offline, and connection states exist; full error/HMS guidance is planned.",
+            "Heap, stack, reset, uptime, coredump, OTA, auth, and connection state are reported; long-duration and full error/HMS work remains.",
         ),
     ]
     add_table(
@@ -980,7 +980,7 @@ def build_document() -> None:
     )
     section_heading(document, "10", "Development roadmap", top=2)
     roadmap_rows = [
-        ("Current — P1S prototype", "Hardware-regression test v0.7.0 telemetry, reconnect, camera lifecycle, SD refresh, health data, and guarded actions."),
+        ("Current — P1S prototype", "Hardware-regression test deployed v0.7.1 telemetry, reconnect, camera lifecycle, SD refresh, health data, and guarded actions."),
         ("Next technical milestone", "Validate supported job commands; harden credentials; implement real local file browse/print start."),
         ("Multi-printer compatibility", "Add model capability profiles; characterize X1 Carbon and H2D telemetry, cameras, AMS, commands, and UI."),
         ("Reliability / hardening", "Reconnect, malformed/error-state, firmware-regression, long-duration, and safe-command testing."),

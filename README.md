@@ -3,7 +3,7 @@
 Touch controller firmware for the Guition **JC4880P443** and a Bambu Lab P1S.
 The first milestone brings up the exact display and touch hardware, presents a
 custom Nova Horizon interface, and establishes a safety boundary for printer
-commands. Firmware 0.7.0 includes the onboard ESP32-C6 hosted-Wi-Fi transport,
+commands. Firmware 0.7.1 includes the onboard ESP32-C6 hosted-Wi-Fi transport,
 on-screen Wi-Fi and P1S pairing, live P1S telemetry over pinned local TLS/MQTT,
 an on-demand encrypted P1S camera feed, and physically authorized dual-slot LAN
 OTA updates. OTA uploads are rejected unless the five-minute update window has
@@ -17,7 +17,7 @@ and a signed-enforcement image rejects future OTA uploads from any other key.
 - The interface is rendered in landscape at 800 x 480 using PPA rotation.
 - The header clock updates from SNTP-synchronized local time. The System page
   cycles through persistent UTC and regional timezone presets.
-- GT911 capacitive touch, backlight PWM, and the native SDMMC slot are wired.
+- GT911 capacitive touch, backlight PWM, and the native SD-card slot are wired.
 - Dashboard, Job, Control, Files, Camera, and System screens are implemented.
 - ESP32-C6 hosted Wi-Fi uses Guition's four-bit SDIO profile, with access-point
   scanning and masked on-screen password entry.
@@ -61,7 +61,7 @@ and a signed-enforcement image rejects future OTA uploads from any other key.
 | LCD reset | GPIO5 |
 | Backlight | GPIO23, 20 kHz PWM |
 | DSI power | Internal LDO channel 3 at 2.5 V |
-| SD card | Native four-bit SDMMC slot, internal LDO channel 4 |
+| SD card | Native four-bit SDMMC slot 0 on GPIO39-44, internal LDO channel 4 |
 | Boot strap | BOOT on GPIO35 |
 | Programming | Native USB2 connector, `/dev/ttyACM0` on Linux |
 | Hosted Wi-Fi | SDIO GPIO14-19, C6 reset GPIO54 |
@@ -105,9 +105,15 @@ upload into the inactive OTA slot, validates the image, switches boot slots,
 and restarts automatically. The new image marks itself valid after a stable
 ten-second boot; otherwise the rollback-enabled bootloader returns to the
 previous slot. Uploads are rejected outside the physical five-minute
-authorization window. Firmware 0.7.0 uses ESP-IDF's signed-app verification
+authorization window. Firmware 0.7.1 uses ESP-IDF's signed-app verification
 without hardware Secure Boot, protecting the OTA path while retaining native
 USB recovery.
+
+If an upload connection drops, the uploader keeps the operation in a failed
+state and performs a read-only recovery check. It reports the returned firmware
+version, partition, and reset reason when available. Do not immediately repeat
+an upload after a disconnect; diagnose that state and explicitly reopen the
+physical authorization window only after the controller is known healthy.
 
 OTA updates replace only the application slot. Changes to `partitions.csv`
 (including the v0.6.0 expansion of crash-dump storage from 64 KiB to 512 KiB)
@@ -120,6 +126,9 @@ The firmware mounts `/sdcard` without ever formatting it automatically.
 ESP-IDF's current FatFs configuration expects FAT32. A 512 GB SDXC card usually
 ships as exFAT and therefore may not mount until it is backed up and reformatted
 as FAT32. Reformatting is deliberately left as an explicit host-side operation.
+The card uses SDMMC slot 0 while the ESP32-C6 link uses slot 1. ESP-Hosted owns
+the shared controller; card mount and cleanup are deliberately limited to slot
+0 so rescans cannot interrupt Wi-Fi.
 
 ## Project layout
 
@@ -170,7 +179,7 @@ eFuse decision, so routine builds deliberately leave it disabled. See
 
 ## Integration roadmap
 
-The next controller milestone is on-device v0.7.0 regression testing and a
+The next controller milestone is on-device v0.7.1 regression testing and a
 deliberate wired partition-table update, followed by a reviewed decision on
 encrypted-at-rest credential provisioning. Nova Horizon backend and Jetson Orin
 Nano vision adapters can then be added without coupling them to the display

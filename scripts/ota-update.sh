@@ -107,6 +107,50 @@ read -r current_version window_seconds <<<"${status_values}"
 
 echo "Uploading $(basename -- "${firmware}") to ${controller_ip}..."
 echo "Controller ${current_version}; authorized window ${window_seconds}s."
+
+diagnose_upload_disconnect() {
+    echo "Checking the controller state before any retry..."
+    for _attempt in {1..15}; do
+        sleep 2
+        if returned_status="$(
+            curl \
+                --silent \
+                --show-error \
+                --connect-timeout 2 \
+                --max-time 3 \
+                --proto '=http' \
+                "http://${controller_ip}/api/v1/ota" 2>/dev/null
+        )" &&
+           state_values="$(
+               python3 -c '
+import json, sys
+data = json.load(sys.stdin)
+if data.get("service") != "nova-horizon-ota":
+    raise SystemExit(1)
+version = data.get("version", "unknown")
+reset = data.get("reset_reason", "unknown")
+partition = data.get("partition", "unknown")
+print(version, reset, partition)
+' <<<"${returned_status}"
+           )"; then
+            read -r returned_version reset_reason running_partition \
+                <<<"${state_values}"
+            echo "Controller returned on v${returned_version}, partition" \
+                "${running_partition}, reset reason ${reset_reason}."
+            if [[ "${returned_version}" == "${expected_version}" ]]; then
+                echo "The expected version is running, but the required" \
+                    "verified-success response was lost; treating this run" \
+                    "as unconfirmed."
+            else
+                echo "The requested update was not selected. Do not retry" \
+                    "blindly; diagnose the reported reset first."
+            fi
+            return
+        fi
+    done
+    echo "The controller did not return to its status endpoint within 30 seconds."
+}
+
 if ! upload_response="$(
     curl \
         --silent \
@@ -121,6 +165,7 @@ if ! upload_response="$(
         "http://${controller_ip}/api/v1/ota"
 )"; then
     echo "Firmware upload failed."
+    diagnose_upload_disconnect
     exit 1
 fi
 upload_code="${upload_response##*$'\n'}"

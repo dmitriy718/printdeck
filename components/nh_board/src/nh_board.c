@@ -34,6 +34,12 @@ enum {
     NH_MIPI_DSI_LDO_CHANNEL = 3,
     NH_MIPI_DSI_LDO_MV = 2500,
     NH_SD_LDO_CHANNEL = 4,
+    NH_SD_CLK_GPIO = GPIO_NUM_43,
+    NH_SD_CMD_GPIO = GPIO_NUM_44,
+    NH_SD_D0_GPIO = GPIO_NUM_39,
+    NH_SD_D1_GPIO = GPIO_NUM_40,
+    NH_SD_D2_GPIO = GPIO_NUM_41,
+    NH_SD_D3_GPIO = GPIO_NUM_42,
     NH_BACKLIGHT_LEDC_TIMER = LEDC_TIMER_1,
     NH_BACKLIGHT_LEDC_CHANNEL = LEDC_CHANNEL_1,
 };
@@ -50,6 +56,30 @@ static lv_indev_t *s_touch_indev;
 static sdmmc_card_t *s_sd_card;
 static sd_pwr_ctrl_handle_t s_sd_power;
 static bool s_backlight_initialized;
+
+/*
+ * ESP-Hosted creates the ESP32-P4's one SDMMC controller for its C6 link on
+ * slot 1. Creating the controller again for the card would fail. The card
+ * still uses SDMMC_HOST_DEFAULT's per-slot deinitializer, so removal, mount
+ * failure, and a later rescan release only slot 0 without disrupting Wi-Fi.
+ *
+ * This is the ESP-IDF 6 workaround documented by Espressif's
+ * host_sdcard_with_hosted example, tightened with an initialization-state
+ * check so an accidental call before nh_network_init() fails safely.
+ */
+static esp_err_t use_hosted_sdmmc_controller(void)
+{
+    sdmmc_host_state_t state = {0};
+    esp_err_t err = sdmmc_host_get_state(&state);
+    if (err != ESP_OK) {
+        return err;
+    }
+    if (!state.host_initialized) {
+        ESP_LOGE(TAG, "ESP-Hosted SDMMC controller is not initialized");
+        return ESP_ERR_INVALID_STATE;
+    }
+    return ESP_OK;
+}
 
 static void release_sd_mount(void)
 {
@@ -409,14 +439,18 @@ esp_err_t nh_board_sd_mount(nh_sd_info_t *out)
     sdmmc_host_t host = SDMMC_HOST_DEFAULT();
     host.slot = SDMMC_HOST_SLOT_0;
     host.max_freq_khz = SDMMC_FREQ_HIGHSPEED;
+    host.init = use_hosted_sdmmc_controller;
     host.pwr_ctrl_handle = s_sd_power;
 
-    const sdmmc_slot_config_t slot_cfg = {
-        .cd = SDMMC_SLOT_NO_CD,
-        .wp = SDMMC_SLOT_NO_WP,
-        .width = 4,
-        .flags = 0,
-    };
+    sdmmc_slot_config_t slot_cfg = SDMMC_SLOT_CONFIG_DEFAULT();
+    slot_cfg.clk = NH_SD_CLK_GPIO;
+    slot_cfg.cmd = NH_SD_CMD_GPIO;
+    slot_cfg.d0 = NH_SD_D0_GPIO;
+    slot_cfg.d1 = NH_SD_D1_GPIO;
+    slot_cfg.d2 = NH_SD_D2_GPIO;
+    slot_cfg.d3 = NH_SD_D3_GPIO;
+    slot_cfg.width = 4;
+    slot_cfg.flags |= SDMMC_SLOT_FLAG_INTERNAL_PULLUP;
 
     const esp_vfs_fat_mount_config_t mount_cfg = {
         .format_if_mount_failed = false,
@@ -427,8 +461,7 @@ esp_err_t nh_board_sd_mount(nh_sd_info_t *out)
     esp_err_t err = esp_vfs_fat_sdmmc_mount(
         "/sdcard", &host, &slot_cfg, &mount_cfg, &s_sd_card);
     if (err != ESP_OK) {
-        (void)sd_pwr_ctrl_del_on_chip_ldo(s_sd_power);
-        s_sd_power = NULL;
+        release_sd_mount();
         return err;
     }
 
@@ -442,7 +475,9 @@ esp_err_t nh_board_sd_mount(nh_sd_info_t *out)
         out->free_bytes = (uint64_t)fs.f_bavail * fs.f_frsize;
     }
 
-    ESP_LOGI(TAG, "SD mounted: %s, capacity=%" PRIu64 " bytes, free=%" PRIu64,
+    ESP_LOGI(TAG,
+             "SD mounted over shared four-bit SDMMC: %s, capacity=%" PRIu64
+             " bytes, free=%" PRIu64,
              out->name, out->capacity_bytes, out->free_bytes);
     return ESP_OK;
 }
