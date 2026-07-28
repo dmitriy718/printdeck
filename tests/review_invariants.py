@@ -30,7 +30,7 @@ def production_text() -> str:
 class ReleaseInvariants(unittest.TestCase):
     def test_release_version_is_current(self) -> None:
         cmake = (ROOT / "CMakeLists.txt").read_text(encoding="utf-8")
-        self.assertIn('set(PROJECT_VER "0.7.1")', cmake)
+        self.assertIn('set(PROJECT_VER "0.7.2")', cmake)
 
     def test_no_development_device_defaults_are_compiled(self) -> None:
         text = production_text()
@@ -109,6 +109,29 @@ class ReleaseInvariants(unittest.TestCase):
         )
         self.assertIn("time_config.start = false", network)
         self.assertIn("esp_netif_sntp_start()", network)
+
+    def test_header_clock_uses_twelve_hour_time(self) -> None:
+        ui = (ROOT / "components/nh_ui/src/nh_ui.c").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('local_time.tm_hour < 12 ? "AM" : "PM"', ui)
+        self.assertNotIn('"%H:%M"', ui)
+
+    def test_files_page_does_not_present_future_sources_as_files(self) -> None:
+        ui = (ROOT / "components/nh_ui/src/nh_ui.c").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("NO INDEXED .3MF FILES", ui)
+        self.assertNotIn("Nova cloud queue", ui)
+        self.assertNotIn("USB / network import", ui)
+
+    def test_control_lock_reason_tracks_print_state(self) -> None:
+        ui = (ROOT / "components/nh_ui/src/nh_ui.c").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("Locked during active print", ui)
+        self.assertIn("Motion controls disabled", ui)
+        self.assertNotIn("Hardware validation pending", ui)
 
     def test_wifi_ui_accepts_raw_64_character_psk(self) -> None:
         ui = (ROOT / "components/nh_ui/src/nh_ui.c").read_text(

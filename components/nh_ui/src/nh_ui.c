@@ -82,6 +82,8 @@ typedef struct {
     lv_obj_t *job_page_state;
     lv_obj_t *job_page_progress;
     lv_obj_t *job_page_copy;
+    lv_obj_t *control_motion_status;
+    lv_obj_t *control_thermal_status;
     lv_obj_t *nozzle_value;
     lv_obj_t *bed_value;
     lv_obj_t *chamber_value;
@@ -318,10 +320,14 @@ static void clock_timer_cb(lv_timer_t *timer)
         return;
     }
 
-    char text[6];
-    if (strftime(text, sizeof(text), "%H:%M", &local_time) == 0) {
-        return;
+    char text[20];
+    int hour_12 = local_time.tm_hour % 12;
+    if (hour_12 == 0) {
+        hour_12 = 12;
     }
+    snprintf(text, sizeof(text), "%d:%02d %s",
+             hour_12, local_time.tm_min,
+             local_time.tm_hour < 12 ? "AM" : "PM");
     lv_label_set_text(s_ui.clock, text);
     lv_obj_set_style_text_color(s_ui.clock, NH_COLOR_TEXT, 0);
 }
@@ -386,7 +392,7 @@ static void dispatch_action(nh_action_t action, int32_t value)
         update_footer("Blocked safely: connect the P1S before using this control",
                       NH_COLOR_AMBER);
     } else if (err == ESP_ERR_NOT_SUPPORTED) {
-        update_footer("This control remains locked pending hardware validation",
+        update_footer("This control is disabled in this firmware; no command was sent",
                       NH_COLOR_AMBER);
     } else {
         char status[96];
@@ -1292,7 +1298,8 @@ static void build_job_page(lv_obj_t *page)
 static void build_control_page(lv_obj_t *page)
 {
     lv_obj_t *motion = make_card(page, 0, 0, 338, 340);
-    add_card_title(motion, "AXIS", "Hardware validation pending");
+    s_ui.control_motion_status =
+        add_card_title(motion, "AXIS", "Motion controls disabled");
 
     make_action_button(motion, 122, 78, 94, 52, "Y +",
                        NH_COLOR_CYAN, NH_ACTION_JOG_Y, 10);
@@ -1311,11 +1318,13 @@ static void build_control_page(lv_obj_t *page)
                        NH_COLOR_VIOLET, NH_ACTION_JOG_Z, -1);
 
     lv_obj_t *thermal = make_card(page, 350, 0, 338, 340);
-    add_card_title(thermal, "MATERIAL", "Thermal presets");
+    s_ui.control_thermal_status =
+        add_card_title(thermal, "MATERIAL", "Presets not enabled");
 
     lv_obj_t *warning = make_label(
         thermal,
-        "Heating is not enabled in this build.\nControls remain visible for validation.",
+        "Preheat and cooldown commands are not enabled.\n"
+        "Disabled buttons never send printer commands.",
         &lv_font_montserrat_12, NH_COLOR_AMBER);
     lv_obj_set_pos(warning, 20, 78);
     lv_obj_set_style_text_line_space(warning, 5, 0);
@@ -1361,33 +1370,30 @@ static void build_files_page(lv_obj_t *page)
     s_ui.printer_sd_label = lv_obj_get_child(s_ui.printer_sd_pill, 0);
 
     lv_obj_t *files = make_card(page, 247, 0, 441, 340);
-    add_card_title(files, "PRINT QUEUE", "Recent files");
+    add_card_title(files, "LOCAL PRINT FILES", "Indexing not implemented");
 
-    const char *file_names[] = {
-        "No indexed .3mf files",
-        "Nova cloud queue",
-        "USB / network import",
-    };
-    const char *file_meta[] = {
-        "Insert or index local media",
-        "Backend integration reserved",
-        "Future transport",
-    };
-    for (int i = 0; i < 3; ++i) {
-        int y = 80 + i * 73;
-        lv_obj_t *row = lv_obj_create(files);
-        set_obj_box(row, NH_COLOR_SURFACE_2, 10, 1);
-        lv_obj_set_pos(row, 18, y);
-        lv_obj_set_size(row, 405, 58);
-        lv_obj_clear_flag(row, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_t *empty = lv_obj_create(files);
+    set_obj_box(empty, NH_COLOR_SURFACE_2, 12, 1);
+    lv_obj_set_pos(empty, 18, 91);
+    lv_obj_set_size(empty, 405, 180);
+    lv_obj_clear_flag(empty, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_clear_flag(empty, LV_OBJ_FLAG_CLICKABLE);
 
-        lv_obj_t *name = make_label(row, file_names[i],
-                                    &lv_font_montserrat_14, NH_COLOR_TEXT);
-        lv_obj_set_pos(name, 15, 9);
-        lv_obj_t *meta = make_label(row, file_meta[i],
-                                    &lv_font_montserrat_12, NH_COLOR_MUTED);
-        lv_obj_set_pos(meta, 15, 32);
-    }
+    lv_obj_t *empty_title = make_label(
+        empty, "NO INDEXED .3MF FILES",
+        &lv_font_montserrat_16, NH_COLOR_TEXT);
+    lv_obj_align(empty_title, LV_ALIGN_TOP_MID, 0, 27);
+
+    lv_obj_t *empty_copy = make_label(
+        empty,
+        "The controller currently detects SD storage only.\n"
+        "File browsing and print start are not implemented.\n\n"
+        "No cloud queue or USB/network source is connected.",
+        &lv_font_montserrat_12, NH_COLOR_MUTED);
+    lv_obj_set_width(empty_copy, 355);
+    lv_obj_set_style_text_align(empty_copy, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_line_space(empty_copy, 6, 0);
+    lv_obj_align(empty_copy, LV_ALIGN_TOP_MID, 0, 67);
 }
 
 static void build_camera_page(lv_obj_t *page)
@@ -2008,6 +2014,21 @@ static void refresh_snapshot(void)
                       (snapshot->job == NH_JOB_PREPARING ||
                        snapshot->job == NH_JOB_PRINTING ||
                        snapshot->job == NH_JOB_PAUSED);
+    if (s_ui.control_motion_status) {
+        const char *motion_status = "Motion controls disabled";
+        if (snapshot->job == NH_JOB_PRINTING ||
+            snapshot->job == NH_JOB_PREPARING) {
+            motion_status = "Locked during active print";
+        } else if (snapshot->job == NH_JOB_PAUSED) {
+            motion_status = "Locked while print paused";
+        }
+        lv_label_set_text(s_ui.control_motion_status, motion_status);
+    }
+    if (s_ui.control_thermal_status) {
+        lv_label_set_text(
+            s_ui.control_thermal_status,
+            active_job ? "Locked during active print" : "Presets not enabled");
+    }
     const char *job_name =
         snapshot->job_name && snapshot->job_name[0]
             ? snapshot->job_name

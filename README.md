@@ -3,7 +3,7 @@
 Touch controller firmware for the Guition **JC4880P443** and a Bambu Lab P1S.
 The first milestone brings up the exact display and touch hardware, presents a
 custom Nova Horizon interface, and establishes a safety boundary for printer
-commands. Firmware 0.7.1 includes the onboard ESP32-C6 hosted-Wi-Fi transport,
+commands. Firmware 0.7.2 includes the onboard ESP32-C6 hosted-Wi-Fi transport,
 on-screen Wi-Fi and P1S pairing, live P1S telemetry over pinned local TLS/MQTT,
 an on-demand encrypted P1S camera feed, and physically authorized dual-slot LAN
 OTA updates. OTA uploads are rejected unless the five-minute update window has
@@ -105,7 +105,7 @@ upload into the inactive OTA slot, validates the image, switches boot slots,
 and restarts automatically. The new image marks itself valid after a stable
 ten-second boot; otherwise the rollback-enabled bootloader returns to the
 previous slot. Uploads are rejected outside the physical five-minute
-authorization window. Firmware 0.7.1 uses ESP-IDF's signed-app verification
+authorization window. Firmware 0.7.2 uses ESP-IDF's signed-app verification
 without hardware Secure Boot, protecting the OTA path while retaining native
 USB recovery.
 
@@ -179,7 +179,7 @@ eFuse decision, so routine builds deliberately leave it disabled. See
 
 ## Integration roadmap
 
-The next controller milestone is on-device v0.7.1 regression testing and a
+The next controller milestone is on-device v0.7.2 regression testing and a
 deliberate wired partition-table update, followed by a reviewed decision on
 encrypted-at-rest credential provisioning. Nova Horizon backend and Jetson Orin
 Nano vision adapters can then be added without coupling them to the display

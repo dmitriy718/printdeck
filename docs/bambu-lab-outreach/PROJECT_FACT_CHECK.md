@@ -40,7 +40,7 @@ Status definitions:
 | The controller SD slot mounts FAT32 without automatic formatting. | **Verified in deployed code; media compatibility pending** | Shared-controller native SDMMC implementation in `components/nh_board/src/nh_board.c`; Espressif `host_sdcard_with_hosted` example; `README.md`; repository invariant test; v0.7.1 deployment. | Physical card/filesystem status is awaiting operator confirmation. A 512 GB SDXC card may ship as exFAT and require an explicit backup/reformat. File indexing is not implemented. |
 | Firmware v0.6.0 builds and boots successfully. | **Verified build and deployment** | A physically authorized OTA completed on 2026-07-27 and the controller returned to its status endpoint reporting v0.6.0. | Full on-device behavioral regression remains a separate step. |
 | Firmware v0.7.1 builds and boots as a valid signed ESP32-P4 image. | **Verified build and deployment** | Clean/incremental builds passed; signed binary is 1,773,568 bytes; `espsecure` validates its RSA block; esptool verified every written region; the LAN endpoint reported v0.7.1 on `ota_0`, rollback cleared, and a 524,288-byte coredump partition; 72% of the smallest OTA slot remains free. | Full UI, printer, SD, camera, and long-duration regression remains separate work. |
-| Automated regression and static-analysis checks exist. | **Verified** | 11 C parser cases plus 23 Python repository invariants; AddressSanitizer/UndefinedBehaviorSanitizer parser runs; ShellCheck; GCC `-fanalyzer` across all 12 first-party translation units. | No UI simulator or hardware-in-the-loop suite exists yet. |
+| Automated regression and static-analysis checks exist. | **Verified** | 11 C parser cases plus 26 Python repository invariants; AddressSanitizer/UndefinedBehaviorSanitizer parser runs; ShellCheck; GCC `-fanalyzer` across all 12 first-party translation units. | No UI simulator or hardware-in-the-loop suite exists yet. |
 | Runtime health instrumentation is implemented. | **Verified in deployed code; short-duration measurement complete** | `components/nh_diagnostics/`; System UI; read-only status JSON; v0.7.1 LAN samples from 48–89 seconds showed monotonic uptime, stable heap/PSRAM, 6,268-byte minimum tracked stack reserve, and no reset. | This is not a long-duration stress result and is not used to justify further stack reductions. |
 | The clock timezone can be changed and persisted. | **Verified in code/build; UI test pending** | `components/nh_settings/`; timezone control in `components/nh_ui/`; NVS persistence and 15 POSIX presets; clean v0.7.1 build. | Hardware touch/persistence behavior still needs confirmation. |
 | Credentials are masked and cleared from transient UI/command buffers. | **Partially verified** | Password-mode UI and `nh_secure_zero()` usage in UI, network, printer, and camera paths; secret scan found no literal credentials. | Wi-Fi and P1S credentials remain plaintext in NVS until a provisioning migration enables encryption at rest. |
@@ -74,7 +74,7 @@ Current recorded results:
 - Signed application binary: 1,773,568 bytes (`0x1b1000`).
 - Smallest application partition: 6 MiB; 72% reported free.
 - Production parser cases: 11 passed, including a sanitizer run.
-- Repository safety/release invariants: 23 passed.
+- Repository safety/release invariants: 26 passed.
 - Project shell scripts: ShellCheck passed.
 - GCC path-sensitive analysis: 12 first-party C translation units passed.
 - Signed v0.7.1 wired deployment with per-region hash verification: passed.
