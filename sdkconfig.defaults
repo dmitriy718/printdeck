@@ -1,4 +1,4 @@
-# Nova Horizon Controller: JC4880P443 / ESP32-P4NRW32
+# PrintDeck: JC4880P443 / ESP32-P4NRW32
 CONFIG_IDF_TARGET="esp32p4"
 
 # This production board contains ESP32-P4 revision v1.3 silicon. ESP32-P4

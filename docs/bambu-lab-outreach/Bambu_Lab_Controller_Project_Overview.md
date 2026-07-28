@@ -1,9 +1,10 @@
-# NOVA HORIZON CONTROLLER
+# PRINTDECK
 
 **An independent, local-first touchscreen controller prototype for monitoring and cautiously controlling Bambu Lab printers.**
 
 **Independent Bambu Lab Controller Development Project**<br>
 Prepared by **Dima**<br>
+Developed by **Horizon Services LLC**<br>
 Firmware reviewed: **v0.7.1 deployed prototype build** | July 2026
 
 > **IMAGE PLACEHOLDER — Current physical prototype**
@@ -15,9 +16,9 @@ Firmware reviewed: **v0.7.1 deployed prototype build** | July 2026
 
 ## 1. Project overview
 
-Nova Horizon Controller is a dedicated touchscreen device being developed to put useful printer information and carefully gated controls on a small, always-available local display. The current prototype targets a Bambu Lab P1S and is intended to reduce the need to reach for a phone or computer for routine at-a-glance monitoring and selected printer actions.
+PrintDeck is a dedicated touchscreen device being developed to put useful printer information and carefully gated controls on a small, always-available local display. The current prototype targets a Bambu Lab P1S and is intended to reduce the need to reach for a phone or computer for routine at-a-glance monitoring and selected printer actions.
 
-The project is local-first: the working P1S integration communicates over the local network. The longer-term design leaves clear boundaries for optional Nova Horizon web services and a Jetson Orin Nano vision system, but neither is part of the current working printer path.
+The project is local-first: the working P1S integration communicates over the local network. The longer-term design leaves clear boundaries for an optional novahorizon.net backend/dashboard and a Jetson Orin Nano vision system, but neither is part of the current working printer path.
 
 ## 2. Current development status
 
@@ -26,7 +27,7 @@ The project is local-first: the working P1S integration communicates over the lo
 | **Completed and verified** | Firmware builds for the JC4880P443 ESP32-P4 board; the 4.3-inch display, landscape LVGL interface, aligned capacitive touch, ESP32-C6 Wi-Fi connection, local P1S authentication, live print reporting, chamber-light control, local P1 camera liveview, and physically enabled LAN OTA have been exercised on the current prototype. |
 | **Functional but still being refined** | P1S telemetry parsing and presentation, on-screen Wi-Fi/P1S setup, reconnect behavior, SD-card mounting, camera lifecycle, and UI status/error messaging. Signed v0.7.1 is deployed and reports stable short-duration health samples; full behavioral and long-duration regression remains pending. |
 | **In active development** | Safe validation of pause/resume/cancel, credential-storage hardening, local file indexing and print initiation, and broader regression testing. |
-| **Planned** | AMS/filament workflows, multi-printer profiles, optional Nova Horizon backend/dashboard connectivity, Jetson Orin Nano vision verification, and broader diagnostics. No current code claims these features are complete. |
+| **Planned** | AMS/filament workflows, multi-printer profiles, optional novahorizon.net backend/dashboard connectivity, Jetson Orin Nano vision verification, and broader diagnostics. No current code claims these features are complete. |
 | **Requires additional printer testing** | X-series and H-series discovery, authentication, telemetry, cameras, AMS generations, command behavior, firmware differences, error handling, and UI adaptation. |
 
 > **IMAGE PLACEHOLDER — Current touchscreen interface**
@@ -44,7 +45,7 @@ The project is local-first: the working P1S integration communicates over the lo
 | Temperature, fan, and motion control | **Intentionally disabled:** controls are visible as design scaffolding but rejected by the transport until safely validated. |
 | Camera and AI-assisted verification | **P1 camera working; AI planned:** an on-demand encrypted P1-family liveview is implemented with hardware JPEG decode and PPA scaling. No vision model or Jetson integration is present. |
 | AMS / filament management | **Planned compatibility work:** no AMS parser or control workflow is currently implemented. |
-| Multi-printer and remote management | **Planned:** current code is P1S-specific and stores one printer profile. Optional Nova Horizon backend/dashboard integration is a roadmap item, not a current capability. |
+| Multi-printer and remote management | **Planned:** current code is P1S-specific and stores one printer profile. Optional novahorizon.net backend/dashboard integration is a roadmap item, not a current capability. |
 | Diagnostics | **Partial:** authentication, TLS/identity, offline, and general connection states are represented. v0.7.1 reports heap, task-stack, reset, uptime, coredump-partition, and OTA state; long-duration stress measurements and full printer error/HMS interpretation remain pending. |
 
 ## 4. Hardware and software architecture
@@ -53,7 +54,7 @@ The prototype uses a Guition JC4880P443 controller with an ESP32-P4NRW32, 32 MB 
 
 The working printer path uses authenticated local TLS/MQTT. The controller checks the Bambu Lab certificate authority and the configured printer identity, subscribes to printer reports, and sends only the command types currently enabled by its safety gate. Release builds use RSA-signed OTA verification without enabling irreversible hardware Secure Boot. Wi-Fi and printer credentials are stored in NVS on the prototype; encrypted-at-rest storage requires a separately approved device-provisioning step.
 
-![Nova Horizon architecture diagram](assets/architecture_diagram.png)
+![PrintDeck architecture diagram](assets/architecture_diagram.png)
 
 **Legend:** solid lines are implemented in the current prototype; dashed lines are planned. No passwords, device identifiers, private addresses, or tokens are shown.
 
@@ -152,4 +153,4 @@ Project website: **[INSERT PROJECT WEBSITE]**<br>
 Repository: **[INSERT GITHUB OR PRIVATE-DEMO LINK, IF SHARED]**<br>
 Social links: **[INSERT SOCIAL LINKS]**
 
-*Nova Horizon Controller is an independent development project. Bambu Lab is not currently affiliated with or responsible for it.*
+*PrintDeck is an independent development project of Horizon Services LLC. Bambu Lab is not currently affiliated with or responsible for it.*

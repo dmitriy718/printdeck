@@ -573,7 +573,7 @@ static esp_err_t start_mqtt(void)
              s_serial);
     snprintf(s_request_topic, sizeof(s_request_topic), "device/%s/request",
              s_serial);
-    snprintf(s_client_id, sizeof(s_client_id), "nova-horizon-%s", s_serial);
+    snprintf(s_client_id, sizeof(s_client_id), "printdeck-%s", s_serial);
 
     const esp_mqtt_client_config_t mqtt_config = {
         .broker = {

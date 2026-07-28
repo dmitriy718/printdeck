@@ -1,8 +1,10 @@
-# Nova Horizon Controller
+# PrintDeck
+
+PrintDeck is developed by **Horizon Services LLC**.
 
 Touch controller firmware for the Guition **JC4880P443** and a Bambu Lab P1S.
 The first milestone brings up the exact display and touch hardware, presents a
-custom Nova Horizon interface, and establishes a safety boundary for printer
+custom PrintDeck interface, and establishes a safety boundary for printer
 commands. Firmware 0.7.2 includes the onboard ESP32-C6 hosted-Wi-Fi transport,
 on-screen Wi-Fi and P1S pairing, live P1S telemetry over pinned local TLS/MQTT,
 an on-demand encrypted P1S camera feed, and physically authorized dual-slot LAN
@@ -142,7 +144,7 @@ components/nh_network/   ESP32-C6 hosted Wi-Fi state and worker
 components/nh_ota/       Physically authorized dual-slot LAN updater
 components/nh_printer/   Pinned-TLS P1S telemetry and guarded command worker
 components/nh_settings/  Persistent controller timezone and future settings
-components/nh_ui/        Nova Horizon LVGL interface
+components/nh_ui/        PrintDeck LVGL interface
 scripts/idf-env.sh       Project-local ESP-IDF environment
 scripts/ota-update.sh    Guarded LAN firmware uploader
 tests/                   Host protocol regression tests and review checks
@@ -181,6 +183,6 @@ eFuse decision, so routine builds deliberately leave it disabled. See
 
 The next controller milestone is on-device v0.7.2 regression testing and a
 deliberate wired partition-table update, followed by a reviewed decision on
-encrypted-at-rest credential provisioning. Nova Horizon backend and Jetson Orin
-Nano vision adapters can then be added without coupling them to the display
-driver, printer transport, or UI.
+encrypted-at-rest credential provisioning. The planned novahorizon.net
+backend/dashboard and Jetson Orin Nano vision adapters can then be added without
+coupling them to the display driver, printer transport, or UI.

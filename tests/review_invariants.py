@@ -32,6 +32,35 @@ class ReleaseInvariants(unittest.TestCase):
         cmake = (ROOT / "CMakeLists.txt").read_text(encoding="utf-8")
         self.assertIn('set(PROJECT_VER "0.7.2")', cmake)
 
+    def test_public_product_identity_is_printdeck(self) -> None:
+        cmake = (ROOT / "CMakeLists.txt").read_text(encoding="utf-8")
+        ui = (ROOT / "components/nh_ui/src/nh_ui.c").read_text(
+            encoding="utf-8"
+        )
+        ota = (ROOT / "components/nh_ota/src/nh_ota.c").read_text(
+            encoding="utf-8"
+        )
+        printer = (ROOT / "components/nh_printer/src/nh_printer.c").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("project(printdeck)", cmake)
+        self.assertIn('"PRINTDECK"', ui)
+        self.assertNotIn('"NOVA HORIZON"', ui)
+        self.assertIn(r'\"service\":\"printdeck-ota\"', ota)
+        self.assertIn('"printdeck-%s"', printer)
+
+    def test_ota_uploader_supports_identity_migration(self) -> None:
+        uploader = (ROOT / "scripts/ota-update.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("build/printdeck.bin", uploader)
+        self.assertIn('{"printdeck-ota", "nova-horizon-ota"}', uploader)
+        self.assertIn(
+            'data.get("service") != "printdeck-ota" '
+            'or data.get("version") != expected',
+            uploader,
+        )
+
     def test_no_development_device_defaults_are_compiled(self) -> None:
         text = production_text()
         private_ipv4 = re.compile(

@@ -1156,7 +1156,7 @@ static void nav_button_cb(lv_event_t *event)
             ? (camera_ready
                    ? "P1S camera uses the encrypted local LAN connection"
                    : "Camera waits for an online, validated P1S profile")
-            : "Nova Horizon control node ready",
+            : "PrintDeck ready",
         page_index == NH_PAGE_CAMERA
             ? (camera_ready ? NH_COLOR_CYAN : NH_COLOR_AMBER)
             : NH_COLOR_MUTED);
@@ -1678,7 +1678,7 @@ static void build_chrome(void)
     lv_obj_set_pos(side_status, 35, 447);
     lv_obj_set_size(side_status, 10, 10);
 
-    lv_obj_t *brand = make_label(s_ui.screen, "NOVA HORIZON",
+    lv_obj_t *brand = make_label(s_ui.screen, "PRINTDECK",
                                  &lv_font_montserrat_20, NH_COLOR_TEXT);
     lv_obj_set_pos(brand, 98, 15);
     lv_obj_t *sub = make_label(s_ui.screen, "P1S CONTROL NODE",
@@ -1712,13 +1712,13 @@ static void build_chrome(void)
     lv_obj_set_size(s_ui.content, 688, 340);
     lv_obj_clear_flag(s_ui.content, LV_OBJ_FLAG_SCROLLABLE);
 
-    s_ui.footer_status = make_label(s_ui.screen, "Nova Horizon control node ready",
+    s_ui.footer_status = make_label(s_ui.screen, "PrintDeck ready",
                                     &lv_font_montserrat_12, NH_COLOR_MUTED);
     lv_obj_set_pos(s_ui.footer_status, 99, 443);
 
     const esp_app_desc_t *app = esp_app_get_description();
     char build_text[48];
-    snprintf(build_text, sizeof(build_text), "NH-CTRL  /  v%s",
+    snprintf(build_text, sizeof(build_text), "PRINTDECK  /  v%s",
              app ? app->version : "UNKNOWN");
     lv_obj_t *build = make_label(s_ui.screen, build_text,
                                  &lv_font_montserrat_12, NH_COLOR_MUTED);
@@ -2256,7 +2256,7 @@ esp_err_t nh_ui_create(const nh_ui_config_t *config)
     refresh_snapshot();
     lvgl_port_unlock();
 
-    ESP_LOGI(TAG, "Nova Horizon UI created (%u bound actions)",
+    ESP_LOGI(TAG, "PrintDeck UI created (%u bound actions)",
              (unsigned)s_ui.binding_count);
     return ESP_OK;
 }

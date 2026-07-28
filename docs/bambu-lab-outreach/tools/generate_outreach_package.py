@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the editable Nova Horizon outreach DOCX and its visual assets."""
+"""Generate the editable PrintDeck outreach DOCX and its visual assets."""
 
 from pathlib import Path
 from typing import Iterable, Sequence
@@ -186,7 +186,7 @@ def make_architecture_diagram(path: Path) -> None:
     center_lines(
         draw,
         controller,
-        "NOVA HORIZON CONTROLLER",
+        "PRINTDECK",
         "ESP32-P4 • LVGL 9.5 • FreeRTOS\ntelemetry parser • command safety gate\nESP32-C6 hosted Wi-Fi • SD storage",
         title_font=box_title,
         detail_font=detail_font,
@@ -226,7 +226,7 @@ def make_architecture_diagram(path: Path) -> None:
     center_lines(
         draw,
         backend,
-        "NOVA HORIZON BACKEND",
+        "NOVAHORIZON.NET",
         "Optional API / dashboard",
         title_font=small_font,
         detail_font=detail_font,
@@ -591,7 +591,7 @@ def configure_document(document: Document) -> None:
     header_p = header.paragraphs[0]
     header_p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     header_p.paragraph_format.space_after = Pt(0)
-    run = header_p.add_run("NOVA HORIZON  /  PROJECT OVERVIEW")
+    run = header_p.add_run("PRINTDECK  /  PROJECT OVERVIEW")
     set_run_font(run, 7.2, MID, True)
 
     first_footer = section.first_page_footer.paragraphs[0]
@@ -603,15 +603,15 @@ def configure_document(document: Document) -> None:
     footer = section.footer
     footer_p = footer.paragraphs[0]
     footer_p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    run = footer_p.add_run("NOVA HORIZON CONTROLLER  /  ")
+    run = footer_p.add_run("PRINTDECK  /  ")
     set_run_font(run, 7.2, MID, True)
     add_page_number(footer_p)
 
-    document.core_properties.title = "Nova Horizon Controller — Project Overview"
+    document.core_properties.title = "PrintDeck — Project Overview"
     document.core_properties.subject = "Independent Bambu Lab controller development and temporary printer-loan request"
     document.core_properties.author = "Dima"
     document.core_properties.keywords = (
-        "Nova Horizon, Bambu Lab, P1S, X1 Carbon, H2D, controller, development loan"
+        "PrintDeck, Horizon Services LLC, Bambu Lab, P1S, X1 Carbon, H2D, controller, development loan"
     )
     document.core_properties.comments = (
         "Independent project; Bambu Lab is not currently affiliated."
@@ -666,10 +666,10 @@ def build_document() -> None:
     configure_document(document)
 
     # Page 1 — Cover
-    add_text(document, "NOVA HORIZON", size=11.5, color=TEAL, bold=True, after=6)
+    add_text(document, "HORIZON SERVICES LLC", size=11.5, color=TEAL, bold=True, after=6)
     p = document.add_paragraph()
     p.paragraph_format.space_after = Pt(5)
-    r = p.add_run("CONTROLLER")
+    r = p.add_run("PRINTDECK")
     set_run_font(r, 34, NAVY, True)
     add_text(
         document,
@@ -688,7 +688,7 @@ def build_document() -> None:
     label_p.paragraph_format.space_after = Pt(0)
     label_r = label_p.add_run("INDEPENDENT BAMBU LAB CONTROLLER DEVELOPMENT PROJECT")
     set_run_font(label_r, 9.4, NAVY, True)
-    add_text(document, "Prepared by Dima", size=12, color=TEXT, bold=True, before=10, after=1)
+    add_text(document, "Prepared by Dima / Horizon Services LLC", size=12, color=TEXT, bold=True, before=10, after=1)
     add_text(
         document,
         "Firmware reviewed: v0.7.1 deployed prototype build  /  July 2026",
@@ -713,13 +713,13 @@ def build_document() -> None:
     section_heading(document, "1", "Project overview")
     add_text(
         document,
-        "Nova Horizon Controller is a dedicated touchscreen device being developed to put useful printer information and carefully gated controls on a small, always-available local display. The current prototype targets a Bambu Lab P1S and is intended to reduce the need to reach for a phone or computer for routine at-a-glance monitoring and selected printer actions.",
+        "PrintDeck is a dedicated touchscreen device being developed to put useful printer information and carefully gated controls on a small, always-available local display. The current prototype targets a Bambu Lab P1S and is intended to reduce the need to reach for a phone or computer for routine at-a-glance monitoring and selected printer actions.",
         size=9.3,
         after=4,
     )
     add_text(
         document,
-        "The project is local-first: the working P1S integration communicates over the local network. The design leaves clear boundaries for optional Nova Horizon web services and a Jetson Orin Nano vision system, but neither is part of the current working printer path.",
+        "The project is local-first: the working P1S integration communicates over the local network. The design leaves clear boundaries for an optional novahorizon.net backend/dashboard and a Jetson Orin Nano vision system, but neither is part of the current working printer path.",
         size=9.3,
         after=6,
     )
@@ -739,7 +739,7 @@ def build_document() -> None:
         ),
         (
             "Planned",
-            "AMS/filament workflows, multi-printer profiles, optional Nova Horizon backend connectivity, Jetson vision verification, and broader diagnostics.",
+            "AMS/filament workflows, multi-printer profiles, optional novahorizon.net backend/dashboard connectivity, Jetson vision verification, and broader diagnostics.",
         ),
         (
             "Needs more printers",
@@ -794,7 +794,7 @@ def build_document() -> None:
         (
             "Multi-printer / remote",
             "Planned",
-            "One P1S profile today; optional Nova backend/dashboard is a roadmap item.",
+            "One P1S profile today; optional novahorizon.net backend/dashboard is a roadmap item.",
         ),
         (
             "Diagnostics",
@@ -1034,7 +1034,7 @@ def build_document() -> None:
             set_run_font(run, 7.7, NAVY if col_index == 0 else TEXT, col_index == 0)
     add_text(
         document,
-        "Nova Horizon Controller is an independent development project. Bambu Lab is not currently affiliated with or responsible for it.",
+        "PrintDeck is an independent development project of Horizon Services LLC. Bambu Lab is not currently affiliated with or responsible for it.",
         size=7.7,
         color=MID,
         align=WD_ALIGN_PARAGRAPH.CENTER,

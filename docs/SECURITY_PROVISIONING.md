@@ -2,7 +2,7 @@
 
 ## Current release policy
 
-Nova Horizon firmware uses RSA-3072 signed-app verification for LAN OTA
+PrintDeck firmware uses RSA-3072 signed-app verification for LAN OTA
 updates without enabling hardware Secure Boot. This is a reversible ESP-IDF
 mode: an application installed through the OTA service must match the public
 key embedded in the running application, while the native USB ROM recovery

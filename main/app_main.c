@@ -193,7 +193,7 @@ static void init_nvs(void)
 
 void app_main(void)
 {
-    ESP_LOGI(TAG, "Nova Horizon Controller booting");
+    ESP_LOGI(TAG, "PrintDeck booting");
     init_nvs();
     ESP_ERROR_CHECK(nh_settings_init());
 
@@ -282,7 +282,7 @@ void app_main(void)
     }
 
     ESP_LOGI(TAG,
-             "Nova Horizon UI ready; heap free internal=%u, PSRAM=%u bytes",
+             "PrintDeck UI ready; heap free internal=%u, PSRAM=%u bytes",
              (unsigned)heap_caps_get_free_size(MALLOC_CAP_INTERNAL),
              (unsigned)heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
 }

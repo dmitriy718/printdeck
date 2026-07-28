@@ -70,7 +70,7 @@ static esp_err_t ota_status_handler(httpd_req_t *request)
     nh_diagnostics_snapshot(&health);
     char response[640];
     snprintf(response, sizeof(response),
-             "{\"service\":\"nova-horizon-ota\",\"version\":\"%s\","
+             "{\"service\":\"printdeck-ota\",\"version\":\"%s\","
              "\"window_seconds\":%lu,\"upload\":\"POST /api/v1/ota\","
              "\"uptime_seconds\":%lu,\"reset_reason\":%d,"
              "\"partition\":\"%s\",\"ota_pending_verification\":%s,"

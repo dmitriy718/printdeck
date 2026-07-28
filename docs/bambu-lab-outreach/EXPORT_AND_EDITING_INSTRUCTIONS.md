@@ -10,7 +10,7 @@
 
 Recommended external attachment filename:
 
-`Dima_Nova_Horizon_Bambu_Lab_Controller_Overview.pdf`
+`Dima_PrintDeck_Bambu_Lab_Controller_Overview.pdf`
 
 ## Placeholders that must be replaced
 
@@ -101,7 +101,7 @@ The DOCX archive passed its integrity test and reopened through `python-docx` wi
 
 Attach the personalized PDF, renamed to:
 
-`Dima_Nova_Horizon_Bambu_Lab_Controller_Overview.pdf`
+`Dima_PrintDeck_Bambu_Lab_Controller_Overview.pdf`
 
 Do not attach the fact-check file, generator, source repository, or image guide unless Bambu Lab asks for supporting detail. The editable Word file can be retained for follow-up revisions.
 

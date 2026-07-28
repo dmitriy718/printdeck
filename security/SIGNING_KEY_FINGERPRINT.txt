@@ -1,4 +1,4 @@
-Nova Horizon OTA signing key
+PrintDeck OTA signing key — Horizon Services LLC
 Fingerprint format: SHA-256 of the DER SubjectPublicKeyInfo
 Fingerprint: eb6526069fefed0fdb0a43c5be8b33ff06b45d0c30198d9e9474769a5cf25b0e
 ESP Secure Boot v2 public-key digest: e1e39e4de4568dd274b5a35f50bee27db8e32534989ca4e7bba071321b647797

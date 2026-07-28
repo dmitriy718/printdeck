@@ -9,7 +9,7 @@ fi
 controller_ip="$1"
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 project_dir="$(cd -- "${script_dir}/.." && pwd)"
-firmware="${project_dir}/build/nova_horizon_controller.bin"
+firmware="${project_dir}/build/printdeck.bin"
 fingerprint_file="${project_dir}/security/SIGNING_KEY_FINGERPRINT.txt"
 expected_version="$(
     sed -n 's/^set(PROJECT_VER "\([^"]*\)")/\1/p' \
@@ -91,8 +91,8 @@ if ! status_values="$(
     python3 -c '
 import json, sys
 data = json.load(sys.stdin)
-if data.get("service") != "nova-horizon-ota":
-    raise SystemExit("target is not the Nova Horizon OTA service")
+if data.get("service") not in {"printdeck-ota", "nova-horizon-ota"}:
+    raise SystemExit("target is not a PrintDeck-compatible OTA service")
 window = data.get("window_seconds")
 if not isinstance(window, int) or window <= 0:
     raise SystemExit("physical OTA window is closed")
@@ -125,7 +125,7 @@ diagnose_upload_disconnect() {
                python3 -c '
 import json, sys
 data = json.load(sys.stdin)
-if data.get("service") != "nova-horizon-ota":
+if data.get("service") not in {"printdeck-ota", "nova-horizon-ota"}:
     raise SystemExit(1)
 version = data.get("version", "unknown")
 reset = data.get("reset_reason", "unknown")
@@ -180,7 +180,7 @@ data = json.load(sys.stdin)
 if data.get("ok") is not True or data.get("message") != "verified; restarting":
     raise SystemExit("unexpected OTA success response")
 ' <<<"${upload_body}"; then
-    echo "The target did not confirm a verified Nova Horizon update."
+    echo "The target did not confirm a verified PrintDeck update."
     exit 1
 fi
 
@@ -200,7 +200,7 @@ for _attempt in {1..20}; do
 import json, sys
 data = json.load(sys.stdin)
 expected = sys.argv[1]
-if data.get("service") != "nova-horizon-ota" or data.get("version") != expected:
+if data.get("service") != "printdeck-ota" or data.get("version") != expected:
     raise SystemExit(1)
 ' "${expected_version}" <<<"${returned_status}"; then
         echo "Controller returned on v${expected_version}; OTA verified."
