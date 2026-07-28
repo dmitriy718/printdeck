@@ -5,7 +5,7 @@
 **Independent Bambu Lab Controller Development Project**<br>
 Prepared by **Dima**<br>
 Developed by **Horizon Services LLC**<br>
-Firmware reviewed: **v0.7.1 deployed prototype build** | July 2026
+Firmware reviewed: **v0.7.2 deployed prototype build** | July 2026
 
 > **IMAGE PLACEHOLDER — Current physical prototype**
 > Replace with a clean landscape photograph of the powered controller.
@@ -25,7 +25,7 @@ The project is local-first: the working P1S integration communicates over the lo
 | Category | Factual status |
 | --- | --- |
 | **Completed and verified** | Firmware builds for the JC4880P443 ESP32-P4 board; the 4.3-inch display, landscape LVGL interface, aligned capacitive touch, ESP32-C6 Wi-Fi connection, local P1S authentication, live print reporting, chamber-light control, local P1 camera liveview, and physically enabled LAN OTA have been exercised on the current prototype. |
-| **Functional but still being refined** | P1S telemetry parsing and presentation, on-screen Wi-Fi/P1S setup, reconnect behavior, SD-card mounting, camera lifecycle, and UI status/error messaging. Signed v0.7.1 is deployed and reports stable short-duration health samples; full behavioral and long-duration regression remains pending. |
+| **Functional but still being refined** | P1S telemetry parsing and presentation, on-screen Wi-Fi/P1S setup, reconnect behavior, SD-card mounting, camera lifecycle, and UI status/error messaging. Signed v0.7.2 is deployed and reports stable short-duration health samples; full behavioral and long-duration regression remains pending. |
 | **In active development** | Safe validation of pause/resume/cancel, credential-storage hardening, local file indexing and print initiation, and broader regression testing. |
 | **Planned** | AMS/filament workflows, multi-printer profiles, optional novahorizon.net backend/dashboard connectivity, Jetson Orin Nano vision verification, and broader diagnostics. No current code claims these features are complete. |
 | **Requires additional printer testing** | X-series and H-series discovery, authentication, telemetry, cameras, AMS generations, command behavior, firmware differences, error handling, and UI adaptation. |
@@ -46,7 +46,7 @@ The project is local-first: the working P1S integration communicates over the lo
 | Camera and AI-assisted verification | **P1 camera working; AI planned:** an on-demand encrypted P1-family liveview is implemented with hardware JPEG decode and PPA scaling. No vision model or Jetson integration is present. |
 | AMS / filament management | **Planned compatibility work:** no AMS parser or control workflow is currently implemented. |
 | Multi-printer and remote management | **Planned:** current code is P1S-specific and stores one printer profile. Optional novahorizon.net backend/dashboard integration is a roadmap item, not a current capability. |
-| Diagnostics | **Partial:** authentication, TLS/identity, offline, and general connection states are represented. v0.7.1 reports heap, task-stack, reset, uptime, coredump-partition, and OTA state; long-duration stress measurements and full printer error/HMS interpretation remain pending. |
+| Diagnostics | **Partial:** authentication, TLS/identity, offline, and general connection states are represented. v0.7.2 reports heap, task-stack, reset, uptime, coredump-partition, and OTA state; long-duration stress measurements and full printer error/HMS interpretation remain pending. |
 
 ## 4. Hardware and software architecture
 
@@ -133,7 +133,7 @@ These are potential outcomes, not claims of endorsement or guaranteed commercial
 
 | Phase | Scope and exit condition |
 | --- | --- |
-| **Current — P1S prototype** | Hardware-regression test deployed v0.7.1 telemetry, reconnect, camera lifecycle, SD refresh, runtime health reporting, and guarded actions. |
+| **Current — P1S prototype** | Hardware-regression test deployed v0.7.2 telemetry, reconnect, camera lifecycle, SD refresh, runtime health reporting, and guarded actions. |
 | **Next technical milestone** | Safely validate supported job commands, harden credential storage, and implement a real local file browser/print-start path. |
 | **Multi-printer compatibility** | Introduce model capability profiles; characterize X1 Carbon and H2D authentication, telemetry, cameras, AMS behavior, commands, and UI differences. |
 | **Reliability and hardening** | Run reconnect, malformed/error-state, firmware-regression, long-duration, and safe-command tests; document known limitations. |
