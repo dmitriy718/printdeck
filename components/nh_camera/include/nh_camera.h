@@ -45,7 +45,7 @@ typedef struct {
 /**
  * Starts the local P1-family camera service. The stream remains stopped until
  * nh_camera_set_active(true) is called. Printer credentials are read directly
- * from the existing encrypted-LAN profile in NVS and are never returned.
+ * from the existing local-LAN profile in NVS and are never returned.
  */
 esp_err_t nh_camera_init(const nh_camera_config_t *config);
 

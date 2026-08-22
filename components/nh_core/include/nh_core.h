@@ -28,6 +28,83 @@ typedef enum {
     NH_JOB_FAILED,
 } nh_job_state_t;
 
+enum {
+    NH_ALERT_MAX = 12,
+    NH_ALERT_CODE_LENGTH = 32,
+    NH_ALERT_TITLE_LENGTH = 80,
+    NH_ALERT_GUIDANCE_LENGTH = 120,
+    NH_AMS_MAX_UNITS = 4,
+    NH_AMS_MAX_TRAYS = 16,
+    NH_AMS_MATERIAL_LENGTH = 20,
+    NH_AMS_COLOR_LENGTH = 9,
+    NH_AMS_PROFILE_LENGTH = 20,
+    NH_AMS_RFID_LENGTH = 33,
+};
+
+typedef enum {
+    NH_ALERT_SOURCE_HMS = 0,
+    NH_ALERT_SOURCE_PRINT,
+    NH_ALERT_SOURCE_CONTROLLER,
+    NH_ALERT_SOURCE_MATERIAL,
+    NH_ALERT_SOURCE_VISION,
+} nh_alert_source_t;
+
+typedef enum {
+    NH_ALERT_INFO = 0,
+    NH_ALERT_WARNING,
+    NH_ALERT_ERROR,
+    NH_ALERT_CRITICAL,
+} nh_alert_severity_t;
+
+typedef struct {
+    char raw_code[NH_ALERT_CODE_LENGTH];
+    char title[NH_ALERT_TITLE_LENGTH];
+    char guidance[NH_ALERT_GUIDANCE_LENGTH];
+    nh_alert_source_t source;
+    nh_alert_severity_t severity;
+    uint64_t first_seen_epoch;
+    uint64_t last_seen_epoch;
+    uint32_t occurrence_count;
+    bool active;
+    bool dismissed_locally;
+    bool known_code;
+} nh_alert_t;
+
+typedef struct {
+    uint8_t id;
+    uint8_t humidity_index;
+    float temperature_c;
+    bool present;
+    bool humidity_known;
+    bool temperature_known;
+    bool material_at_risk;
+} nh_ams_unit_t;
+
+typedef struct {
+    uint8_t unit_id;
+    uint8_t tray_id;
+    uint8_t remaining_percent;
+    int16_t nozzle_min_c;
+    int16_t nozzle_max_c;
+    char material[NH_AMS_MATERIAL_LENGTH];
+    char color_rgba[NH_AMS_COLOR_LENGTH];
+    char profile_id[NH_AMS_PROFILE_LENGTH];
+    char rfid_uid[NH_AMS_RFID_LENGTH];
+    bool present;
+    bool external;
+    bool remaining_known;
+    bool rfid_present;
+} nh_ams_tray_t;
+
+typedef struct {
+    nh_ams_unit_t units[NH_AMS_MAX_UNITS];
+    nh_ams_tray_t trays[NH_AMS_MAX_TRAYS + 1];
+    uint8_t unit_count;
+    uint8_t tray_count;
+    bool known;
+    bool external_spool_present;
+} nh_ams_snapshot_t;
+
 typedef struct {
     nh_connection_state_t connection;
     nh_job_state_t job;
@@ -50,6 +127,10 @@ typedef struct {
     esp_err_t sd_mount_error;
     uint64_t sd_capacity_bytes;
     uint64_t sd_free_bytes;
+    nh_alert_t alerts[NH_ALERT_MAX];
+    uint8_t alert_count;
+    uint8_t active_alert_count;
+    nh_ams_snapshot_t ams;
 } nh_printer_snapshot_t;
 
 typedef enum {
@@ -70,6 +151,9 @@ typedef enum {
     NH_ACTION_OPEN_FILE,
     NH_ACTION_BRIGHTNESS_SET,
     NH_ACTION_SD_RESCAN,
+    NH_ACTION_SPEED_PROFILE,
+    NH_ACTION_CALIBRATE,
+    NH_ACTION_SKIP_OBJECT,
 } nh_action_t;
 
 typedef esp_err_t (*nh_action_handler_t)(nh_action_t action, int32_t value, void *ctx);

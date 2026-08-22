@@ -24,16 +24,15 @@ try:
     address = ipaddress.ip_address(sys.argv[1])
 except ValueError as exc:
     raise SystemExit(f"Invalid controller IP address: {exc}")
-if address.version != 4:
-    raise SystemExit("Only an explicit private IPv4 controller address is supported")
-if (
-    not address.is_private
-    or address.is_loopback
-    or address.is_link_local
-    or address.is_multicast
-    or address.is_unspecified
+private_networks = (
+    ipaddress.ip_network("10.0.0.0/8"),
+    ipaddress.ip_network("172.16.0.0/12"),
+    ipaddress.ip_network("192.168.0.0/16"),
+)
+if address.version != 4 or not any(
+    address in network for network in private_networks
 ):
-    raise SystemExit("Refusing a non-private or special-purpose target address")
+    raise SystemExit("Only an explicit RFC 1918 private IPv4 target is supported")
 PY
 then
     exit 2

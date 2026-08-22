@@ -81,6 +81,12 @@ const char *nh_action_label(nh_action_t action)
         return "set display brightness";
     case NH_ACTION_SD_RESCAN:
         return "refresh controller SD";
+    case NH_ACTION_SPEED_PROFILE:
+        return "set speed profile";
+    case NH_ACTION_CALIBRATE:
+        return "run calibration";
+    case NH_ACTION_SKIP_OBJECT:
+        return "skip object";
     case NH_ACTION_NONE:
     default:
         return "none";

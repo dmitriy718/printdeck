@@ -5,15 +5,20 @@ PrintDeck is developed by **Horizon Services LLC**.
 Touch controller firmware for the Guition **JC4880P443** and a Bambu Lab P1S.
 The first milestone brings up the exact display and touch hardware, presents a
 custom PrintDeck interface, and establishes a safety boundary for printer
-commands. Firmware 0.7.2 includes the onboard ESP32-C6 hosted-Wi-Fi transport,
+commands. Firmware 1.0.0 includes the onboard ESP32-C6 hosted-Wi-Fi transport,
 on-screen Wi-Fi and P1S pairing, live P1S telemetry over pinned local TLS/MQTT,
-an on-demand encrypted P1S camera feed, and physically authorized dual-slot LAN
+an on-demand encrypted P1S camera feed, and on-device-authorized dual-slot LAN
 OTA updates. OTA uploads are rejected unless the five-minute update window has
 been opened from the controller display. Release images are RSA-3072 signed,
 and a signed-enforcement image rejects future OTA uploads from any other key.
 
 ## Current status
 
+- Source version v1.0.0 adds SD-backed print history, explicitly labeled
+  cost/energy estimates, maintenance counters, recovery, and redacted exports
+  on top of the AMS/material and HMS centers. v0.7.2 remains the last
+  hardware-deployed version until the new source line completes on-device
+  regression.
 - ESP32-P4 firmware builds with ESP-IDF 6.0.2 and LVGL 9.5.
 - ST7701S MIPI-DSI display runs at its native 480 x 800 resolution.
 - The interface is rendered in landscape at 800 x 480 using PPA rotation.
@@ -51,6 +56,26 @@ and a signed-enforcement image rejects future OTA uploads from any other key.
   minimums and persistent-task stack high-water marks without enabling the
   heavier FreeRTOS trace facility.
 
+## Documentation
+
+The [documentation index](docs/README.md) is the entry point for maintained
+product and engineering documentation:
+
+- [Product overview](docs/PRODUCT_OVERVIEW.md) and
+  [user guide](docs/USER_GUIDE.md);
+- [architecture](docs/ARCHITECTURE.md) and
+  [hardware reference](docs/HARDWARE.md);
+- [development](docs/DEVELOPMENT.md), [testing](docs/TESTING.md), and
+  [release process](docs/RELEASE_PROCESS.md);
+- [operations](docs/OPERATIONS.md),
+  [troubleshooting](docs/TROUBLESHOOTING.md), and
+  [security](docs/SECURITY.md);
+- the evidence-qualified [changelog](CHANGELOG.md), including the reconstructed
+  pre-Git project start on July 26, 2026.
+
+Historical records remain under `Reviews/`; the Bambu outreach package is a
+v0.7.2 snapshot and is not the current engineering source of truth.
+
 ## Target hardware
 
 | Function | JC4880P443 configuration |
@@ -65,7 +90,7 @@ and a signed-enforcement image rejects future OTA uploads from any other key.
 | DSI power | Internal LDO channel 3 at 2.5 V |
 | SD card | Native four-bit SDMMC slot 0 on GPIO39-44, internal LDO channel 4 |
 | Boot strap | BOOT on GPIO35 |
-| Programming | Native USB2 connector, `/dev/ttyACM0` on Linux |
+| Programming | Native USB2 connector, `/dev/ttyACM*` on Linux |
 | Hosted Wi-Fi | SDIO GPIO14-19, C6 reset GPIO54 |
 
 The display profile uses a 34 MHz pixel clock, two DSI lanes at 500 Mbps, and
@@ -89,7 +114,8 @@ If automatic reset cannot enter the ROM loader:
 1. Hold **BOOT**.
 2. Tap and release **RESET** while keeping BOOT held.
 3. Release BOOT after two to three seconds.
-4. Start the flash command against `/dev/ttyACM0`.
+4. Resolve the currently enumerated `/dev/ttyACM*` device and start the flash
+   command against that exact path.
 
 Exit the serial monitor with `Ctrl-]`.
 
@@ -106,8 +132,8 @@ The upload script first refuses an unsigned image. The service accepts one
 upload into the inactive OTA slot, validates the image, switches boot slots,
 and restarts automatically. The new image marks itself valid after a stable
 ten-second boot; otherwise the rollback-enabled bootloader returns to the
-previous slot. Uploads are rejected outside the physical five-minute
-authorization window. Firmware 0.7.2 uses ESP-IDF's signed-app verification
+previous slot. Uploads are rejected outside the on-device five-minute
+authorization window. Firmware 1.0.0 uses ESP-IDF's signed-app verification
 without hardware Secure Boot, protecting the OTA path while retaining native
 USB recovery.
 
@@ -115,7 +141,7 @@ If an upload connection drops, the uploader keeps the operation in a failed
 state and performs a read-only recovery check. It reports the returned firmware
 version, partition, and reset reason when available. Do not immediately repeat
 an upload after a disconnect; diagnose that state and explicitly reopen the
-physical authorization window only after the controller is known healthy.
+on-device authorization window only after the controller is known healthy.
 
 OTA updates replace only the application slot. Changes to `partitions.csv`
 (including the v0.6.0 expansion of crash-dump storage from 64 KiB to 512 KiB)
@@ -141,14 +167,16 @@ components/nh_camera/    On-demand P1 TLS/JPEG liveview and frame pipeline
 components/nh_core/      Printer state and guarded command boundary
 components/nh_diagnostics/ Runtime heap, stack, reset, and OTA health data
 components/nh_network/   ESP32-C6 hosted Wi-Fi state and worker
-components/nh_ota/       Physically authorized dual-slot LAN updater
+components/nh_ota/       On-device-authorized dual-slot LAN updater
 components/nh_printer/   Pinned-TLS P1S telemetry and guarded command worker
 components/nh_settings/  Persistent controller timezone and future settings
 components/nh_ui/        PrintDeck LVGL interface
 scripts/idf-env.sh       Project-local ESP-IDF environment
 scripts/ota-update.sh    Guarded LAN firmware uploader
 tests/                   Host protocol regression tests and review checks
+docs/                    Maintained product and engineering documentation
 Reviews/                 Timestamped comprehensive review records
+CHANGELOG.md              Evidence-qualified chronological release history
 partitions.csv           Dual-OTA 16 MB flash layout
 ```
 
@@ -169,7 +197,7 @@ release is called hardware-verified.
 ## Security status
 
 Printer traffic uses local TLS with CA and configured-device identity
-verification. OTA requires a physical five-minute authorization window and
+verification. OTA requires an on-device five-minute authorization window and
 release images use RSA-3072 signed-update verification without burning hardware
 Secure Boot eFuses. The signing key is excluded from Git and checked against a
 committed public fingerprint.
@@ -177,12 +205,16 @@ committed public fingerprint.
 Wi-Fi and P1S LAN credentials are still stored in plaintext NVS. Genuine NVS
 encryption on this ESP32-P4 requires an irreversible HMAC or flash-encryption
 eFuse decision, so routine builds deliberately leave it disabled. See
-`docs/SECURITY_PROVISIONING.md` for the recovery constraints and approval gate.
+[Security Provisioning](docs/SECURITY_PROVISIONING.md) for the recovery
+constraints and approval gate.
 
 ## Integration roadmap
 
-The next controller milestone is on-device v0.7.2 regression testing and a
-deliberate wired partition-table update, followed by a reviewed decision on
-encrypted-at-rest credential provisioning. The planned novahorizon.net
-backend/dashboard and Jetson Orin Nano vision adapters can then be added without
-coupling them to the display driver, printer transport, or UI.
+The current implementation program is advancing the seven reviewed product
+recommendations through individually verified source gates before the 1.0.0
+integration release. A reviewed decision on encrypted-at-rest credential
+provisioning remains required. The wired
+512 KiB coredump partition is already installed and runtime-reported. The
+planned novahorizon.net backend/dashboard and Jetson Orin Nano vision adapters
+can then be added without coupling them to the display driver, printer
+transport, or UI.

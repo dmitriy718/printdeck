@@ -40,12 +40,33 @@ typedef void (*nh_printer_update_cb_t)(
     const nh_printer_status_t *status,
     void *ctx);
 
+typedef enum {
+    NH_COMMAND_RESULT_QUEUED = 0,
+    NH_COMMAND_RESULT_SENT,
+    NH_COMMAND_RESULT_ACKNOWLEDGED,
+    NH_COMMAND_RESULT_OBSERVED,
+    NH_COMMAND_RESULT_REJECTED,
+    NH_COMMAND_RESULT_TIMED_OUT,
+} nh_command_result_state_t;
+
+typedef struct {
+    uint32_t sequence_id;
+    nh_action_t action;
+    nh_command_result_state_t state;
+    esp_err_t error;
+} nh_command_result_t;
+
+typedef void (*nh_printer_command_result_cb_t)(
+    const nh_command_result_t *result, void *ctx);
+
 typedef struct {
     nh_printer_snapshot_t *snapshot;
     const char *default_ip;
     const char *default_serial;
     nh_printer_update_cb_t update_cb;
     void *update_ctx;
+    nh_printer_command_result_cb_t command_result_cb;
+    void *command_result_ctx;
 } nh_printer_config_t;
 
 /**
@@ -67,8 +88,19 @@ esp_err_t nh_printer_pair(const char *ip_address, const char *serial,
  * rejected until their behavior is validated on this exact printer.
  */
 esp_err_t nh_printer_action(nh_action_t action, int32_t value);
+esp_err_t nh_printer_action_with_sequence(nh_action_t action,
+                                          int32_t value,
+                                          uint32_t *sequence_id);
+const char *nh_command_result_label(nh_command_result_state_t state);
+
+/**
+ * Hides an alert locally. This does not send a printer command and does not
+ * mark the underlying condition resolved.
+ */
+esp_err_t nh_printer_alert_dismiss(const char *raw_code);
 
 bool nh_printer_action_supported(nh_action_t action);
+bool nh_printer_typed_action_valid(nh_action_t action, int32_t value);
 bool nh_printer_action_available(
     nh_action_t action, const nh_printer_snapshot_t *snapshot);
 const char *nh_printer_state_label(nh_printer_state_t state);

@@ -20,6 +20,7 @@ typedef struct {
     size_t remaining_size;
     int current_layer;
     int total_layers;
+    uint32_t report_sequence;
 } nh_printer_protocol_t;
 
 void nh_printer_protocol_init(
@@ -36,3 +37,10 @@ void nh_printer_protocol_reset(nh_printer_protocol_t *protocol);
 
 nh_printer_protocol_result_t nh_printer_protocol_parse(
     nh_printer_protocol_t *protocol, const char *data, size_t length);
+
+/**
+ * Dismisses one alert in the local view without claiming that the printer
+ * resolved it. A later active report makes the alert visible again.
+ */
+bool nh_printer_protocol_dismiss_alert(
+    nh_printer_protocol_t *protocol, const char *raw_code);

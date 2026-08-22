@@ -4,9 +4,13 @@ idf_component_register(
     REQUIRES
         esp_app_format
         heap
+        nh_ai
         nh_camera
         nh_core
         nh_diagnostics
+        nh_files
+        nh_fleet
+        nh_history
         nh_network
         nh_printer
         esp_lvgl_port

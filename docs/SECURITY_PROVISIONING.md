@@ -1,5 +1,8 @@
 # Controller security provisioning
 
+This specialized policy is part of the maintained
+[PrintDeck security documentation](SECURITY.md).
+
 ## Current release policy
 
 PrintDeck firmware uses RSA-3072 signed-app verification for LAN OTA

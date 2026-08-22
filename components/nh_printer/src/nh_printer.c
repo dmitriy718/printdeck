@@ -45,6 +45,7 @@ typedef struct {
     char serial[NH_PRINTER_SERIAL_MAX_LENGTH + 1];
     char access_code[NH_PRINTER_ACCESS_CODE_MAX_LENGTH + 1];
     uint32_t profile_generation;
+    uint32_t sequence_id;
 } nh_printer_command_t;
 
 static nh_printer_config_t s_config;
@@ -85,6 +86,23 @@ static nh_printer_protocol_t s_protocol;
 static char *s_report_buffer;
 static size_t s_report_buffer_size;
 static size_t s_report_received_size;
+
+static void notify_command_result(uint32_t sequence_id,
+                                  nh_action_t action,
+                                  nh_command_result_state_t state,
+                                  esp_err_t error)
+{
+    if (!s_config.command_result_cb) {
+        return;
+    }
+    const nh_command_result_t result = {
+        .sequence_id = sequence_id,
+        .action = action,
+        .state = state,
+        .error = error,
+    };
+    s_config.command_result_cb(&result, s_config.command_result_ctx);
+}
 
 static bool system_clock_ready(void)
 {
@@ -243,6 +261,24 @@ bool nh_printer_action_supported(nh_action_t action)
     }
 }
 
+static bool action_available_for_job(nh_action_t action, nh_job_state_t job)
+{
+    switch (action) {
+    case NH_ACTION_PAUSE:
+        return job == NH_JOB_PRINTING;
+    case NH_ACTION_RESUME:
+        return job == NH_JOB_PAUSED;
+    case NH_ACTION_CANCEL:
+        return job == NH_JOB_PREPARING ||
+               job == NH_JOB_PRINTING ||
+               job == NH_JOB_PAUSED;
+    case NH_ACTION_LIGHT_TOGGLE:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool nh_printer_action_available(
     nh_action_t action, const nh_printer_snapshot_t *snapshot)
 {
@@ -255,21 +291,7 @@ bool nh_printer_action_available(
     if (!snapshot || snapshot->connection != NH_CONNECTION_ONLINE) {
         return false;
     }
-
-    switch (action) {
-    case NH_ACTION_PAUSE:
-        return snapshot->job == NH_JOB_PRINTING;
-    case NH_ACTION_RESUME:
-        return snapshot->job == NH_JOB_PAUSED;
-    case NH_ACTION_CANCEL:
-        return snapshot->job == NH_JOB_PREPARING ||
-               snapshot->job == NH_JOB_PRINTING ||
-               snapshot->job == NH_JOB_PAUSED;
-    case NH_ACTION_LIGHT_TOGGLE:
-        return true;
-    default:
-        return false;
-    }
+    return action_available_for_job(action, snapshot->job);
 }
 
 static void clear_report_buffer(void)
@@ -554,13 +576,17 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
 static void stop_mqtt(void)
 {
     atomic_store(&s_connected, false);
-    clear_report_buffer();
-    if (!s_mqtt) {
-        return;
+    if (s_mqtt) {
+        /*
+         * The MQTT event task owns report-buffer writes. Stop and destroy that
+         * task before freeing the shared fragment buffer so a late DATA event
+         * cannot write through a pointer released by the profile worker.
+         */
+        (void)esp_mqtt_client_stop(s_mqtt);
+        (void)esp_mqtt_client_destroy(s_mqtt);
+        s_mqtt = NULL;
     }
-    (void)esp_mqtt_client_stop(s_mqtt);
-    (void)esp_mqtt_client_destroy(s_mqtt);
-    s_mqtt = NULL;
+    clear_report_buffer();
 }
 
 static esp_err_t start_mqtt(void)
@@ -634,7 +660,8 @@ static esp_err_t start_mqtt(void)
     return ESP_OK;
 }
 
-static esp_err_t send_action(nh_action_t action, int32_t value)
+static esp_err_t send_action(nh_action_t action, int32_t value,
+                             uint32_t sequence)
 {
     (void)value;
     if (action == NH_ACTION_CONNECT) {
@@ -648,6 +675,15 @@ static esp_err_t send_action(nh_action_t action, int32_t value)
         return s_mqtt ? esp_mqtt_client_reconnect(s_mqtt) : start_mqtt();
     }
     if (!atomic_load(&s_connected) || !s_mqtt) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    nh_job_state_t job = (nh_job_state_t)atomic_load(&s_job_state);
+    if (!action_available_for_job(action, job)) {
+        /*
+         * Commands can wait behind profile work in the worker queue. Recheck
+         * the latest print state at dispatch time so a formerly valid pause,
+         * resume, or cancel cannot be sent after the printer has moved on.
+         */
         return ESP_ERR_INVALID_STATE;
     }
 
@@ -664,8 +700,6 @@ static esp_err_t send_action(nh_action_t action, int32_t value)
         break;
     case NH_ACTION_LIGHT_TOGGLE: {
         char payload[320];
-        uint32_t sequence =
-            (uint32_t)atomic_fetch_add(&s_sequence, 1) + 1U;
         snprintf(
             payload, sizeof(payload),
             "{\"system\":{\"sequence_id\":\"%lu\",\"command\":\"ledctrl\","
@@ -681,8 +715,6 @@ static esp_err_t send_action(nh_action_t action, int32_t value)
     }
 
     char payload[160];
-    uint32_t sequence =
-        (uint32_t)atomic_fetch_add(&s_sequence, 1) + 1U;
     snprintf(payload, sizeof(payload),
              "{\"print\":{\"sequence_id\":\"%lu\",\"command\":\"%s\"}}",
              (unsigned long)sequence, command);
@@ -790,7 +822,13 @@ static void printer_worker_task(void *arg)
             continue;
         }
 
-        esp_err_t err = send_action(command.action, command.value);
+        esp_err_t err = send_action(
+            command.action, command.value, command.sequence_id);
+        notify_command_result(
+            command.sequence_id, command.action,
+            err == ESP_OK ? NH_COMMAND_RESULT_SENT
+                          : NH_COMMAND_RESULT_REJECTED,
+            err);
         if (err != ESP_OK) {
             ESP_LOGW(TAG, "Rejected action '%s': %s",
                      nh_action_label(command.action), esp_err_to_name(err));
@@ -821,10 +859,18 @@ esp_err_t nh_printer_pair(const char *ip_address, const char *serial,
 
 esp_err_t nh_printer_action(nh_action_t action, int32_t value)
 {
+    return nh_printer_action_with_sequence(action, value, NULL);
+}
+
+esp_err_t nh_printer_action_with_sequence(nh_action_t action,
+                                          int32_t value,
+                                          uint32_t *sequence_id)
+{
     if (!s_initialized || !s_command_queue) {
         return ESP_ERR_INVALID_STATE;
     }
-    if (!nh_printer_action_supported(action)) {
+    if (!nh_printer_typed_action_valid(action, value) ||
+        !nh_printer_action_supported(action)) {
         return ESP_ERR_NOT_SUPPORTED;
     }
     if (action == NH_ACTION_CONNECT) {
@@ -836,16 +882,7 @@ esp_err_t nh_printer_action(nh_action_t action, int32_t value)
     } else {
         nh_job_state_t job =
             (nh_job_state_t)atomic_load(&s_job_state);
-        bool available = action == NH_ACTION_LIGHT_TOGGLE ||
-                         (action == NH_ACTION_PAUSE &&
-                          job == NH_JOB_PRINTING) ||
-                         (action == NH_ACTION_RESUME &&
-                          job == NH_JOB_PAUSED) ||
-                         (action == NH_ACTION_CANCEL &&
-                          (job == NH_JOB_PREPARING ||
-                           job == NH_JOB_PRINTING ||
-                           job == NH_JOB_PAUSED));
-        if (!available) {
+        if (!action_available_for_job(action, job)) {
             return ESP_ERR_INVALID_STATE;
         }
     }
@@ -854,14 +891,36 @@ esp_err_t nh_printer_action(nh_action_t action, int32_t value)
         return ESP_ERR_INVALID_STATE;
     }
 
+    uint32_t sequence =
+        (uint32_t)atomic_fetch_add(&s_sequence, 1) + 1U;
     const nh_printer_command_t command = {
         .type = NH_PRINTER_COMMAND_ACTION,
         .action = action,
         .value = value,
+        .sequence_id = sequence,
     };
-    return xQueueSend(s_command_queue, &command, 0) == pdTRUE
-               ? ESP_OK
-               : ESP_ERR_TIMEOUT;
+    if (xQueueSend(s_command_queue, &command, 0) != pdTRUE) {
+        return ESP_ERR_TIMEOUT;
+    }
+    if (sequence_id) {
+        *sequence_id = sequence;
+    }
+    return ESP_OK;
+}
+
+esp_err_t nh_printer_alert_dismiss(const char *raw_code)
+{
+    if (!s_initialized || !raw_code || !raw_code[0]) {
+        return ESP_ERR_INVALID_ARG;
+    }
+    state_lock();
+    bool dismissed = nh_printer_protocol_dismiss_alert(&s_protocol, raw_code);
+    state_unlock();
+    if (!dismissed) {
+        return ESP_ERR_NOT_FOUND;
+    }
+    notify_update();
+    return ESP_OK;
 }
 
 esp_err_t nh_printer_init(const nh_printer_config_t *config)

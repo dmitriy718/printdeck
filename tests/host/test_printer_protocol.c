@@ -234,6 +234,185 @@ static void test_invalid_layer_values_do_not_replace_known_values(void)
     assert(strcmp(fixture.job_layer, "Layer 8 / 90") == 0);
 }
 
+static void test_known_hms_alert_is_mapped_and_deduplicated(void)
+{
+    fixture_t fixture;
+    init_fixture(&fixture);
+    const char *report =
+        "{\"print\":{\"hms\":[{\"attr\":50332416,\"code\":65537}]}}";
+    assert(parse(&fixture, report) == NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.alert_count == 1);
+    assert(fixture.snapshot.active_alert_count == 1);
+    const nh_alert_t *alert = &fixture.snapshot.alerts[0];
+    assert(strcmp(alert->raw_code, "HMS_0300-0300-0001-0001") == 0);
+    assert(alert->known_code);
+    assert(alert->severity == NH_ALERT_CRITICAL);
+    assert(strstr(alert->title, "cooling fan") != NULL);
+    assert(alert->occurrence_count == 1);
+
+    assert(parse(&fixture, report) == NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.alert_count == 1);
+    assert(fixture.snapshot.alerts[0].occurrence_count == 1);
+}
+
+static void test_unknown_hms_is_preserved_and_delta_does_not_clear(void)
+{
+    fixture_t fixture;
+    init_fixture(&fixture);
+    assert(parse(
+               &fixture,
+               "{\"print\":{\"hms\":["
+               "{\"attr\":\"305419896\",\"code\":\"2596069104\"}]}}") ==
+           NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.alert_count == 1);
+    assert(strcmp(
+               fixture.snapshot.alerts[0].raw_code,
+               "HMS_1234-5678-9ABC-DEF0") == 0);
+    assert(!fixture.snapshot.alerts[0].known_code);
+    assert(parse(&fixture, "{\"print\":{\"mc_percent\":22}}") ==
+           NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.alerts[0].active);
+    assert(fixture.snapshot.active_alert_count == 1);
+}
+
+static void test_hms_clear_recurrence_and_local_dismissal(void)
+{
+    fixture_t fixture;
+    init_fixture(&fixture);
+    const char *active =
+        "{\"print\":{\"hms\":[{\"attr\":50332416,\"code\":65537}]}}";
+    assert(parse(&fixture, active) == NH_PRINTER_PROTOCOL_UPDATED);
+    assert(nh_printer_protocol_dismiss_alert(
+        &fixture.protocol, "HMS_0300-0300-0001-0001"));
+    assert(fixture.snapshot.alerts[0].active);
+    assert(fixture.snapshot.alerts[0].dismissed_locally);
+    assert(fixture.snapshot.active_alert_count == 0);
+
+    assert(parse(&fixture, active) == NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.alerts[0].dismissed_locally);
+    assert(fixture.snapshot.alerts[0].occurrence_count == 1);
+
+    assert(parse(&fixture, "{\"print\":{\"hms\":[]}}") ==
+           NH_PRINTER_PROTOCOL_UPDATED);
+    assert(!fixture.snapshot.alerts[0].active);
+    assert(!fixture.snapshot.alerts[0].dismissed_locally);
+    assert(fixture.snapshot.active_alert_count == 0);
+
+    assert(parse(&fixture, active) == NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.alerts[0].active);
+    assert(fixture.snapshot.alerts[0].occurrence_count == 2);
+}
+
+static void test_print_error_lifecycle(void)
+{
+    fixture_t fixture;
+    init_fixture(&fixture);
+    assert(parse(
+               &fixture,
+               "{\"print\":{\"print_error\":117473284,\"hms\":[]}}") ==
+           NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.active_alert_count == 1);
+    assert(strcmp(
+               fixture.snapshot.alerts[0].raw_code,
+               "PRINT_ERROR_117473284") == 0);
+    assert(fixture.snapshot.alerts[0].source == NH_ALERT_SOURCE_PRINT);
+    assert(parse(&fixture, "{\"print\":{\"print_error\":0}}") ==
+           NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.active_alert_count == 0);
+    assert(!fixture.snapshot.alerts[0].active);
+}
+
+static void test_ams_unit_trays_and_material_risk(void)
+{
+    fixture_t fixture;
+    init_fixture(&fixture);
+    const char *report =
+        "{\"print\":{\"ams\":{\"ams\":[{"
+        "\"id\":\"0\",\"humidity\":\"4\",\"temp\":\"22.7\","
+        "\"tray\":["
+        "{\"id\":\"0\"},"
+        "{\"id\":\"1\",\"tray_type\":\"PLA\","
+        "\"tray_color\":\"DFE2E3FF\",\"tray_info_idx\":\"GFA05\","
+        "\"tag_uid\":\"AABBCCDDEEFF0011\",\"remain\":75,"
+        "\"nozzle_temp_min\":\"190\",\"nozzle_temp_max\":\"240\"}"
+        "]}]}}}";
+    assert(parse(&fixture, report) == NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.ams.known);
+    assert(fixture.snapshot.ams.unit_count == 1);
+    assert(fixture.snapshot.ams.tray_count == 2);
+    assert(fixture.snapshot.ams.units[0].humidity_index == 4);
+    assert(fixture.snapshot.ams.units[0].material_at_risk);
+    assert(fixture.snapshot.ams.units[0].temperature_c > 22.6f);
+    assert(!fixture.snapshot.ams.trays[0].present);
+    assert(fixture.snapshot.ams.trays[1].present);
+    assert(strcmp(fixture.snapshot.ams.trays[1].material, "PLA") == 0);
+    assert(strcmp(
+               fixture.snapshot.ams.trays[1].color_rgba,
+               "DFE2E3FF") == 0);
+    assert(fixture.snapshot.ams.trays[1].remaining_percent == 75);
+    assert(fixture.snapshot.ams.trays[1].rfid_present);
+    assert(fixture.snapshot.active_alert_count == 1);
+    assert(strstr(
+               fixture.snapshot.alerts[0].raw_code,
+               "MATERIAL_AMS_0_HUMIDITY_4") != NULL);
+}
+
+static void test_ams_delta_preservation_and_explicit_clear(void)
+{
+    fixture_t fixture;
+    init_fixture(&fixture);
+    assert(parse(
+               &fixture,
+               "{\"print\":{\"ams\":{\"ams\":[{"
+               "\"id\":\"0\",\"humidity\":\"3\",\"tray\":["
+               "{\"id\":\"0\",\"tray_type\":\"PETG\"}]}]}}}") ==
+           NH_PRINTER_PROTOCOL_UPDATED);
+    assert(parse(&fixture, "{\"print\":{\"mc_percent\":40}}") ==
+           NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.ams.unit_count == 1);
+    assert(fixture.snapshot.ams.tray_count == 1);
+    assert(strcmp(fixture.snapshot.ams.trays[0].material, "PETG") == 0);
+
+    assert(parse(&fixture, "{\"print\":{\"ams\":{\"ams\":[]}}}") ==
+           NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.ams.known);
+    assert(fixture.snapshot.ams.unit_count == 0);
+    assert(fixture.snapshot.ams.tray_count == 0);
+}
+
+static void test_multiple_ams_external_spool_and_bounds(void)
+{
+    fixture_t fixture;
+    init_fixture(&fixture);
+    const char *report =
+        "{\"print\":{\"ams\":{\"ams\":["
+        "{\"id\":\"0\",\"humidity\":\"1\",\"tray\":[]},"
+        "{\"id\":\"1\",\"humidity\":\"2\",\"tray\":[]},"
+        "{\"id\":\"2\",\"humidity\":\"3\",\"tray\":[]},"
+        "{\"id\":\"3\",\"humidity\":\"4\",\"tray\":[]},"
+        "{\"id\":\"4\",\"humidity\":\"5\",\"tray\":[]}"
+        "]},\"vt_tray\":{\"id\":\"254\",\"tray_type\":\"TPU\","
+        "\"tray_color\":\"112233FF\",\"remain\":55}}}";
+    assert(parse(&fixture, report) == NH_PRINTER_PROTOCOL_UPDATED);
+    assert(fixture.snapshot.ams.unit_count == NH_AMS_MAX_UNITS);
+    assert(fixture.snapshot.ams.external_spool_present);
+    const nh_ams_tray_t *external =
+        &fixture.snapshot.ams.trays[NH_AMS_MAX_TRAYS];
+    assert(external->external);
+    assert(external->present);
+    assert(strcmp(external->material, "TPU") == 0);
+    assert(external->remaining_percent == 55);
+
+    assert(parse(
+               &fixture,
+               "{\"print\":{\"vt_tray\":{\"id\":\"254\","
+               "\"tray_type\":\"PLA\",\"tray_color\":\"NOTHEX!!\","
+               "\"remain\":101}}}") == NH_PRINTER_PROTOCOL_UPDATED);
+    external = &fixture.snapshot.ams.trays[NH_AMS_MAX_TRAYS];
+    assert(external->color_rgba[0] == '\0');
+    assert(!external->remaining_known);
+}
+
 int main(void)
 {
     test_full_running_report();
@@ -247,6 +426,13 @@ int main(void)
     test_string_layers_and_sd_number();
     test_delta_without_state_preserves_active_job();
     test_invalid_layer_values_do_not_replace_known_values();
-    puts("nh_printer_protocol host tests: PASS (11 cases)");
+    test_known_hms_alert_is_mapped_and_deduplicated();
+    test_unknown_hms_is_preserved_and_delta_does_not_clear();
+    test_hms_clear_recurrence_and_local_dismissal();
+    test_print_error_lifecycle();
+    test_ams_unit_trays_and_material_risk();
+    test_ams_delta_preservation_and_explicit_clear();
+    test_multiple_ams_external_spool_and_bounds();
+    puts("nh_printer_protocol host tests: PASS (18 cases)");
     return 0;
 }
