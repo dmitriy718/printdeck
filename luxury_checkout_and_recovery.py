@@ -9,6 +9,7 @@ from __future__ import annotations
 import datetime as dt
 import html
 import json
+import os
 import secrets
 import sqlite3
 import time
@@ -25,6 +26,262 @@ from db.database import DatabaseManager, get_db
 from frontend.build_static_dist import ASSET_VERSION, CRITICAL_HEAD_STYLE, CURATED_CATALOG
 
 checkout_recovery_router = APIRouter()
+
+
+def get_stripe_secret_key() -> str:
+    """
+    Loads the live Stripe secret key from environment or .env.automations on disk.
+    """
+    key = os.getenv("STRIPE_SECRET_KEY", "").strip()
+    if key and key.startswith("sk_"):
+        return key
+    env_file = Path(__file__).resolve().parent / ".env.automations"
+    if env_file.exists():
+        for line in env_file.read_text(encoding="utf-8").splitlines():
+            line_s = line.strip()
+            if line_s.startswith("STRIPE_SECRET_KEY="):
+                val = line_s.split("=", 1)[1].strip().strip('"').strip("'")
+                if val.startswith("sk_"):
+                    return val
+    return ""
+
+
+async def create_live_stripe_checkout_session(
+    *,
+    order_id: str,
+    order_number: str,
+    customer_email: str,
+    resolved_items: List[Dict[str, Any]],
+    subtotal_cents: int,
+    discount_cents: int,
+    shipping_cents: int,
+    promo_code: str = "",
+    payment_method: str = "card",
+    cancel_slug: str = "monolith-no-4-stretched-gallery-canvas-24x36",
+) -> Optional[Dict[str, Any]]:
+    """
+    Creates a real live Stripe Hosted Checkout Session via https://api.stripe.com/v1/checkout/sessions
+    supporting Apple Pay, Google Pay, Link 1-Click, and Card payments.
+    """
+    secret_key = get_stripe_secret_key()
+    if not secret_key:
+        return None
+
+    discount_ratio = 1.0
+    if subtotal_cents > 0 and discount_cents > 0:
+        discount_ratio = max(0.0, (subtotal_cents - discount_cents) / float(subtotal_cents))
+
+    clean_cancel_slug = (cancel_slug or "monolith-no-4-stretched-gallery-canvas-24x36").strip().lstrip("/")
+    promo_qs = f"?promo={urllib.parse.quote(promo_code)}" if promo_code else ""
+    params: Dict[str, str] = {
+        "mode": "payment",
+        "success_url": f"https://printdeck.net/pay/confirmation/{order_id}?session_id={{CHECKOUT_SESSION_ID}}",
+        "cancel_url": f"https://printdeck.net/pay/{clean_cancel_slug}{promo_qs}",
+        "client_reference_id": order_id,
+        "metadata[order_id]": order_id,
+        "metadata[order_number]": order_number,
+        "metadata[tenant]": "printdeck",
+        "metadata[preferred_wallet]": payment_method,
+        "metadata[promo_code]": promo_code,
+        "payment_intent_data[metadata][order_id]": order_id,
+        "payment_intent_data[metadata][order_number]": order_number,
+        "payment_intent_data[metadata][tenant]": "printdeck",
+        "phone_number_collection[enabled]": "true",
+    }
+    allowed_countries = ["US", "CA", "GB", "AU", "DE", "FR", "NL", "CH", "JP", "SG"]
+    for c_idx, c_code in enumerate(allowed_countries):
+        params[f"shipping_address_collection[allowed_countries][{c_idx}]"] = c_code
+
+    if not promo_code and discount_cents == 0:
+        params["allow_promotion_codes"] = "true"
+
+    if (
+        customer_email
+        and "@" in customer_email
+        and customer_email not in ("collector@printdeck.net", "pending-stripe-checkout@printdeck.net")
+    ):
+        params["customer_email"] = customer_email
+        params["payment_intent_data[receipt_email]"] = customer_email
+
+    target_net_cents = max(50, subtotal_cents - discount_cents)
+    for idx, it in enumerate(resolved_items):
+        q = max(1, int(it.get("qty", 1)))
+        raw_unit_cents = int(round(float(it["price_usd"]) * 100))
+        if len(resolved_items) == 1 and q == 1:
+            net_unit_cents = target_net_cents
+        else:
+            net_unit_cents = max(50, int(round(raw_unit_cents * discount_ratio)))
+        title_str = str(it.get("title") or "PrintDeck Archival Edition")
+        if discount_cents > 0 and promo_code:
+            title_str = f"{title_str} ({promo_code} Privilege Applied)"
+        s_key = str(it.get("size") or "24x36").upper()
+        f_key = str(it.get("frame") or "oak")
+        f_lbl = FRAME_LABELS.get(f_key, f_key.title())
+        desc_str = f"Proportion: {s_key} • Finish: {f_lbl} • 300-DPI Verified Archival Edition"
+
+        params[f"line_items[{idx}][price_data][currency]"] = "usd"
+        params[f"line_items[{idx}][price_data][unit_amount]"] = str(net_unit_cents)
+        params[f"line_items[{idx}][price_data][product_data][name]"] = title_str[:250]
+        params[f"line_items[{idx}][price_data][product_data][description]"] = desc_str[:450]
+        img_path = str(it.get("image") or "")
+        if img_path.startswith("/images/"):
+            img_jpg = img_path.replace(".webp", ".jpg")
+            params[f"line_items[{idx}][price_data][product_data][images][0]"] = f"https://printdeck.net{img_jpg}"
+        params[f"line_items[{idx}][quantity]"] = str(q)
+
+    params["shipping_options[0][shipping_rate_data][type]"] = "fixed_amount"
+    params["shipping_options[0][shipping_rate_data][fixed_amount][amount]"] = str(max(0, int(shipping_cents)))
+    params["shipping_options[0][shipping_rate_data][fixed_amount][currency]"] = "usd"
+    params["shipping_options[0][shipping_rate_data][display_name]"] = (
+        "FREE Insured Fine-Art Express Courier (48h Dispatch)"
+        if shipping_cents == 0
+        else "Insured Fine-Art Express Courier (48h Dispatch)"
+    )
+
+    try:
+        async with httpx.AsyncClient(timeout=12.0) as client:
+            resp = await client.post(
+                "https://api.stripe.com/v1/checkout/sessions",
+                data=params,
+                headers={
+                    "Authorization": f"Bearer {secret_key}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Idempotency-Key": f"pd_checkout_{order_id}",
+                },
+            )
+            if resp.status_code == 200:
+                return resp.json()
+    except Exception:
+        pass
+    return None
+
+
+async def verify_stripe_session_paid(session_id: str) -> Tuple[bool, Optional[Dict[str, Any]]]:
+    """
+    Verifies directly against the live Stripe API whether a Checkout Session has been paid.
+    Only returns True when Stripe confirms payment_status == 'paid'.
+    """
+    secret_key = get_stripe_secret_key()
+    if not secret_key or not session_id or not session_id.startswith("cs_"):
+        return False, None
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(
+                f"https://api.stripe.com/v1/checkout/sessions/{urllib.parse.quote(session_id)}",
+                headers={"Authorization": f"Bearer {secret_key}"},
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                is_paid = data.get("payment_status") == "paid"
+                return is_paid, data
+    except Exception:
+        pass
+    return False, None
+
+
+def activate_paid_grace_hold_from_stripe(
+    db: DatabaseManager,
+    order_id: str,
+    stripe_data: Dict[str, Any],
+) -> Dict[str, Any]:
+    """
+    Atomically transitions an order from PENDING_PAYMENT to PAID_GRACE_HOLD (120-Minute Grace Window)
+    only after live Stripe payment verification succeeds, updating customer & shipping details from Stripe.
+    """
+    with db.connect() as conn:
+        row = conn.execute("SELECT * FROM orders WHERE order_id = ? LIMIT 1", (order_id,)).fetchone()
+        if not row:
+            return {}
+        row_d = dict(row)
+        cust_details = stripe_data.get("customer_details") or {}
+        ship_details = stripe_data.get("shipping_details") or {}
+        addr = ship_details.get("address") or cust_details.get("address") or {}
+
+        paid_email = str(
+            cust_details.get("email")
+            or stripe_data.get("customer_email")
+            or row_d.get("customer_email")
+            or ""
+        ).strip()
+        if not paid_email or paid_email == "pending-stripe-checkout@printdeck.net":
+            paid_email = str(row_d.get("customer_email") or "collector@printdeck.net")
+
+        paid_name = str(
+            ship_details.get("name")
+            or cust_details.get("name")
+            or row_d.get("customer_name")
+            or "Verified Collector"
+        ).strip()
+        paid_phone = str(cust_details.get("phone") or row_d.get("customer_phone") or "").strip()
+        line1 = str(addr.get("line1") or row_d.get("shipping_address_line1") or "").strip()
+        line2 = str(addr.get("line2") or row_d.get("shipping_address_line2") or "").strip()
+        city = str(addr.get("city") or row_d.get("shipping_city") or "").strip()
+        state = str(addr.get("state") or row_d.get("shipping_state") or "").strip()
+        postal_code = str(addr.get("postal_code") or row_d.get("shipping_zip") or "").strip()
+        country = str(addr.get("country") or row_d.get("shipping_country") or "US").strip()
+        pi_id = str(stripe_data.get("payment_intent") or row_d.get("stripe_payment_intent_id") or "")
+        session_id = str(stripe_data.get("id") or row_d.get("stripe_checkout_session_id") or "")
+
+        if row_d.get("status") == "PENDING_PAYMENT":
+            now_utc = dt.datetime.now(dt.timezone.utc)
+            grace_expires = (now_utc + dt.timedelta(minutes=120)).isoformat()
+            conn.execute(
+                """
+                UPDATE orders
+                SET status = 'PAID_GRACE_HOLD',
+                    grace_hold_expires_at = ?,
+                    stripe_checkout_session_id = ?,
+                    stripe_payment_intent_id = ?,
+                    customer_email = ?,
+                    customer_name = ?,
+                    customer_phone = ?,
+                    shipping_address_line1 = ?,
+                    shipping_address_line2 = ?,
+                    shipping_city = ?,
+                    shipping_state = ?,
+                    shipping_zip = ?,
+                    shipping_country = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE order_id = ?
+                """,
+                (
+                    grace_expires,
+                    session_id,
+                    pi_id,
+                    paid_email,
+                    paid_name,
+                    paid_phone,
+                    line1,
+                    line2,
+                    city,
+                    state,
+                    postal_code,
+                    country,
+                    order_id,
+                ),
+            )
+            existing_hold = conn.execute(
+                "SELECT 1 FROM fulfillment_holds WHERE order_id = ? LIMIT 1",
+                (order_id,),
+            ).fetchone()
+            if not existing_hold:
+                conn.execute(
+                    """
+                    INSERT INTO fulfillment_holds (
+                        hold_id, order_id, hold_type, status, hold_reason, expires_at
+                    ) VALUES (?, ?, 'GRACE_WINDOW_120M', 'ACTIVE', ?, ?)
+                    """,
+                    (
+                        f"hold_{uuid.uuid4().hex[:12]}",
+                        order_id,
+                        "Verified live Stripe payment; 120-minute post-order editable grace window active.",
+                        grace_expires,
+                    ),
+                )
+
+        updated = conn.execute("SELECT * FROM orders WHERE order_id = ? LIMIT 1", (order_id,)).fetchone()
+        return dict(updated) if updated else row_d
+
 
 # ==============================================================================
 # 1. Canonical Offer & Product Registry (All 13 Storefront Items + Bundles + B2B + Hardware)
@@ -217,12 +474,71 @@ SIZE_UPGRADE_PRICES: Dict[str, float] = {
 }
 
 FRAME_LABELS: Dict[str, str] = {
+    "none": "Unframed 1.5\" Stretched Gallery Wrap",
+    "black": "Architectural Matte Black Ash Frame",
     "oak": "Kiln-Dried Museum White Oak Frame",
     "walnut": "Solid American Walnut Float Frame",
     "gold": "Brushed Champagne Gold Leaf Frame",
-    "black": "Architectural Matte Black Frame",
     "canvas": "1.5\" Gallery-Wrapped Stretched Linen",
 }
+
+SIZE_LABELS: Dict[str, str] = {
+    "18x24": "18\"×24\" Collector Edition",
+    "24x36": "24\"×36\" Statement Scale",
+    "36x48": "36\"×48\" Grand Architectural",
+    "s": "Small (S)",
+    "m": "Medium (M)",
+    "l": "Large (L)",
+    "xl": "Extra Large (XL)",
+    "2xl": "2XL Tall",
+    "3xl": "3XL Collector",
+}
+
+
+def compute_customized_price(
+    catalog_base_usd: float,
+    size_key: str = "24x36",
+    frame_key: str = "oak",
+) -> Tuple[float, float, float, float]:
+    """
+    Computes `(unit_price_usd, compare_at_usd, size_delta_usd, frame_delta_usd)` from the item's
+    canonical 24"x36" Oak base price so every Frame Style and every Architectural Scale
+    has a distinct, transparent gallery price.
+    """
+    s_norm = (size_key or "24x36").strip().lower()
+    f_norm = (frame_key or "oak").strip().lower()
+
+    is_standard_tier = catalog_base_usd >= 110.0
+    if s_norm == "18x24":
+        size_delta = -30.0 if is_standard_tier else -15.0
+    elif s_norm == "36x48":
+        size_delta = 80.0 if is_standard_tier else 45.0
+    elif s_norm == "s":
+        size_delta = -4.0
+    elif s_norm == "xl":
+        size_delta = 4.0
+    elif s_norm == "2xl":
+        size_delta = 8.0
+    elif s_norm == "3xl":
+        size_delta = 12.0
+    else:
+        size_delta = 0.0
+
+    is_frame_standard = catalog_base_usd >= 90.0
+    if f_norm in ("none", "canvas", "unframed"):
+        frame_delta = -25.0 if is_frame_standard else -8.0
+    elif f_norm == "black":
+        frame_delta = -10.0 if is_frame_standard else -4.0
+    elif f_norm == "walnut":
+        frame_delta = 25.0 if is_frame_standard else 12.0
+    elif f_norm == "gold":
+        frame_delta = 38.0 if is_frame_standard else 18.0
+    else:
+        frame_delta = 0.0
+
+    unit_price = max(19.0, round(catalog_base_usd + size_delta + frame_delta, 2))
+    compare_at = round(unit_price * 1.25, 2)
+    return unit_price, compare_at, size_delta, frame_delta
 
 
 def is_hardware_offer(offer_or_sku: Optional[str]) -> Optional[str]:
@@ -341,11 +657,20 @@ def _apply_customization_to_offer(
     clean_size = (size or "24x36").strip().lower()
     clean_frame = (frame or "oak").strip().lower()
     out = dict(item)
+    catalog_base = float(out.get("catalog_base_usd", out.get("price_usd", 149.0)))
+    out["catalog_base_usd"] = catalog_base
     out["qty"] = clamped_qty
     out["size"] = clean_size
     out["frame"] = clean_frame
-    if out.get("category") == "wall_art" and out.get("sku") == "PD-CANVAS-24X36" and clean_size in SIZE_UPGRADE_PRICES:
-        out["price_usd"] = SIZE_UPGRADE_PRICES[clean_size]
+    unit_p, comp_p, s_delta, f_delta = compute_customized_price(
+        catalog_base_usd=catalog_base,
+        size_key=clean_size,
+        frame_key=clean_frame,
+    )
+    out["price_usd"] = unit_p
+    out["compare_at_usd"] = comp_p
+    out["size_delta_usd"] = s_delta
+    out["frame_delta_usd"] = f_delta
     return out
 
 
@@ -504,35 +829,57 @@ def render_luxury_checkout_page(
 
     items_summary_rows = []
     serialized_tokens = []
+    other_items_subtotal = 0.0
+    other_items_compare = 0.0
     for idx, it in enumerate(items):
         q = int(it.get("qty", 1))
         line_p = float(it["price_usd"]) * q
+        line_comp = float(it.get("compare_at_usd", float(it["price_usd"]) * 1.25)) * q
+        if idx > 0:
+            other_items_subtotal += line_p
+            other_items_compare += line_comp
         f_key = str(it.get("frame") or "oak")
         s_key = str(it.get("size") or "24x36")
         serialized_tokens.append(f"{it['sku']}:{q}:{f_key}:{s_key}")
+        thumb_id_attr = ' id="checkout-primary-thumb"' if idx == 0 else ""
+        spec_id_attr = ' id="checkout-primary-spec-line"' if idx == 0 else ""
+        price_id_attr = ' id="checkout-primary-line-price"' if idx == 0 else ""
+        comp_id_attr = ' id="checkout-primary-compare-price"' if idx == 0 else ""
         items_summary_rows.append(
             f"""
             <div style="display:flex;gap:1rem;padding:0.95rem 0;border-bottom:1px solid var(--border-stone);align-items:center;">
-              <img src="{html.escape(it['image'])}" alt="{html.escape(it['title'])}" style="width:76px;height:90px;object-fit:cover;border-radius:8px;border:2px solid var(--accent-gold);box-shadow:0 8px 18px rgba(0,0,0,0.12);" />
+              <img{thumb_id_attr} src="{html.escape(it['image'])}" alt="{html.escape(it['title'])}" style="width:76px;height:90px;object-fit:cover;border-radius:8px;border:3px solid var(--accent-gold);box-shadow:0 8px 18px rgba(0,0,0,0.12);transition:border-color 0.2s ease;" />
               <div style="flex:1;min-width:0;">
                 <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--cta-terracotta);">{html.escape(it.get('badge', '✦ Archival Edition'))}</div>
                 <div style="font-family:var(--font-display);font-size:1.25rem;color:var(--ink-espresso);line-height:1.2;">{html.escape(it['title'])}</div>
-                <div style="font-size:0.76rem;color:var(--ink-graphite);margin-top:0.2rem;">
-                  Proportion: <strong>{html.escape(s_key.upper())}</strong> • Finish: <strong>{html.escape(FRAME_LABELS.get(f_key, f_key.title()))}</strong> • Qty: <strong>{q}</strong>
+                <div{spec_id_attr} style="font-size:0.76rem;color:var(--ink-graphite);margin-top:0.2rem;">
+                  Proportion: <strong>{html.escape(SIZE_LABELS.get(s_key, s_key.upper()))}</strong> • Finish: <strong>{html.escape(FRAME_LABELS.get(f_key, f_key.title()))}</strong> • Qty: <strong>{q}</strong>
                 </div>
                 <div style="font-size:0.73rem;color:var(--accent-sage);font-weight:700;margin-top:0.18rem;">
                   ✓ Hand-Numbered Certificate #294/300 • 300-DPI Verified
                 </div>
               </div>
               <div style="text-align:right;">
-                <div style="font-family:var(--font-display);font-size:1.45rem;color:var(--ink-espresso);">${line_p:.2f}</div>
-                <div style="font-size:0.74rem;color:var(--ink-muted);"><s>${float(it.get('compare_at_usd', line_p * 1.2)):.2f}</s></div>
+                <div{price_id_attr} style="font-family:var(--font-display);font-size:1.45rem;color:var(--ink-espresso);">${line_p:.2f}</div>
+                <div style="font-size:0.74rem;color:var(--ink-muted);"><s{comp_id_attr}>${line_comp:.2f}</s></div>
               </div>
             </div>
             """
         )
 
     items_token_str = ",".join(serialized_tokens)
+    primary_catalog_base = float(primary.get("catalog_base_usd", primary.get("price_usd", 149.0)))
+    primary_qty = int(primary.get("qty", 1))
+    primary_frame = str(primary.get("frame", "oak")).lower()
+    primary_size = str(primary.get("size", "24x36")).lower()
+    p_18, _, _, _ = compute_customized_price(primary_catalog_base, "18x24", primary_frame)
+    p_24, _, _, _ = compute_customized_price(primary_catalog_base, "24x36", primary_frame)
+    p_36, _, _, _ = compute_customized_price(primary_catalog_base, "36x48", primary_frame)
+    is_frame_std = primary_catalog_base >= 90.0
+    f_none_lbl = "-$25" if is_frame_std else "-$8"
+    f_blk_lbl = "-$10" if is_frame_std else "-$4"
+    f_wal_lbl = "+$25" if is_frame_std else "+$12"
+    f_gld_lbl = "+$38" if is_frame_std else "+$18"
 
     # Quick-switcher pills so buyer can switch editions in 1 click
     switcher_offers = [
@@ -600,21 +947,33 @@ def render_luxury_checkout_page(
 
       {"".join(items_summary_rows)}
 
-      <!-- Interactive Specification & Size/Frame Switcher (for single wall-art items) -->
-      <div style="margin-top:1.15rem;padding:1rem;background:var(--bg-soft-stone);border-radius:var(--radius-sm);border:1px solid var(--border-stone);">
-        <div style="font-size:0.74rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-charcoal);margin-bottom:0.5rem;">
-          Customize Frame Molding &amp; Scale Before Locking Allocation
+      <!-- Interactive Specification & Size/Frame Switcher (Live Dynamic Pricing) -->
+      <div style="margin-top:1.15rem;padding:1.05rem;background:var(--bg-soft-stone);border-radius:var(--radius-sm);border:1px solid var(--border-stone);">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.65rem;">
+          <div style="font-size:0.74rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-charcoal);">
+            Customize Frame Molding &amp; Scale Before Locking Allocation
+          </div>
+          <span id="live-spec-price-pill" style="font-size:0.74rem;font-weight:800;padding:0.25rem 0.65rem;border-radius:999px;background:var(--ink-espresso);color:#FFE5A3;">
+            Selected Edition Price: ${float(primary['price_usd']):.2f} USD
+          </span>
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:0.45rem;margin-bottom:0.65rem;">
-          <button type="button" class="swatch-pill {'is-active' if primary.get('frame','oak')=='oak' else ''}" onclick="window.updateCheckoutSpec('frame','oak',this)">Museum White Oak</button>
-          <button type="button" class="swatch-pill {'is-active' if primary.get('frame')=='walnut' else ''}" onclick="window.updateCheckoutSpec('frame','walnut',this)">Walnut Float</button>
-          <button type="button" class="swatch-pill {'is-active' if primary.get('frame')=='gold' else ''}" onclick="window.updateCheckoutSpec('frame','gold',this)">Champagne Gold</button>
-          <button type="button" class="swatch-pill {'is-active' if primary.get('frame')=='black' else ''}" onclick="window.updateCheckoutSpec('frame','black',this)">Matte Black</button>
+        <div style="font-size:0.71rem;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.35rem;">
+          1. Select Frame Molding Profile (Adjusts Price by Material &amp; Joinery)
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.45rem;margin-bottom:0.75rem;">
+          <button type="button" data-frame-choice="none" class="swatch-pill {'is-active' if primary_frame in ('none','canvas','unframed') else ''}" onclick="window.updateCheckoutSpec('frame','none',this)">Unframed Wrap ({f_none_lbl})</button>
+          <button type="button" data-frame-choice="black" class="swatch-pill {'is-active' if primary_frame=='black' else ''}" onclick="window.updateCheckoutSpec('frame','black',this)">Matte Black ({f_blk_lbl})</button>
+          <button type="button" data-frame-choice="oak" class="swatch-pill {'is-active' if primary_frame=='oak' else ''}" onclick="window.updateCheckoutSpec('frame','oak',this)">Museum White Oak (Included)</button>
+          <button type="button" data-frame-choice="walnut" class="swatch-pill {'is-active' if primary_frame=='walnut' else ''}" onclick="window.updateCheckoutSpec('frame','walnut',this)">Walnut Float ({f_wal_lbl})</button>
+          <button type="button" data-frame-choice="gold" class="swatch-pill {'is-active' if primary_frame=='gold' else ''}" onclick="window.updateCheckoutSpec('frame','gold',this)">Champagne Gold ({f_gld_lbl})</button>
+        </div>
+        <div style="font-size:0.71rem;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.35rem;">
+          2. Select Architectural Print Scale (300-DPI Archival Output)
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
-          <button type="button" class="swatch-pill {'is-active' if primary.get('size')=='18x24' else ''}" onclick="window.updateCheckoutSpec('size','18x24',this)">18"×24" Collector</button>
-          <button type="button" class="swatch-pill {'is-active' if primary.get('size','24x36')=='24x36' else ''}" onclick="window.updateCheckoutSpec('size','24x36',this)">24"×36" Statement (★ Most Popular)</button>
-          <button type="button" class="swatch-pill {'is-active' if primary.get('size')=='36x48' else ''}" onclick="window.updateCheckoutSpec('size','36x48',this)">36"×48" Grand Architectural</button>
+          <button type="button" id="size-btn-18x24" data-size-choice="18x24" class="swatch-pill {'is-active' if primary_size=='18x24' else ''}" onclick="window.updateCheckoutSpec('size','18x24',this)">18"×24" Collector (${p_18:.0f})</button>
+          <button type="button" id="size-btn-24x36" data-size-choice="24x36" class="swatch-pill {'is-active' if primary_size=='24x36' else ''}" onclick="window.updateCheckoutSpec('size','24x36',this)">24"×36" Statement ★ (${p_24:.0f})</button>
+          <button type="button" id="size-btn-36x48" data-size-choice="36x48" class="swatch-pill {'is-active' if primary_size=='36x48' else ''}" onclick="window.updateCheckoutSpec('size','36x48',this)">36"×48" Grand Architectural (${p_36:.0f})</button>
         </div>
       </div>
 
@@ -626,8 +985,8 @@ def render_luxury_checkout_page(
         <label style="display:flex;align-items:flex-start;gap:0.75rem;padding:0.85rem 1rem;background:#FAF6EE;border:1px solid var(--accent-gold);border-radius:var(--radius-sm);cursor:pointer;margin-bottom:0.6rem;">
           <input type="checkbox" id="bump-walnut-frame" onchange="window.recalcCheckoutMath()" style="margin-top:0.2rem;width:18px;height:18px;accent-color:var(--cta-terracotta);" />
           <div style="flex:1;font-size:0.82rem;">
-            <strong style="color:var(--ink-espresso);display:block;">Upgrade to Kiln-Dried American Walnut Float Frame &amp; UV Museum Acrylic (+$35.00)</strong>
-            <span style="color:var(--ink-graphite);font-size:0.76rem;">Hand-joined solid hardwood float profile with 0.25" gallery shadow-gap reveal (Normally $65).</span>
+            <strong style="color:var(--ink-espresso);display:block;">Add Anti-Reflective UV Museum Glazing &amp; Heavy-Duty French Cleat Kit (+$35.00)</strong>
+            <span style="color:var(--ink-graphite);font-size:0.76rem;">99% UV-filtering optical conservation acrylic with anodized gallery wall-cleat hardware (Normally $65).</span>
           </div>
         </label>
         <label style="display:flex;align-items:flex-start;gap:0.75rem;padding:0.85rem 1rem;background:#FAF6EE;border:1px solid var(--border-strong);border-radius:var(--radius-sm);cursor:pointer;">
@@ -692,9 +1051,9 @@ def render_luxury_checkout_page(
         <input type="hidden" name="items_token" id="form-items-token" value="{html.escape(items_token_str)}" />
         <input type="hidden" name="sku" id="form-sku" value="{html.escape(primary['sku'])}" />
         <input type="hidden" name="offer" id="form-offer" value="{html.escape(primary['slug'])}" />
-        <input type="hidden" name="quantity" id="form-qty" value="{int(primary.get('qty', 1))}" />
-        <input type="hidden" name="size" id="form-size" value="{html.escape(str(primary.get('size', '24x36')))}" />
-        <input type="hidden" name="frame" id="form-frame" value="{html.escape(str(primary.get('frame', 'oak')))}" />
+        <input type="hidden" name="quantity" id="form-qty" value="{primary_qty}" />
+        <input type="hidden" name="size" id="form-size" value="{html.escape(primary_size)}" />
+        <input type="hidden" name="frame" id="form-frame" value="{html.escape(primary_frame)}" />
         <input type="hidden" name="promo_code" id="form-promo-code" value="{html.escape(promo_code)}" />
         <input type="hidden" name="bump_walnut" id="form-bump-walnut" value="0" />
         <input type="hidden" name="bump_deskmat" id="form-bump-deskmat" value="0" />
@@ -703,31 +1062,31 @@ def render_luxury_checkout_page(
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
           <div>
             <label for="co-name" style="display:block;font-size:0.78rem;font-weight:700;margin-bottom:0.28rem;">Collector Full Name *</label>
-            <input id="co-name" name="recipient_name" type="text" autocomplete="name" required placeholder="Elena Sterling" value="Collector Guest" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
+            <input id="co-name" name="recipient_name" type="text" autocomplete="name" required placeholder="Elena Sterling" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
           </div>
           <div>
             <label for="co-email" style="display:block;font-size:0.78rem;font-weight:700;margin-bottom:0.28rem;">Email for Provenance &amp; Tracking *</label>
-            <input id="co-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" required placeholder="collector@domain.com" value="collector@printdeck.net" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
+            <input id="co-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" required placeholder="collector@domain.com" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
           </div>
         </div>
 
         <div>
           <label for="co-line1" style="display:block;font-size:0.78rem;font-weight:700;margin-bottom:0.28rem;">White-Glove Courier Street Address *</label>
-          <input id="co-line1" name="line1" type="text" autocomplete="street-address" required placeholder="450 Broadway, Suite 4B" value="450 Broadway" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
+          <input id="co-line1" name="line1" type="text" autocomplete="street-address" required placeholder="450 Broadway, Suite 4B" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
         </div>
 
         <div style="display:grid;grid-template-columns:1.2fr 0.8fr 0.9fr;gap:0.65rem;">
           <div>
             <label for="co-city" style="display:block;font-size:0.78rem;font-weight:700;margin-bottom:0.28rem;">City *</label>
-            <input id="co-city" name="city" type="text" autocomplete="address-level2" required placeholder="New York" value="New York" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
+            <input id="co-city" name="city" type="text" autocomplete="address-level2" required placeholder="New York" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
           </div>
           <div>
             <label for="co-state" style="display:block;font-size:0.78rem;font-weight:700;margin-bottom:0.28rem;">State *</label>
-            <input id="co-state" name="state" type="text" autocomplete="address-level1" required placeholder="NY" value="NY" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
+            <input id="co-state" name="state" type="text" autocomplete="address-level1" required placeholder="NY" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
           </div>
           <div>
             <label for="co-zip" style="display:block;font-size:0.78rem;font-weight:700;margin-bottom:0.28rem;">ZIP / Postal *</label>
-            <input id="co-zip" name="postal_code" type="text" inputmode="numeric" autocomplete="postal-code" required placeholder="10013" value="10013" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
+            <input id="co-zip" name="postal_code" type="text" inputmode="numeric" autocomplete="postal-code" required placeholder="10013" style="width:100%;padding:0.68rem 0.85rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-alabaster);font-size:1rem;" />
           </div>
         </div>
 
@@ -735,7 +1094,7 @@ def render_luxury_checkout_page(
         <div style="padding:1rem;background:var(--bg-soft-stone);border-radius:var(--radius-sm);border:1px solid var(--border-stone);display:grid;gap:0.4rem;font-size:0.84rem;">
           <div style="display:flex;justify-content:space-between;">
             <span>Gallery Valuation / Compare At</span>
-            <span style="color:var(--ink-muted);"><s>${compare_total:.2f} USD</s></span>
+            <span style="color:var(--ink-muted);"><s id="summary-compare-total">${compare_total:.2f} USD</s></span>
           </div>
           <div style="display:flex;justify-content:space-between;">
             <span>Exhibition Subtotal</span>
@@ -758,8 +1117,8 @@ def render_luxury_checkout_page(
           </div>
         </div>
 
-        <button type="submit" class="btn-primary" style="width:100%;padding:1rem;font-size:0.95rem;">
-          Complete Allocation &amp; Lock 2-Hour Edit Guarantee →
+        <button type="submit" id="checkout-submit-btn" class="btn-primary" style="width:100%;padding:1rem;font-size:0.95rem;">
+          Proceed to Secure Stripe Checkout (${final_total:.2f}) →
         </button>
 
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;text-align:center;font-size:0.71rem;color:var(--ink-graphite);padding-top:0.35rem;">
@@ -773,8 +1132,15 @@ def render_luxury_checkout_page(
 
   <script>
     (function() {{
-      var baseSubtotal = {raw_subtotal:.2f};
+      var primarySku = "{primary['sku']}";
+      var primaryCatalogBase = {primary_catalog_base:.2f};
+      var primaryQty = {primary_qty};
+      var otherItemsSubtotal = {other_items_subtotal:.2f};
+      var otherItemsCompare = {other_items_compare:.2f};
+      var activeFrame = "{primary_frame}";
+      var activeSize = "{primary_size}";
       var activePromo = "{promo_code}";
+
       var promoRules = {{
         "ATELIER15": {{ type: "percent", value: 0.15 }},
         "CURATOR15": {{ type: "percent", value: 0.15 }},
@@ -783,13 +1149,94 @@ def render_luxury_checkout_page(
         "TRADE20":   {{ type: "percent", value: 0.20 }}
       }};
 
+      var frameLabels = {{
+        "none": "Unframed 1.5\\" Stretched Gallery Wrap",
+        "black": "Architectural Matte Black Ash Frame",
+        "oak": "Kiln-Dried Museum White Oak Frame",
+        "walnut": "Solid American Walnut Float Frame",
+        "gold": "Brushed Champagne Gold Leaf Frame"
+      }};
+
+      var frameBorderColors = {{
+        "none": "#EBE4D5",
+        "black": "#181715",
+        "oak": "#C9A97E",
+        "walnut": "#4E3524",
+        "gold": "#C5A059"
+      }};
+
+      var sizeLabels = {{
+        "18x24": "18\\"×24\\" Collector Edition",
+        "24x36": "24\\"×36\\" Statement Scale",
+        "36x48": "36\\"×48\\" Grand Architectural"
+      }};
+
+      function computeUnitForSpec(sizeKey, frameKey) {{
+        var isStdSize = primaryCatalogBase >= 110.0;
+        var sDelta = 0.0;
+        if (sizeKey === "18x24") sDelta = isStdSize ? -30.0 : -15.0;
+        else if (sizeKey === "36x48") sDelta = isStdSize ? 80.0 : 45.0;
+
+        var isStdFrame = primaryCatalogBase >= 90.0;
+        var fDelta = 0.0;
+        if (frameKey === "none" || frameKey === "canvas") fDelta = isStdFrame ? -25.0 : -8.0;
+        else if (frameKey === "black") fDelta = isStdFrame ? -10.0 : -4.0;
+        else if (frameKey === "walnut") fDelta = isStdFrame ? 25.0 : 12.0;
+        else if (frameKey === "gold") fDelta = isStdFrame ? 38.0 : 18.0;
+
+        return Math.max(19.0, Math.round((primaryCatalogBase + sDelta + fDelta) * 100) / 100);
+      }}
+
       window.recalcCheckoutMath = function() {{
+        var unitPrice = computeUnitForSpec(activeSize, activeFrame);
+        var linePrice = Math.round(unitPrice * primaryQty * 100) / 100;
+        var lineCompare = Math.round(linePrice * 1.25 * 100) / 100;
+
+        // Update Left Column primary item price, compare-at, spec text, thumb border & size button labels
+        var linePriceEl = document.getElementById("checkout-primary-line-price");
+        if (linePriceEl) linePriceEl.textContent = "$" + linePrice.toFixed(2);
+        var lineCompEl = document.getElementById("checkout-primary-compare-price");
+        if (lineCompEl) lineCompEl.textContent = "$" + lineCompare.toFixed(2);
+        var specLineEl = document.getElementById("checkout-primary-spec-line");
+        if (specLineEl) {{
+          var sLbl = sizeLabels[activeSize] || activeSize.toUpperCase();
+          var fLbl = frameLabels[activeFrame] || activeFrame;
+          specLineEl.innerHTML = "Proportion: <strong>" + sLbl + "</strong> • Finish: <strong>" + fLbl + "</strong> • Qty: <strong>" + primaryQty + "</strong>";
+        }}
+        var thumbEl = document.getElementById("checkout-primary-thumb");
+        if (thumbEl && frameBorderColors[activeFrame]) {{
+          thumbEl.style.borderColor = frameBorderColors[activeFrame];
+        }}
+        var pillEl = document.getElementById("live-spec-price-pill");
+        if (pillEl) {{
+          pillEl.textContent = "Selected Edition Price: $" + unitPrice.toFixed(2) + " USD";
+        }}
+
+        // Update the 3 size button labels to show exact dollar price for the active frame
+        var btn18 = document.getElementById("size-btn-18x24");
+        var btn24 = document.getElementById("size-btn-24x36");
+        var btn36 = document.getElementById("size-btn-36x48");
+        if (btn18) btn18.textContent = '18"×24" Collector ($' + computeUnitForSpec("18x24", activeFrame).toFixed(0) + ')';
+        if (btn24) btn24.textContent = '24"×36" Statement ★ ($' + computeUnitForSpec("24x36", activeFrame).toFixed(0) + ')';
+        if (btn36) btn36.textContent = '36"×48" Grand Architectural ($' + computeUnitForSpec("36x48", activeFrame).toFixed(0) + ')';
+
+        // Rewrite hidden form fields so server submission matches 100%
+        document.getElementById("form-size").value = activeSize;
+        document.getElementById("form-frame").value = activeFrame;
+        var tokenInput = document.getElementById("form-items-token");
+        if (tokenInput && tokenInput.value) {{
+          var parts = tokenInput.value.split(",");
+          parts[0] = primarySku + ":" + primaryQty + ":" + activeFrame + ":" + activeSize;
+          tokenInput.value = parts.join(",");
+        }}
+
         var wBump = document.getElementById("bump-walnut-frame") && document.getElementById("bump-walnut-frame").checked ? 35.0 : 0.0;
         var dBump = document.getElementById("bump-deskmat") && document.getElementById("bump-deskmat").checked ? 34.0 : 0.0;
         document.getElementById("form-bump-walnut").value = wBump > 0 ? "1" : "0";
         document.getElementById("form-bump-deskmat").value = dBump > 0 ? "1" : "0";
 
-        var sub = baseSubtotal + wBump + dBump;
+        var sub = linePrice + otherItemsSubtotal + wBump + dBump;
+        var compTotal = lineCompare + otherItemsCompare + (wBump > 0 ? 65.0 : 0.0) + (dBump > 0 ? 49.0 : 0.0);
         var disc = 0.0;
         var rule = promoRules[activePromo];
         if (rule) {{
@@ -800,6 +1247,8 @@ def render_luxury_checkout_page(
         var ship = net >= 120 ? 0.0 : 6.99;
         var tot = net + ship;
 
+        var compTotalEl = document.getElementById("summary-compare-total");
+        if (compTotalEl) compTotalEl.textContent = "$" + compTotal.toFixed(2) + " USD";
         document.getElementById("summary-raw-subtotal").textContent = "$" + sub.toFixed(2) + " USD";
         var dRow = document.getElementById("summary-discount-row");
         if (disc > 0) {{
@@ -812,6 +1261,10 @@ def render_luxury_checkout_page(
         document.getElementById("summary-shipping").textContent = ship === 0 ? "FREE ($24 Value)" : ("$" + ship.toFixed(2));
         document.getElementById("summary-final-total").textContent = "$" + tot.toFixed(2) + " USD";
         document.getElementById("summary-bnpl").innerHTML = "Or 4 interest-free collector installments of <strong>$" + (tot / 4).toFixed(2) + "</strong> with Klarna / Affirm";
+        var submitBtn = document.getElementById("checkout-submit-btn");
+        if (submitBtn) {{
+          submitBtn.innerHTML = "Proceed to Secure Stripe Checkout ($" + tot.toFixed(2) + ") →";
+        }}
       }};
 
       window.setCheckoutPromo = function(code) {{
@@ -824,24 +1277,31 @@ def render_luxury_checkout_page(
       }};
 
       window.updateCheckoutSpec = function(field, val, btnEl) {{
-        if (field === "frame") document.getElementById("form-frame").value = val;
-        if (field === "size") {{
-          document.getElementById("form-size").value = val;
-          if ("{primary['sku']}" === "PD-CANVAS-24X36") {{
-            baseSubtotal = val === "18x24" ? 119.0 : (val === "36x48" ? 229.0 : 149.0);
-          }}
-        }}
+        if (field === "frame") activeFrame = val;
+        if (field === "size") activeSize = val;
         if (btnEl && btnEl.parentElement) {{
           Array.from(btnEl.parentElement.children).forEach(function(b) {{ b.classList.remove("is-active"); }});
           btnEl.classList.add("is-active");
         }}
+        try {{
+          var u = new URL(window.location.href);
+          u.searchParams.set("frame", activeFrame);
+          u.searchParams.set("size", activeSize);
+          if (activePromo) u.searchParams.set("promo", activePromo);
+          window.history.replaceState({{}}, "", u.toString());
+        }} catch (e) {{}}
         window.recalcCheckoutMath();
       }};
 
       window.submitExpressWallet = function(walletType) {{
         document.getElementById("form-payment-method").value = walletType;
         var form = document.getElementById("luxury-checkout-form");
-        if (form) form.submit();
+        if (form) {{
+          form.querySelectorAll("[required]").forEach(function(el) {{
+            el.removeAttribute("required");
+          }});
+          form.submit();
+        }}
       }};
     }})();
   </script>
@@ -1198,12 +1658,12 @@ async def _process_claim_submission(
             parsed_qs = urllib.parse.parse_qs(raw_body.decode("utf-8"))
             data = {k: v[0] for k, v in parsed_qs.items() if v}
 
-    email = str(data.get("email") or "collector@printdeck.net").strip()
-    recipient_name = str(data.get("recipient_name") or "Verified Collector").strip()
-    line1 = str(data.get("line1") or "450 Broadway").strip()
-    city = str(data.get("city") or "New York").strip()
-    state = str(data.get("state") or "NY").strip()
-    postal_code = str(data.get("postal_code") or "10013").strip()
+    email = str(data.get("email") or "").strip()
+    recipient_name = str(data.get("recipient_name") or "").strip()
+    line1 = str(data.get("line1") or "").strip()
+    city = str(data.get("city") or "").strip()
+    state = str(data.get("state") or "").strip()
+    postal_code = str(data.get("postal_code") or "").strip()
     promo_code = str(data.get("promo_code") or "").strip().upper()
     payment_method = str(data.get("payment_method") or "card").strip().lower()
     if payment_method not in ("card", "apple_pay", "google_pay", "link"):
@@ -1253,13 +1713,16 @@ async def _process_claim_submission(
         desk_bump["qty"] = 1
         resolved_items.append(desk_bump)
 
-    if "@" not in email or len(email) < 5:
+    if email and ("@" not in email or len(email) < 5):
         html_err = render_luxury_checkout_page(
             items=resolved_items,
             active_promo=promo_code,
             validation_error="Please enter a valid email address so we can issue your Certificate of Provenance.",
         )
         return HTMLResponse(content=html_err, status_code=200)
+
+    db_email = email if email else "pending-stripe-checkout@printdeck.net"
+    db_name = recipient_name if recipient_name else "Collector"
 
     subtotal_cents = sum(int(round(float(it["price_usd"]) * 100)) * int(it.get("qty", 1)) for it in resolved_items)
     promo_rule = PROMO_CODES.get(promo_code)
@@ -1272,24 +1735,50 @@ async def _process_claim_submission(
 
     net_cents = max(0, subtotal_cents - discount_cents)
     shipping_cents = 0 if net_cents >= 12000 else 699
-    tax_cents = int(round(net_cents * 0.0725))
-    total_cents = net_cents + shipping_cents + tax_cents
+    tax_cents = 0
+    total_cents = net_cents + shipping_cents
 
     db = get_db()
     order_id = f"ord_{uuid.uuid4().hex[:12]}"
     order_number = f"PD-{int(time.time()) % 1000000:06d}-{uuid.uuid4().hex[:4].upper()}"
     unsubscribe_token = secrets.token_urlsafe(24)
-    stripe_session_id = f"cs_live_{uuid.uuid4().hex[:24]}"
-    stripe_pi_id = f"pi_{uuid.uuid4().hex[:24]}"
     paygate_tx_id = f"pg_tx_{uuid.uuid4().hex[:16]}"
+    cancel_slug = str(resolved_items[0].get("slug") or "monolith-no-4-stretched-gallery-canvas-24x36")
+
+    stripe_session = await create_live_stripe_checkout_session(
+        order_id=order_id,
+        order_number=order_number,
+        customer_email=email,
+        resolved_items=resolved_items,
+        subtotal_cents=subtotal_cents,
+        discount_cents=discount_cents,
+        shipping_cents=shipping_cents,
+        promo_code=promo_code,
+        payment_method=payment_method,
+        cancel_slug=cancel_slug,
+    )
+    if not stripe_session or not stripe_session.get("url") or not stripe_session.get("id"):
+        html_err = render_luxury_checkout_page(
+            items=resolved_items,
+            active_promo=promo_code,
+            validation_error="We could not connect to Stripe to initialize your live payment session. Please try again in a moment.",
+        )
+        return HTMLResponse(content=html_err, status_code=502)
+
+    stripe_session_id = str(stripe_session["id"])
+    stripe_checkout_url = str(stripe_session["url"])
+    stripe_pi_id = str(stripe_session.get("payment_intent") or f"pi_pending_{order_id}")
 
     resolved_db_ids: List[Tuple[Dict[str, Any], str, str]] = []
     for it in resolved_items:
         p_id, v_id = ensure_offer_in_sqlite(db, it)
         resolved_db_ids.append((it, p_id, v_id))
 
-    now_utc = dt.datetime.now(dt.timezone.utc)
-    grace_expires = (now_utc + dt.timedelta(minutes=120)).isoformat()
+    meta_json = json.dumps({
+        "stripe_checkout_url": stripe_checkout_url,
+        "preferred_wallet": payment_method,
+        "promo_code": promo_code,
+    })
 
     with db.connect() as conn:
         conn.execute(
@@ -1303,24 +1792,24 @@ async def _process_claim_submission(
                 status, subtotal_cents, shipping_cents, discount_cents, tax_cents, total_cents,
                 selected_provider, arbitrage_decision_json,
                 estimated_fulfillment_cost_cents, estimated_net_margin_cents,
-                grace_hold_expires_at, marketing_opt_out, unsubscribe_token
+                grace_hold_expires_at, marketing_opt_out, unsubscribe_token, metadata_json
             ) VALUES (
                 ?, ?, ?, ?, '',
                 ?, '', ?,
                 ?, ?, 'US',
                 'stripe', ?,
                 ?, ?, ?,
-                'PAID_GRACE_HOLD', ?, ?, ?, ?, ?,
+                'PENDING_PAYMENT', ?, ?, ?, ?, ?,
                 'printify', '{}',
                 ?, ?,
-                ?, 0, ?
+                NULL, 0, ?, ?
             )
             """,
             (
                 order_id,
                 order_number,
-                email,
-                recipient_name,
+                db_email,
+                db_name,
                 line1,
                 city,
                 state,
@@ -1336,12 +1825,11 @@ async def _process_claim_submission(
                 total_cents,
                 int(round(total_cents * 0.38)),
                 int(round(total_cents * 0.62)),
-                grace_expires,
                 unsubscribe_token,
+                meta_json,
             ),
         )
 
-        inserted_items: List[Dict[str, Any]] = []
         for it, p_id, v_id in resolved_db_ids:
             q = int(it.get("qty", 1))
             u_cents = int(round(float(it["price_usd"]) * 100))
@@ -1371,15 +1859,90 @@ async def _process_claim_submission(
                     json.dumps({"size": it.get("size", "24x36"), "frame": it.get("frame", "oak")}),
                 ),
             )
-            inserted_items.append({"title": it["title"], "quantity": q, "line_total_cents": l_cents})
 
-        order_row = dict(conn.execute("SELECT * FROM orders WHERE order_id = ?", (order_id,)).fetchone())
+    return RedirectResponse(url=stripe_checkout_url, status_code=303)
 
-    return HTMLResponse(content=render_order_confirmation_page(order_row, inserted_items), status_code=200)
+
+async def _resolve_or_redirect_unpaid_order(
+    db: DatabaseManager,
+    row_d: Dict[str, Any],
+    items: List[Dict[str, Any]],
+    override_session_id: Optional[str] = None,
+) -> Response:
+    """
+    Verifies whether an order has actually been paid on Stripe.
+    - If paid: transitions order from PENDING_PAYMENT -> PAID_GRACE_HOLD and renders confirmation page.
+    - If unpaid: redirects (303) the customer to the live Stripe Hosted Checkout URL to complete payment.
+    """
+    check_sid = str(override_session_id or row_d.get("stripe_checkout_session_id") or "").strip()
+    is_paid, stripe_data = await verify_stripe_session_paid(check_sid)
+    if is_paid and stripe_data:
+        updated_order = activate_paid_grace_hold_from_stripe(db, str(row_d["order_id"]), stripe_data)
+        return HTMLResponse(content=render_order_confirmation_page(updated_order, items), status_code=200)
+
+    # Not paid yet: redirect to open Stripe Checkout URL if available
+    if stripe_data and stripe_data.get("url") and stripe_data.get("status") == "open":
+        return RedirectResponse(url=str(stripe_data["url"]), status_code=303)
+
+    try:
+        meta = json.loads(str(row_d.get("metadata_json") or "{}"))
+        if isinstance(meta, dict) and meta.get("stripe_checkout_url") and len(check_sid) >= 40:
+            return RedirectResponse(url=str(meta["stripe_checkout_url"]), status_code=303)
+    except Exception:
+        pass
+
+    # If the order had no live Stripe Checkout URL yet (e.g., created via API or chat), create one now
+    reconstructed_items: List[Dict[str, Any]] = []
+    for db_it in items:
+        it_resolved, _ = resolve_single_offer(
+            sku=str(db_it.get("master_sku") or db_it.get("variant_sku") or "PD-CANVAS-24X36"),
+            qty=max(1, int(db_it.get("quantity") or 1)),
+        )
+        it_resolved["price_usd"] = int(db_it.get("unit_price_cents") or 14900) / 100.0
+        reconstructed_items.append(it_resolved)
+    if not reconstructed_items:
+        it_default, _ = resolve_single_offer("PD-CANVAS-24X36")
+        reconstructed_items.append(it_default)
+
+    fresh_session = await create_live_stripe_checkout_session(
+        order_id=str(row_d["order_id"]),
+        order_number=str(row_d["order_number"]),
+        customer_email=str(row_d.get("customer_email") or ""),
+        resolved_items=reconstructed_items,
+        subtotal_cents=int(row_d.get("subtotal_cents") or 14900),
+        discount_cents=int(row_d.get("discount_cents") or 0),
+        shipping_cents=int(row_d.get("shipping_cents") or 0),
+    )
+    if fresh_session and fresh_session.get("url") and fresh_session.get("id"):
+        new_sid = str(fresh_session["id"])
+        new_url = str(fresh_session["url"])
+        with db.connect() as conn:
+            conn.execute(
+                """
+                UPDATE orders
+                SET stripe_checkout_session_id = ?,
+                    status = 'PENDING_PAYMENT',
+                    grace_hold_expires_at = NULL,
+                    metadata_json = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE order_id = ?
+                """,
+                (
+                    new_sid,
+                    json.dumps({"stripe_checkout_url": new_url}),
+                    str(row_d["order_id"]),
+                ),
+            )
+        return RedirectResponse(url=new_url, status_code=303)
+
+    return RedirectResponse(url="/pay/monolith-no-4-stretched-gallery-canvas-24x36", status_code=303)
 
 
 @checkout_recovery_router.get("/pay/confirmation/{order_id}", response_class=HTMLResponse)
-async def get_order_confirmation(order_id: str) -> HTMLResponse:
+async def get_order_confirmation(
+    order_id: str,
+    session_id: Optional[str] = Query(default=None),
+) -> Response:
     db = get_db()
     with db.connect() as conn:
         row = conn.execute(
@@ -1388,14 +1951,20 @@ async def get_order_confirmation(order_id: str) -> HTMLResponse:
         ).fetchone()
         if not row:
             return HTMLResponse(content=render_luxury_error_recovery_page(f"/pay/confirmation/{order_id}", 200), status_code=200)
-        items = [dict(r) for r in conn.execute("SELECT * FROM order_items WHERE order_id = ?", (row["order_id"],)).fetchall()]
-    return HTMLResponse(content=render_order_confirmation_page(dict(row), items), status_code=200)
+        row_d = dict(row)
+        items = [dict(r) for r in conn.execute("SELECT * FROM order_items WHERE order_id = ?", (row_d["order_id"],)).fetchall()]
+
+    stored_sid = str(row_d.get("stripe_checkout_session_id") or "")
+    if row_d.get("status") == "PENDING_PAYMENT" or session_id or len(stored_sid) < 40:
+        return await _resolve_or_redirect_unpaid_order(db, row_d, items, override_session_id=session_id)
+
+    return HTMLResponse(content=render_order_confirmation_page(row_d, items), status_code=200)
 
 
 @checkout_recovery_router.get("/pay/session/{session_id}", response_class=HTMLResponse)
 @checkout_recovery_router.get("/pay/express/{session_id}", response_class=HTMLResponse)
 @checkout_recovery_router.get("/pay/chat-checkout/{session_id}", response_class=HTMLResponse)
-async def get_session_or_express_checkout(session_id: str, promo: Optional[str] = Query(default="ATELIER15")) -> HTMLResponse:
+async def get_session_or_express_checkout(session_id: str, promo: Optional[str] = Query(default="ATELIER15")) -> Response:
     db = get_db()
     with db.connect() as conn:
         row = conn.execute(
@@ -1403,8 +1972,12 @@ async def get_session_or_express_checkout(session_id: str, promo: Optional[str] 
             (session_id, session_id),
         ).fetchone()
         if row:
-            items = [dict(r) for r in conn.execute("SELECT * FROM order_items WHERE order_id = ?", (row["order_id"],)).fetchall()]
-            return HTMLResponse(content=render_order_confirmation_page(dict(row), items), status_code=200)
+            row_d = dict(row)
+            items = [dict(r) for r in conn.execute("SELECT * FROM order_items WHERE order_id = ?", (row_d["order_id"],)).fetchall()]
+            stored_sid = str(row_d.get("stripe_checkout_session_id") or "")
+            if row_d.get("status") == "PENDING_PAYMENT" or len(stored_sid) < 40:
+                return await _resolve_or_redirect_unpaid_order(db, row_d, items, override_session_id=session_id if session_id.startswith("cs_") else None)
+            return HTMLResponse(content=render_order_confirmation_page(row_d, items), status_code=200)
 
     item, _ = resolve_single_offer("PD-CANVAS-24X36")
     return HTMLResponse(content=render_luxury_checkout_page([item], active_promo=promo), status_code=200)

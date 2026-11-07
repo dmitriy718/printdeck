@@ -25,7 +25,7 @@ from ssot_engine import SSOTEngine
 DIST_DIR = Path(__file__).resolve().parent / "dist"
 STOREFRONT_PUBLIC_DIR = PROJECT_ROOT / "storefront" / "public"
 CSS_SRC = Path(__file__).resolve().parent / "src" / "styles" / "atelier-foundry.css"
-ASSET_VERSION = "20261107lux"
+ASSET_VERSION = "20261107lux2"
 
 CRITICAL_HEAD_STYLE = """
   <style>
@@ -447,7 +447,27 @@ def build_static_bundle() -> None:
     activeArt: "/images/art-monolith-bauhaus.webp",
     activeArtTitle: "Monolith No. 4 — Bauhaus Impasto Gallery Canvas",
     activeArtSlug: "monolith-no-4-stretched-gallery-canvas-24x36",
+    activeArtBasePrice: 149.00,
     quizState: { space: "living", mood: "warm_minimal", span: "24x36", molding: "oak" },
+
+    computeActiveVisualizerPrice: function (sizeKey, frameKey, baseOverride) {
+      var base = Number(baseOverride || this.activeArtBasePrice || 149.00);
+      var sKey = String(sizeKey || this.activeSize || "24x36").toLowerCase();
+      var fKey = String(frameKey || this.activeFrame || "oak").toLowerCase();
+      var isStdSize = base >= 110.0;
+      var sDelta = 0.0;
+      if (sKey === "18x24") sDelta = isStdSize ? -30.0 : -15.0;
+      else if (sKey === "36x48") sDelta = isStdSize ? 80.0 : 45.0;
+
+      var isStdFrame = base >= 90.0;
+      var fDelta = 0.0;
+      if (fKey === "none" || fKey === "canvas" || fKey === "unframed") fDelta = isStdFrame ? -25.0 : -8.0;
+      else if (fKey === "black") fDelta = isStdFrame ? -10.0 : -4.0;
+      else if (fKey === "walnut") fDelta = isStdFrame ? 25.0 : 12.0;
+      else if (fKey === "gold") fDelta = isStdFrame ? 38.0 : 18.0;
+
+      return Math.max(19.0, Math.round((base + sDelta + fDelta) * 100) / 100);
+    },
 
     init: function () {
       this.loadCartState();
@@ -560,11 +580,23 @@ def build_static_bundle() -> None:
 
     syncVisualizerCheckoutLink: function () {
       var expressBtn = document.getElementById("visualizer-express-checkout-link");
-      var sCfg = SIZE_PRICES[this.activeSize] || SIZE_PRICES["24x36"];
+      var livePrice = this.computeActiveVisualizerPrice(this.activeSize, this.activeFrame);
+      var priceEl = document.getElementById("visualizer-live-price");
+      if (priceEl) {
+        priceEl.textContent = "$" + livePrice.toFixed(2);
+      }
       var bnplEl = document.getElementById("visualizer-bnpl-copy");
       if (bnplEl) {
-        bnplEl.textContent = "Or 4 interest-free installments of $" + (sCfg.price / 4).toFixed(2);
+        bnplEl.textContent = "Or 4 interest-free installments of $" + (livePrice / 4).toFixed(2);
       }
+      var self = this;
+      document.querySelectorAll("[data-size-btn]").forEach(function (btn) {
+        var sk = btn.getAttribute("data-size-btn");
+        var sp = self.computeActiveVisualizerPrice(sk, self.activeFrame);
+        if (sk === "18x24") btn.textContent = '18" × 24" ($' + sp.toFixed(0) + ')';
+        else if (sk === "24x36") btn.textContent = '24" × 36" ★ Most Popular ($' + sp.toFixed(0) + ')';
+        else if (sk === "36x48") btn.textContent = '36" × 48" Grand ($' + sp.toFixed(0) + ')';
+      });
       if (expressBtn && this.activeArtSlug) {
         var q = "?size=" + encodeURIComponent(this.activeSize) + "&frame=" + encodeURIComponent(this.activeFrame);
         if (this.activePromo) q += "&promo=" + encodeURIComponent(this.activePromo);
@@ -616,9 +648,6 @@ def build_static_bundle() -> None:
       this.activeSize = sizeKey;
       var mount = document.getElementById("visualizer-art-mount");
       if (mount) mount.setAttribute("data-size", sizeKey);
-      var sCfg = SIZE_PRICES[sizeKey] || SIZE_PRICES["24x36"];
-      var priceEl = document.getElementById("visualizer-live-price");
-      if (priceEl) priceEl.textContent = "$" + sCfg.price.toFixed(2);
       document.querySelectorAll("[data-size-btn]").forEach(function (btn) {
         btn.classList.toggle("is-active", btn.getAttribute("data-size-btn") === sizeKey);
       });
@@ -630,12 +659,11 @@ def build_static_bundle() -> None:
       this.activeArt = imgSrc;
       if (title) this.activeArtTitle = title;
       if (slug) this.activeArtSlug = slug;
+      if (price) this.activeArtBasePrice = Number(price);
       var artImg = document.getElementById("visualizer-art-photo");
       var titleEl = document.getElementById("visualizer-active-title");
-      var priceEl = document.getElementById("visualizer-live-price");
       if (artImg) artImg.src = imgSrc;
       if (titleEl && title) titleEl.textContent = title;
-      if (priceEl && price) priceEl.textContent = "$" + Number(price).toFixed(2);
       this.syncVisualizerCheckoutLink();
       document.querySelectorAll("[data-art-thumb]").forEach(function (btn) {
         btn.classList.toggle("is-active", btn.getAttribute("data-art-thumb") === imgSrc);
@@ -660,6 +688,17 @@ def build_static_bundle() -> None:
         if (lbl && finishLabel) lbl.textContent = finishLabel;
       }
       if (card && finishLabel) {
+        var priceSpan = card.querySelector(".product-card__price");
+        if (priceSpan && frameKey) {
+          var baseCardPrice = Number(priceSpan.getAttribute("data-base-price") || priceSpan.textContent.replace(/[^0-9.]/g, ""));
+          if (!priceSpan.getAttribute("data-base-price") && baseCardPrice > 0) {
+            priceSpan.setAttribute("data-base-price", String(baseCardPrice));
+          }
+          if (baseCardPrice > 0) {
+            var newCardPrice = this.computeActiveVisualizerPrice("24x36", frameKey, baseCardPrice);
+            priceSpan.textContent = "$" + newCardPrice.toFixed(2);
+          }
+        }
         var buyLink = card.querySelector(".btn-card-buy");
         if (buyLink) {
           var baseHref = buyLink.getAttribute("data-base-href") || buyLink.getAttribute("href").split("?")[0];
@@ -761,16 +800,17 @@ def build_static_bundle() -> None:
     },
 
     addVisualizerSelectionToCart: function () {
-      var sCfg = SIZE_PRICES[this.activeSize] || SIZE_PRICES["24x36"];
+      var livePrice = this.computeActiveVisualizerPrice(this.activeSize, this.activeFrame);
       var frameNames = {
         oak: "Museum Oak Frame",
         walnut: "American Walnut Float",
         gold: "Champagne Gold Leaf Frame",
         black: "Matte Black Frame",
+        none: "Unframed Gallery Wrap",
         canvas: "Gallery Stretched Canvas"
       };
       var fullTitle = this.activeArtTitle + " (" + this.activeSize.replace("x", '"×') + '", ' + (frameNames[this.activeFrame] || "Museum Oak") + ")";
-      this.addToCart("PD-CUSTOM-" + this.activeSize.toUpperCase(), fullTitle, sCfg.price, this.activeArt, this.activeArtSlug, this.activeFrame, this.activeSize);
+      this.addToCart("PD-CUSTOM-" + this.activeSize.toUpperCase(), fullTitle, livePrice, this.activeArt, this.activeArtSlug, this.activeFrame, this.activeSize);
     },
 
     removeFromCart: function (index) {
@@ -1375,19 +1415,19 @@ def build_static_bundle() -> None:
             <span class="control-label">2. Frame Molding &amp; Proportion</span>
             <div class="pill-group">
               <button type="button" class="swatch-pill is-active" data-frame-btn="oak" onclick="window.PrintDeckRuntime.setFrameMolding('oak')">
-                <span class="swatch-dot" style="background:#B68D58;"></span> Museum Oak
+                <span class="swatch-dot" style="background:#B68D58;"></span> Museum Oak (Included)
               </button>
               <button type="button" class="swatch-pill" data-frame-btn="walnut" onclick="window.PrintDeckRuntime.setFrameMolding('walnut')">
-                <span class="swatch-dot" style="background:#3C2415;"></span> Walnut Float
+                <span class="swatch-dot" style="background:#3C2415;"></span> Walnut Float (+$25)
               </button>
               <button type="button" class="swatch-pill" data-frame-btn="gold" onclick="window.PrintDeckRuntime.setFrameMolding('gold')">
-                <span class="swatch-dot" style="background:#C5A059;"></span> Champagne Gold
+                <span class="swatch-dot" style="background:#C5A059;"></span> Champagne Gold (+$38)
               </button>
               <button type="button" class="swatch-pill" data-frame-btn="black" onclick="window.PrintDeckRuntime.setFrameMolding('black')">
-                <span class="swatch-dot" style="background:#171717;"></span> Matte Black
+                <span class="swatch-dot" style="background:#171717;"></span> Matte Black (-$10)
               </button>
               <button type="button" class="swatch-pill" data-frame-btn="canvas" onclick="window.PrintDeckRuntime.setFrameMolding('canvas')">
-                <span class="swatch-dot" style="background:#EAE3D2;"></span> Gallery Wrap
+                <span class="swatch-dot" style="background:#EAE3D2;"></span> Gallery Wrap (-$25)
               </button>
             </div>
             <div class="pill-group">
