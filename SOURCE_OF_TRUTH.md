@@ -1,1 +1,1 @@
-/home/dima/Projects/printdeck/.ssot/SOURCE_OF_TRUTH.md
+.ssot/SOURCE_OF_TRUTH.md
