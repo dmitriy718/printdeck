@@ -1,0 +1,36 @@
+{
+  "workflow_name": "PrintDeck Autonomous Flux.1-Dev + Real-ESRGAN 300-DPI Pipeline",
+  "target_nodes": [
+    "omnibook-spark (192.168.0.152:8188)",
+    "aidev (100.103.12.38)"
+  ],
+  "gpu_lease_endpoint": "http://192.168.0.148:8077/lease",
+  "nodes": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "flux1-dev.safetensors"
+      }
+    },
+    "2": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "text": "{{PROMPT}}"
+      }
+    },
+    "3": {
+      "class_type": "KSampler",
+      "inputs": {
+        "steps": 28,
+        "cfg": 3.5,
+        "sampler_name": "euler"
+      }
+    },
+    "4": {
+      "class_type": "ImageUpscaleWithModel",
+      "inputs": {
+        "model_name": "RealESRGAN_x4plus.pth"
+      }
+    }
+  }
+}

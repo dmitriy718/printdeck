@@ -1,0 +1,11 @@
+[Unit]
+Description=Run PrintDeck 120-Minute Grace Queue Sweeper every 60 seconds
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=60s
+AccuracySec=5s
+Unit=printdeck-grace-sweeper.service
+
+[Install]
+WantedBy=timers.target

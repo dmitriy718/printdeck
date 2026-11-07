@@ -1,0 +1,129 @@
+# ==============================================================================
+# PrintDeck (printdeck.net) — Phase 3 Production Edge Caddyfile for `novahorizon`
+# Host: novahorizon (100.66.219.67) | Web Root: /var/www/printdeck
+# Coexists with para-paygate.service (:8790), para-intake.service (:8787),
+# and PrintDeck Phase 2/3 FastAPI Arbitrage & GEO Engine (:8795).
+# ==============================================================================
+
+printdeck.net, www.printdeck.net {
+    # Redirect www -> apex canonical domain
+    @www host www.printdeck.net
+    redir @www https://printdeck.net{uri} permanent
+
+    root * /var/www/printdeck
+
+    # 1. Zstd / Brotli / Gzip Edge Compression for Sub-1.2s LCP
+    encode zstd br gzip
+
+    # 2. Core Web Vitals & Security Headers (Zero CLS, Strict HSTS, Early Hints)
+    header {
+        Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Link "</assets/atelier-foundry.css>; rel=preload; as=style"
+        -Server
+    }
+
+    # Immutable 1-Year Cache for fingerprinted static assets & AVIF/WebP responsive renders
+    @immutable_assets {
+        path /_next/static/* /assets/* *.avif *.webp *.woff2
+    }
+    header @immutable_assets Cache-Control "public, max-age=31536000, immutable"
+
+    # Fresh AI Crawler & Sitemap Cache Headers (GEO / Search Indexing)
+    @geo_endpoints {
+        path /llms.txt /llms-full.txt /sitemap*.xml
+    }
+    header @geo_endpoints Cache-Control "public, max-age=300, stale-while-revalidate=3600"
+
+    # 3. Protected Legacy Hardware Coexistence Routes (DO NOT OVERWRITE)
+    # Preserves Bambu Lab 4.3" ESP32-P4 Touchscreen Controller, $19 Maker Pack,
+    # $50 Beta Hardware Deposit, and A1 CheckoutProber health checks.
+    handle /hardware* {
+        try_files {path} {path}/index.html /hardware/index.html
+        file_server
+    }
+
+    handle /simulator* {
+        try_files {path} {path}/index.html /simulator/index.html
+        file_server
+    }
+
+    # 4. Payment Gate & RFC 8058 Unsubscribe Coexistence (`para-paygate.service` :8790)
+    @legacy_paygate {
+        path /pay/printdeck-maker* /pay/printdeck-deposit* /pay/optout* /pay/unsubscribe* /pay/fulfillment* /pay/lead* /pay/ndr-webhook* /pay/webhook/* /paygate/* /orders/status*
+    }
+    handle @legacy_paygate {
+        reverse_proxy 127.0.0.1:8790 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # 4b. PrintDeck POD Luxury Acquisition Desk & Concierge Recovery (`/pay/*`, `/checkout*`, `/claim/*`)
+    @pod_checkout_and_recovery {
+        path /pay/* /checkout* /claim/* /products/* /collections/* /guides/*
+    }
+    handle @pod_checkout_and_recovery {
+        reverse_proxy 127.0.0.1:8040 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # 5. Customer Support & Order Hold Intake (`para-intake.service` :8787)
+    handle /intake/* {
+        reverse_proxy 127.0.0.1:8787 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # 5b. Phase 4 Executive Administration Portal (`/admin*`) — Authelia SSO + LLDAP
+    handle /admin* {
+        forward_auth 127.0.0.1:9091 {
+            uri /api/verify?rd=https://auth.printdeck.net/
+            copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+        }
+        reverse_proxy 127.0.0.1:8795
+    }
+
+    # 5c. Phase 4 Prometheus Metrics Exporter (`/metrics` for homeserv:9091 & Grafana :3000)
+    @internal_metrics {
+        path /metrics
+        remote_ip 127.0.0.0/8 192.168.0.0/16 100.64.0.0/10
+    }
+    handle @internal_metrics {
+        reverse_proxy 127.0.0.1:8795
+    }
+
+    # 6. Phase 2/3/4 FastAPI Backend, Arbitrage Router, 300-DPI Pre-Flight & Dynamic GEO Routes
+    @backend_routes {
+        path /api/v2/* /health /llms.txt /llms-full.txt /sitemap-index.xml /sitemap-products.xml /sitemap-collections.xml /sitemap-guides.xml
+    }
+    handle @backend_routes {
+        reverse_proxy 127.0.0.1:8795 {
+            header_up X-Forwarded-Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # 7. Storefront & Spatial Studio Static/SSR Hybrid Delivery (Strict File Existence Check)
+    # IMPORTANT: Never fall back unknown paths to /index.html (soft-200). Missing routes
+    # MUST return a true HTTP 404 status code for Portfolio Steward health verification.
+    handle {
+        try_files {path} {path}/index.html
+        file_server
+    }
+
+    # 8. Strict HTTP 404 Error Handler for Portfolio Steward
+    handle_errors {
+        @404 expression `{err.status_code} == 404`
+        handle @404 {
+            rewrite * /404.html
+            header Cache-Control "no-store"
+            file_server
+        }
+    }
+}

@@ -1,0 +1,6 @@
+{
+  "timestamp": "2026-11-07T20:20:47.429383+00:00",
+  "spf_dkim_dmarc": "PASS",
+  "port_25_rcpt_to_verified": 3,
+  "rfc_8058_one_click_unsubscribe_header": "https://printdeck.net/pay/optout"
+}

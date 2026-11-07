@@ -1,0 +1,25 @@
+{
+  "peft_type": "LORA",
+  "base_model_name_or_path": "Qwen/Qwen3-32B-Instruct",
+  "r": 32,
+  "lora_alpha": 64,
+  "lora_dropout": 0.05,
+  "target_modules": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "task_type": "CAUSAL_LM",
+  "trained_on_dialogues": 2520,
+  "category_counts": {
+    "consultative_selling": 700,
+    "custom_order_in_chat": 650,
+    "grace_window_and_order_support": 620,
+    "adversarial_prompt_injection_refusal": 550
+  },
+  "dry_run_export": true
+}

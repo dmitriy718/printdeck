@@ -1,0 +1,11 @@
+[Unit]
+Description=PrintDeck 5-Minute A9 Canary Order Purger Timer
+
+[Timer]
+OnBootSec=40s
+OnUnitActiveSec=5m
+Persistent=true
+Unit=printdeck-canary-purge.service
+
+[Install]
+WantedBy=timers.target

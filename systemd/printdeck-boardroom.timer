@@ -1,0 +1,11 @@
+[Unit]
+Description=PrintDeck 30-Minute Executive Board Room & Manager Standup Timer
+
+[Timer]
+OnBootSec=60s
+OnUnitActiveSec=30m
+Persistent=true
+Unit=printdeck-boardroom.service
+
+[Install]
+WantedBy=timers.target

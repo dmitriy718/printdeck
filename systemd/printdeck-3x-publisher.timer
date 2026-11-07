@@ -1,0 +1,11 @@
+[Unit]
+Description=PrintDeck 3x-Daily Omnichannel Publisher Timer (08:00, 14:00, 20:00 EST Daily)
+
+[Timer]
+OnBootSec=45s
+OnCalendar=*-*-* 08,14,20:00:00
+Persistent=true
+Unit=printdeck-3x-publisher.service
+
+[Install]
+WantedBy=timers.target

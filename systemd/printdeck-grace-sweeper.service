@@ -1,0 +1,10 @@
+[Unit]
+Description=PrintDeck 120-Minute Editable Grace Hold Queue Sweeper & POD Dispatcher
+After=network-online.target printdeck-backend.service
+
+[Service]
+Type=oneshot
+User=dima
+WorkingDirectory=/home/dima/Projects/printdeck
+EnvironmentFile=/home/dima/Projects/printdeck/.env.cluster
+ExecStart=/usr/bin/curl -fsS -X POST http://127.0.0.1:8795/api/v2/orders/sweep-expired-holds

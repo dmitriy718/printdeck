@@ -1,0 +1,23 @@
+{
+  "name": "printdeck-atelier-storefront",
+  "version": "3.0.0",
+  "private": true,
+  "description": "PrintDeck (printdeck.net) Phase 3 — Tactile Atelier & Precision Print Foundry Storefront with SpatialMockupStudio, Answered-Forge Micro-Tools, and GEO/JSON-LD Engine",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build && python3 build_static_dist.py",
+    "export:static": "python3 build_static_dist.py",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}

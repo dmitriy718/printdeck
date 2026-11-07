@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+"""
+printdeck-ctl — Operator & Agent CLI for the PrintDeck SSOT Punch-Clock & Issue Ledger.
+"""
+
+import argparse
+import json
+import sys
+from ssot_engine import SSOTEngine, ScopeLockedError
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="printdeck-ctl",
+        description="PrintDeck (printdeck.net) Single Source of Truth & Punch-Clock CLI",
+    )
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    # status
+    sub.add_parser("status", help="Show active locks, recent punches, and open issues")
+
+    # punch-in
+    p_in = sub.add_parser("punch-in", help="Punch an agent in and lock a site scope")
+    p_in.add_argument("--agent", required=True, help="Agent name, e.g. 'Jennifer'")
+    p_in.add_argument("--scope", required=True, help="Scope key, e.g. 'ui:footer'")
+    p_in.add_argument("--task", required=True, help="Task description")
+    p_in.add_argument("--ttl", type=int, default=900, help="Lock lease TTL in seconds")
+
+    # punch-out
+    p_out = sub.add_parser("punch-out", help="Punch an agent out and release scope lock")
+    p_out.add_argument("--agent", required=True, help="Agent name, e.g. 'Jennifer'")
+    p_out.add_argument("--scope", required=True, help="Scope key, e.g. 'ui:footer'")
+    p_out.add_argument("--summary", required=True, help="Work completed & any observations")
+    p_out.add_argument("--close-issue", default=None, help="Optional Issue ID to close (e.g. ISS-0001)")
+
+    # open-issue
+    p_iss = sub.add_parser("open-issue", help="Manually log a new issue in OPEN ISSUES")
+    p_iss.add_argument("--agent", required=True, help="Reporting agent or operator name")
+    p_iss.add_argument("--scope", required=True, help="Affected scope")
+    p_iss.add_argument("--why", required=True, help="How/why the issue was opened")
+    p_iss.add_argument("--severity", default="HIGH", choices=["LOW", "MEDIUM", "HIGH", "CRITICAL"])
+
+    # heal
+    sub.add_parser("heal", help="Sweep and revoke expired locks, logging critical issues")
+
+    args = parser.parse_args()
+    engine = SSOTEngine()
+
+    try:
+        if args.cmd == "status":
+            state = engine.get_state()
+            print(f"=== PRINTDECK SSOT STATUS (Updated: {state.get('last_updated')}) ===")
+            print(f"Active Locks ({len(state.get('active_locks', {}))}):")
+            for scope, info in state.get("active_locks", {}).items():
+                print(f"  [LOCKED] {scope} -> {info['raw_line']}")
+            print(f"\nOpen Issues ({len(state.get('open_issues', []))}):")
+            for iss in state.get("open_issues", []):
+                print(f"  [{iss['id']}] ({iss['severity']}) {iss['scope']} | {iss['opened_by']}: {iss['how_why_opened']}")
+            return 0
+
+        if args.cmd == "punch-in":
+            rec = engine.punch_in(args.agent, args.scope, args.task, ttl_seconds=args.ttl)
+            print(rec["raw_line"])
+            return 0
+
+        if args.cmd == "punch-out":
+            res = engine.punch_out(args.agent, args.scope, args.summary, close_issue_id=args.close_issue)
+            print(res["punch_out_line"])
+            if res.get("closed_issue"):
+                print(f"  -> Closed Issue: {res['closed_issue']['id']}")
+            if res.get("auto_opened_issue"):
+                ao = res["auto_opened_issue"]
+                print(f"  -> Auto-Opened Secondary Issue: [{ao['id']}] in scope '{ao['scope']}'")
+            return 0
+
+        if args.cmd == "open-issue":
+            iss = engine.open_issue(args.agent, args.scope, args.why, severity=args.severity)
+            print(f"Opened [{iss['id']}] ({iss['severity']}) on {iss['scope']}")
+            return 0
+
+        if args.cmd == "heal":
+            healed = engine.heal_expired_locks()
+            print(f"Healed {len(healed)} expired lock(s).")
+            return 0
+
+    except ScopeLockedError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

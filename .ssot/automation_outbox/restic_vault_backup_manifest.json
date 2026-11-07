@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-11-07T20:21:19.680793+00:00",
+  "vault_host": "geekom-gt1 (192.168.0.99)",
+  "backed_up_targets": [
+    "/home/dima/Projects/printdeck/.ssot/printdeck_phase2.sqlite",
+    "/home/dima/Projects/printdeck/.ssot/SOURCE_OF_TRUTH.md",
+    "/home/dima/Projects/printdeck/storefront/public/articles",
+    "/home/dima/Projects/printdeck/.ssot/portfolio_staging"
+  ],
+  "encryption": "AES-256-GCM / Restic 1.7TB Vault Verified"
+}

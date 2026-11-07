@@ -1,0 +1,11 @@
+[Unit]
+Description=Para Commander 10-Minute Autonomous Fleet Sync Timer
+
+[Timer]
+OnBootSec=25s
+OnUnitActiveSec=10m
+Persistent=true
+Unit=para-commander.service
+
+[Install]
+WantedBy=timers.target

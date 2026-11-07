@@ -1,0 +1,15 @@
+[Unit]
+Description=PrintDeck Phase 5 Autonomous Board Room, IT/Biz Managers & Herdr Control Tower Sync (para-commander hook)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=dima
+WorkingDirectory=/home/dima/Projects/printdeck
+Environment="PYTHONPATH=/home/dima/Projects/printdeck"
+Environment="PRINTDECK_LITELLM_BASE_URL=http://192.168.0.150:4000/v1"
+Environment="PRINTDECK_NATS_URL=nats://192.168.0.155:4222"
+ExecStart=/home/dima/Projects/printdeck/.venv/bin/python /home/dima/Projects/printdeck/herdr_commander_bridge.py
+StandardOutput=journal
+StandardError=journal

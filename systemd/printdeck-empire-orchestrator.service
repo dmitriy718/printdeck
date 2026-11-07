@@ -1,0 +1,15 @@
+[Unit]
+Description=PrintDeck 24/7 Autonomous 75-Automation Empire Orchestrator Daemon
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/dima/Projects/printdeck
+EnvironmentFile=-/home/dima/Projects/printdeck/.env.cluster
+EnvironmentFile=-/home/dima/Projects/printdeck/.env.automations
+ExecStart=/home/dima/Projects/printdeck/.venv/bin/python3 /home/dima/Projects/printdeck/autonomous_empire_daemon.py --daemon
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

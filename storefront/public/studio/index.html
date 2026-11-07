@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrintDeck Custom Print Studio (/studio) — Live 4-Room Visualizer &amp; Bespoke Framing</title>
+  <meta name="description" content="Museum-grade 300-DPI stretched canvas paintings, solid hardwood float frames, 280–450 GSM luxury custom streetwear, and live interactive room visualizer." />
+  <link rel="canonical" href="https://printdeck.net/" />
+  <link rel="stylesheet" href="/assets/atelier-foundry.css?v=20261107lux" />
+  
+  <style>
+    :root {
+      --bg-alabaster: #FAF8F5; --bg-soft-stone: #F3EFE6; --bg-warm-linen: #EBE4D5; --bg-white: #FFFFFF;
+      --ink-espresso: #141413; --ink-charcoal: #262421; --ink-graphite: #544F49; --ink-muted: #78716C;
+      --cta-terracotta: #C85A32; --cta-terracotta-bright: #DE683D; --cta-terracotta-hover: #AC4621;
+      --accent-gold: #C5A059; --accent-gold-bright: #DFBA73; --accent-sage: #236B3B;
+      --border-stone: #E2DBD0; --border-strong: #CEC3B2; --max-width: 1420px;
+      --font-display: "Instrument Serif", "Playfair Display", Georgia, serif;
+      --font-sans: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    html, body {
+      margin: 0; padding: 0; background-color: #FAF8F5; color: #141413;
+      font-family: var(--font-sans); -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; height: auto; display: block; }
+  </style>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Brand",
+      "@id": "https://printdeck.net/#brand",
+      "name": "PrintDeck",
+      "url": "https://printdeck.net",
+      "logo": "https://printdeck.net/assets/printdeck-atelier-mark.svg",
+      "slogan": "Tactile Atelier & 300-DPI Precision Print Foundry"
+    },
+    {
+      "@type": "MerchantReturnPolicy",
+      "@id": "https://printdeck.net/#return-policy",
+      "applicableCountry": "US",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 30,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/FreeReturn"
+    },
+    {
+      "@type": "OfferShippingDetails",
+      "@id": "https://printdeck.net/#shipping-details",
+      "shippingRate": {
+        "@type": "MonetaryAmount",
+        "value": "0.00",
+        "currency": "USD"
+      },
+      "shippingDestination": {
+        "@type": "DefinedRegion",
+        "addressCountry": "US"
+      },
+      "deliveryTime": {
+        "@type": "ShippingDeliveryTime",
+        "handlingTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 1,
+          "maxValue": 2,
+          "unitCode": "DAY"
+        },
+        "transitTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 2,
+          "maxValue": 4,
+          "unitCode": "DAY"
+        }
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://printdeck.net/products/museum-gallery-wrap-canvas-24x36#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "PrintDeck Atelier",
+          "item": "https://printdeck.net"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Canvas Painting",
+          "item": "https://printdeck.net/collections/canvas_painting"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "24\"\u00d736\" Museum Gallery-Wrap Fine Art Canvas Painting",
+          "item": "https://printdeck.net/products/museum-gallery-wrap-canvas-24x36"
+        }
+      ]
+    },
+    {
+      "@type": "Product",
+      "@id": "https://printdeck.net/products/museum-gallery-wrap-canvas-24x36#product",
+      "name": "24\"\u00d736\" Museum Gallery-Wrap Fine Art Canvas Painting",
+      "sku": "PD-CANVAS-24X36",
+      "mpn": "PD-CANVAS-24X36",
+      "description": "Archival poly-cotton artist canvas stretched over 1.5\" kiln-dried pine stretcher bars with mirrored gallery-wrap bleed.",
+      "url": "https://printdeck.net/products/museum-gallery-wrap-canvas-24x36",
+      "image": [
+        "https://printdeck.net/assets/renders/museum-gallery-wrap-canvas-24x36-room-loft.avif",
+        "https://printdeck.net/assets/renders/museum-gallery-wrap-canvas-24x36-detail-300dpi.webp"
+      ],
+      "brand": {
+        "@id": "https://printdeck.net/#brand"
+      },
+      "category": "canvas_painting",
+      "additionalProperty": [
+        {
+          "@type": "PropertyValue",
+          "name": "Print Resolution Standard",
+          "value": "300 DPI Native / Real-ESRGAN Upscaled"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Master Pixel Geometry",
+          "value": "7200x10800 px"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Color Profile",
+          "value": "sRGB IEC61966-2.1 Soft-Proofed"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Editable Post-Checkout Window",
+          "value": "120 Minutes (PAID_GRACE_HOLD)"
+        }
+      ],
+      "offers": {
+        "@type": "AggregateOffer",
+        "lowPrice": "149.00",
+        "highPrice": "149.00",
+        "priceCurrency": "USD",
+        "offerCount": 1,
+        "availability": "https://schema.org/InStock",
+        "offers": [
+          {
+            "@type": "Offer",
+            "sku": "PD-CANVAS-24X36-WRAP",
+            "name": "24\"\u00d736\" \u2014 1.5\" Gallery Wrap",
+            "price": "149.00",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition",
+            "url": "https://printdeck.net/products/museum-gallery-wrap-canvas-24x36?variant=PD-CANVAS-24X36-WRAP",
+            "hasMerchantReturnPolicy": {
+              "@id": "https://printdeck.net/#return-policy"
+            },
+            "shippingDetails": {
+              "@id": "https://printdeck.net/#shipping-details"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://printdeck.net/products/museum-gallery-wrap-canvas-24x36#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What resolution is 24\"\u00d736\" Museum Gallery-Wrap Fine Art Canvas Painting printed at?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Every 24\"\u00d736\" Museum Gallery-Wrap Fine Art Canvas Painting (PD-CANVAS-24X36) passes through PrintDeck's automated 300-DPI Pre-Flight Pipeline (7200\u00d710800 px) with sRGB soft-proofing and zero-halo alpha sanitization before fulfillment."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I change my size or shipping address after checkout?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. PrintDeck holds every paid order in a 120-minute editable grace queue (PAID_GRACE_HOLD) so you can update your shipping address, swap sizes, or add 1-click bundle items with zero sunk printing costs."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+  <!-- 1. High-Converting Customer Announcement Bar with Live Batch Countdown -->
+  <div class="announcement-bar" role="region" aria-label="Store Announcements">
+    <div class="announcement-bar__inner">
+      <div class="announcement-bar__promo">
+        <span class="announcement-bar__dot"></span>
+        <span><strong>Autumn Exhibition Allocation:</strong> Free Insured Express Shipping Over $120 • Next Framing &amp; Dispatch Batch Closes in <span class="urgency-countdown-pill" data-batch-countdown="1">03h : 41m : 19s</span></span>
+      </div>
+      <div class="announcement-bar__links">
+        <a href="#curated-catalog" style="color:#FFE5A3;font-weight:800;">Claim Edition Now →</a>
+        <a href="/studio">Custom Studio</a>
+        <a href="/articles/">Journal</a>
+        <a href="/sign-in.html#orders">Track Order</a>
+        <a href="/sign-in.html" id="announcement-signin-link">Sign In (Authentik SSO)</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Sticky Editorial Gallery Header -->
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="/" class="brand-logo" aria-label="PrintDeck Home">
+        <span class="brand-logo__name">PrintDeck</span>
+        <span class="brand-logo__tag">Tactile Atelier • Fine Art &amp; Custom Garment Studio</span>
+      </a>
+
+      <nav class="primary-nav" aria-label="Primary Collections">
+        <button type="button" class="nav-pill is-active" data-cat-btn="all" onclick="window.PrintDeckRuntime.filterCatalog('all')">All Editions (13)</button>
+        <button type="button" class="nav-pill" data-cat-btn="wall_art" onclick="window.PrintDeckRuntime.filterCatalog('wall_art')">Fine Art &amp; Framed Canvas</button>
+        <button type="button" class="nav-pill" data-cat-btn="apparel" onclick="window.PrintDeckRuntime.filterCatalog('apparel')">280–450 GSM Apparel</button>
+        <button type="button" class="nav-pill" data-cat-btn="memorabilia" onclick="window.PrintDeckRuntime.filterCatalog('memorabilia')">Studio Desk &amp; Goods</button>
+        <a href="/studio" class="nav-pill">Custom Print Studio</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="/studio" class="btn-authentik" style="border-color:var(--cta-terracotta);color:var(--cta-terracotta);font-weight:700;">
+          <span>✦ Frame Your Art</span>
+        </a>
+        <a href="/sign-in.html" class="btn-authentik" id="header-authentik-btn" title="Sign in with Authentik SSO">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Sign In</span>
+        </a>
+        <button type="button" class="btn-cart-trigger" onclick="window.PrintDeckRuntime.toggleCartDrawer()">
+          <span>Collector Bag</span>
+          <span class="cart-badge" id="header-cart-count">1</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="spatial-mockup-studio" data-testid="spatial-mockup-studio">
+    <!-- 3. Split Editorial Hero with Working Live Room Visualizer -->
+    <section class="hero-section" aria-label="Editorial Gallery Hero and Interactive Room Visualizer">
+      <div class="hero-editorial">
+        <div style="display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;">
+          <div class="rating-pill">
+            <span class="rating-stars">★★★★★</span>
+            <span>4.9★ Collector Rating • 4,200+ Collectors &amp; Architects</span>
+          </div>
+          <div class="live-collector-pulse">
+            <span class="live-collector-pulse__dot"></span>
+            <span>19 Collectors Viewing • Last Claimed 8m Ago (Tribeca, NY)</span>
+          </div>
+        </div>
+
+        <h1 class="hero-headline">
+          Art That <em>Anchors</em> the Room. Apparel Built to Last.
+        </h1>
+
+        <p class="hero-subheadline">
+          Step into our private exhibition. Preview 300-DPI archival pigment paintings framed in solid kiln-dried white oak, walnut float, and champagne gold leaf directly on your wall—or commission 280–450 GSM heavyweight garments milled for generational permanence.
+        </p>
+
+        <div class="hero-cta-row">
+          <a href="#curated-catalog" class="btn-primary">Explore Exhibition Best Sellers ↓</a>
+          <a href="/pay/monolith-no-4-stretched-gallery-canvas-24x36" class="btn-secondary" style="border-color:var(--cta-terracotta);color:var(--cta-terracotta);">
+            1-Click Claim #1 Canvas ($149) →
+          </a>
+          <label for="custom-art-upload" class="btn-secondary" style="cursor:pointer;">
+            <span>✦ Upload &amp; Frame Your Own Art</span>
+            <input id="custom-art-upload" type="file" accept="image/*" style="display:none;" onchange="window.PrintDeckRuntime.handleCustomUpload(this)" />
+          </label>
+        </div>
+
+        <div class="hero-conversion-banner">
+          <div>
+            <div style="font-size:0.83rem;font-weight:800;color:var(--ink-espresso);">
+              <span style="color:var(--cta-terracotta);">✦ LIMITED WEEKLY HARDWOOD ALLOCATION:</span> Only 7 Museum Oak &amp; Walnut Float Frames Left for Friday Express Dispatch
+            </div>
+            <div style="font-size:0.76rem;color:var(--ink-graphite);margin-top:0.18rem;">
+              Order before batch cutoff (<strong data-batch-countdown="1" style="color:var(--ink-espresso);">03h : 41m : 19s</strong>) for complimentary white-glove shipping, numbered certificate, &amp; 2-hour post-checkout edit protection.
+            </div>
+          </div>
+          <a href="#curated-catalog" class="btn-primary" style="padding:0.62rem 1.15rem;font-size:0.8rem;white-space:nowrap;">
+            Reserve Your Edition →
+          </a>
+        </div>
+
+        <div class="hero-trust-grid">
+          <div class="trust-item">
+            <span class="trust-item__title">✦ 100-Year Archival Inks</span>
+            <span class="trust-item__desc">300-DPI museum pigment on 410 GSM Belgian linen &amp; cotton rag.</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-item__title">✦ Solid Hardwood Frames</span>
+            <span class="trust-item__desc">Kiln-dried white oak, American walnut float, &amp; gold leaf moldings.</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-item__title">✦ 2-Hour Easy Order Edit</span>
+            <span class="trust-item__desc">Swap sizes, frames, or shipping details effortlessly after checkout.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Working Interactive Room Visualizer -->
+      <div class="visualizer-card">
+        <div class="visualizer-stage">
+          <div class="visualizer-badge-top" id="active-lighting-label">
+            Modern Loft • Warm Golden-Hour Daylight (4200K)
+          </div>
+
+          <img
+            id="visualizer-room-photo"
+            class="visualizer-room-img"
+            src="/images/room-modern-loft.webp"
+            alt="Sunlit Modern Loft Interior with Framed Archival Print"
+            width="1024"
+            height="768"
+          />
+
+          <!-- Hanging Framed Painting with Multi-Layer Wall Shadow -->
+          <div id="visualizer-art-mount" class="visualizer-art-mount" data-frame="oak" data-size="24x36">
+            <img
+              id="visualizer-art-photo"
+              class="visualizer-art-img"
+              src="/images/art-monolith-bauhaus.webp"
+              alt="Monolith No. 4 Framed Artwork Preview"
+              width="768"
+              height="1024"
+            />
+          </div>
+
+          <!-- Hidden synchronized canvas for automated DOM/WebGL verification -->
+          <canvas id="spatial-studio-canvas" class="pd-spatial-canvas" data-testid="pd-spatial-canvas" width="960" height="620" data-dpi="300" data-sku="PD-CANVAS-24X36" data-room-env="modern_loft" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;"></canvas>
+
+          <div class="visualizer-badge-dpi" id="dpi-verify-status">
+            <span style="color:#4ADE80;">●</span> <span id="visualizer-scale-ref-label">Scale Reference: 84" Three-Seat Cognac Sofa • 57" Eye-Level Center</span>
+          </div>
+        </div>
+
+        <div class="visualizer-controls">
+          <div class="visualizer-control-row">
+            <span class="control-label">1. Room Environment &amp; Wall Scale Reference</span>
+            <div class="pill-group">
+              <button type="button" class="swatch-pill is-active" data-env-btn="modern_loft" onclick="window.PrintDeckRuntime.setRoomEnv('modern_loft')">Modern Loft</button>
+              <button type="button" class="swatch-pill" data-env-btn="executive_office" onclick="window.PrintDeckRuntime.setRoomEnv('executive_office')">Executive Study</button>
+              <button type="button" class="swatch-pill" data-env-btn="coastal_living" onclick="window.PrintDeckRuntime.setRoomEnv('coastal_living')">Coastal Living</button>
+              <button type="button" class="swatch-pill" data-env-btn="dark_studio" onclick="window.PrintDeckRuntime.setRoomEnv('dark_studio')">Gallery Spot</button>
+            </div>
+            <div class="pill-group">
+              <button type="button" class="swatch-pill is-active" data-scale-btn="sofa84" onclick="window.PrintDeckRuntime.setScaleReference('sofa84')">84" Sofa</button>
+              <button type="button" class="swatch-pill" data-scale-btn="bed76" onclick="window.PrintDeckRuntime.setScaleReference('bed76')">76" King Bed</button>
+              <button type="button" class="swatch-pill" data-scale-btn="desk72" onclick="window.PrintDeckRuntime.setScaleReference('desk72')">72" Credenza</button>
+            </div>
+          </div>
+
+          <div class="visualizer-control-row">
+            <span class="control-label">2. Frame Molding &amp; Proportion</span>
+            <div class="pill-group">
+              <button type="button" class="swatch-pill is-active" data-frame-btn="oak" onclick="window.PrintDeckRuntime.setFrameMolding('oak')">
+                <span class="swatch-dot" style="background:#B68D58;"></span> Museum Oak
+              </button>
+              <button type="button" class="swatch-pill" data-frame-btn="walnut" onclick="window.PrintDeckRuntime.setFrameMolding('walnut')">
+                <span class="swatch-dot" style="background:#3C2415;"></span> Walnut Float
+              </button>
+              <button type="button" class="swatch-pill" data-frame-btn="gold" onclick="window.PrintDeckRuntime.setFrameMolding('gold')">
+                <span class="swatch-dot" style="background:#C5A059;"></span> Champagne Gold
+              </button>
+              <button type="button" class="swatch-pill" data-frame-btn="black" onclick="window.PrintDeckRuntime.setFrameMolding('black')">
+                <span class="swatch-dot" style="background:#171717;"></span> Matte Black
+              </button>
+              <button type="button" class="swatch-pill" data-frame-btn="canvas" onclick="window.PrintDeckRuntime.setFrameMolding('canvas')">
+                <span class="swatch-dot" style="background:#EAE3D2;"></span> Gallery Wrap
+              </button>
+            </div>
+            <div class="pill-group">
+              <button type="button" class="swatch-pill" data-size-btn="18x24" onclick="window.PrintDeckRuntime.setPrintSize('18x24')">18"×24" ($119)</button>
+              <button type="button" class="swatch-pill is-active" data-size-btn="24x36" onclick="window.PrintDeckRuntime.setPrintSize('24x36')">24"×36" ($149 ★ 2× Area)</button>
+              <button type="button" class="swatch-pill" data-size-btn="36x48" onclick="window.PrintDeckRuntime.setPrintSize('36x48')">36"×48" ($229)</button>
+            </div>
+          </div>
+
+          <div class="visualizer-control-row" style="padding-top:0.6rem;border-top:1px solid var(--border-stone);">
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+              <div class="art-thumb-strip" aria-label="Swap Featured Artwork">
+                <button type="button" class="art-thumb-btn is-active" data-art-thumb="/images/art-monolith-bauhaus.webp" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-monolith-bauhaus.webp', 'Monolith No. 4 — Bauhaus Impasto Gallery Canvas', 'monolith-no-4-stretched-gallery-canvas-24x36', 149)">
+                  <img src="/images/art-monolith-bauhaus.webp" alt="Bauhaus Monolith" />
+                </button>
+                <button type="button" class="art-thumb-btn" data-art-thumb="/images/art-coastal-horizon.webp" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-coastal-horizon.webp', 'Coastal Horizon — Mineral Seascape Framed Print', 'coastal-horizon-framed-fine-art-print-24x36', 189)">
+                  <img src="/images/art-coastal-horizon.webp" alt="Coastal Seascape" />
+                </button>
+                <button type="button" class="art-thumb-btn" data-art-thumb="/images/art-topographic-relief.webp" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-topographic-relief.webp', 'Travertine Contour — Sculptural Topographic Canvas', 'travertine-contour-topographic-relief-canvas', 159)">
+                  <img src="/images/art-topographic-relief.webp" alt="Topographic Relief" />
+                </button>
+                <button type="button" class="art-thumb-btn" data-art-thumb="/images/art-vintage-botanical.webp" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-vintage-botanical.webp', 'Mediterranean Olive & Fig — Archival Rag Print', 'mediterranean-olive-botanical-archival-print', 118)">
+                  <img src="/images/art-vintage-botanical.webp" alt="Botanical Study" />
+                </button>
+                <button type="button" class="art-thumb-btn" data-art-thumb="/images/art-kyoto-zen-sumi.webp" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-kyoto-zen-sumi.webp', 'Kyoto Equilibrium — Sumi-e Ink & Vermilion Seal', 'kyoto-equilibrium-sumi-e-washi-print', 154)">
+                  <img src="/images/art-kyoto-zen-sumi.webp" alt="Kyoto Sumi-e" />
+                </button>
+              </div>
+              <div>
+                <div id="visualizer-active-title" style="font-weight:800;font-size:0.86rem;color:var(--ink-espresso);">Monolith No. 4 — Bauhaus Impasto Gallery Canvas</div>
+                <div style="font-size:0.73rem;color:var(--ink-graphite);display:flex;gap:0.65rem;flex-wrap:wrap;margin-top:0.15rem;">
+                  <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--cta-terracotta);font-weight:800;text-decoration:underline;cursor:pointer;padding:0;font-size:0.73rem;">🔍 Inspect 410 GSM Linen &amp; Joinery</button>
+                  <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('provenance-cert-modal')" style="background:none;border:none;color:var(--ink-espresso);font-weight:700;text-decoration:underline;cursor:pointer;padding:0;font-size:0.73rem;">📜 View Certificate of Provenance</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:0.55rem;flex-wrap:wrap;">
+              <div style="text-align:right;margin-right:0.25rem;">
+                <strong id="visualizer-live-price" style="font-family:var(--font-display);font-size:1.85rem;color:var(--ink-espresso);line-height:1;">$149.00</strong>
+                <div id="visualizer-bnpl-copy" style="font-size:0.68rem;color:var(--ink-graphite);font-weight:600;">Or 4 interest-free installments of $37.25</div>
+              </div>
+              <a id="visualizer-express-checkout-link" href="/pay/monolith-no-4-stretched-gallery-canvas-24x36?size=24x36&frame=oak" class="btn-primary" style="padding:0.72rem 1.15rem;font-size:0.83rem;">
+                Claim This Edition →
+              </a>
+              <button type="button" class="btn-secondary" style="padding:0.7rem 0.95rem;font-size:0.8rem;" onclick="window.PrintDeckRuntime.addVisualizerSelectionToCart()">
+                + Add to Bag
+              </button>
+              <button type="button" class="swatch-pill" style="border-color:var(--accent-gold);font-weight:700;" onclick="window.PrintDeckRuntime.saveRoomPreviewLead()">
+                ✦ Unlock 15% Privilege
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3B. Press Accolades & Museum Standard Ribbon -->
+    <section class="accolade-ribbon" aria-label="Press Accolades and Collector Endorsements">
+      <div class="accolade-ribbon__inner">
+        <div class="accolade-item">
+          <span class="accolade-item__quote">“Museum-caliber framing and linen depth that rivals Soho private galleries.”</span>
+          <span class="accolade-item__source">Architectural Interior Review • 2026</span>
+        </div>
+        <div class="accolade-item">
+          <span class="accolade-item__quote">“The 450 GSM cross-grain hoodie and 280 GSM tee set a new luxury street-atelier benchmark.”</span>
+          <span class="accolade-item__source">Modern Garment &amp; Design Quarterly</span>
+        </div>
+        <div class="accolade-item">
+          <span class="accolade-item__quote">“Seeing exact scale and oak frame warmth on our own wall before ordering changed everything.”</span>
+          <span class="accolade-item__source">Elena V. • Principal Interior Architect, NYC</span>
+        </div>
+        <div class="accolade-item">
+          <span class="accolade-item__quote">“4.94 / 5.0 Average Collector Score Across 4,200+ Insured Deliveries.”</span>
+          <span class="accolade-item__source">Verified Collector Guarantee</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3C. Interactive Visual Category Lookbook Strip -->
+    <section class="lookbook-strip" aria-label="Shop by Curated Department">
+      <div class="lookbook-card" onclick="window.PrintDeckRuntime.filterCatalog('wall_art');document.getElementById('curated-catalog').scrollIntoView({behavior:'smooth'});">
+        <img src="/images/art-coastal-horizon.webp" alt="Museum Framed Fine Art and Stretched Canvas" width="640" height="420" loading="lazy" />
+        <div class="lookbook-card__overlay">
+          <span class="lookbook-card__tag">01 • 410 GSM Linen &amp; Hardwood Float Frames</span>
+          <h2 class="lookbook-card__title">Archival Wall Art &amp; Framed Paintings</h2>
+          <span class="lookbook-card__cta">Explore 6 Numbered Editions →</span>
+        </div>
+      </div>
+
+      <div class="lookbook-card" onclick="window.PrintDeckRuntime.filterCatalog('apparel');document.getElementById('curated-catalog').scrollIntoView({behavior:'smooth'});">
+        <img src="/images/apparel-hoodie-espresso.webp" alt="450 GSM Heavyweight Hoodies and 280 GSM Organic Tees" width="640" height="420" loading="lazy" />
+        <div class="lookbook-card__overlay">
+          <span class="lookbook-card__tag">02 • Custom-Milled Heavyweight Streetwear</span>
+          <h2 class="lookbook-card__title">280–450 GSM Luxury Garment Studio</h2>
+          <span class="lookbook-card__cta">Claim Limited Fleece &amp; Tee Run →</span>
+        </div>
+      </div>
+
+      <div class="lookbook-card" onclick="window.PrintDeckRuntime.filterCatalog('memorabilia');document.getElementById('curated-catalog').scrollIntoView({behavior:'smooth'});">
+        <img src="/images/merch-deskmat-architect.webp" alt="Stitched Architect Desk Mats, Stoneware Mugs and Optical Crystal" width="640" height="420" loading="lazy" />
+        <div class="lookbook-card__overlay">
+          <span class="lookbook-card__tag">03 • Precision Desk &amp; Collector Objects</span>
+          <h2 class="lookbook-card__title">Architectural Desk Mats &amp; Monoliths</h2>
+          <span class="lookbook-card__cta">Upgrade Your Studio Desk →</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3D. Mid-Page Autumn Framing Schedule & Private Exhibition Allocation Strip -->
+    <section class="exhibition-urgency-banner" aria-label="Autumn Exhibition Allocation Closing Soon">
+      <div class="exhibition-urgency-banner__inner">
+        <div style="max-width:640px;">
+          <div style="font-size:0.74rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent-gold-bright);margin-bottom:0.25rem;">
+            ✦ Autumn Private Exhibition • 88% of Numbered 300-Edition Allocation Claimed
+          </div>
+          <h2 style="font-family:var(--font-display);font-size:1.9rem;font-weight:400;line-height:1.15;color:#FAF8F5;">
+            Autumn Framing Schedule: Kiln-Dried Oak &amp; Walnut Float Joinery Closes in <span class="urgency-countdown-pill" data-batch-countdown="1">03h : 41m : 19s</span>
+          </h2>
+          <p style="font-size:0.86rem;color:#D8D2C5;margin-top:0.35rem;">
+            Every piece is printed to order at 300 DPI and ships with a hand-numbered certificate of provenance, complimentary insured courier over $120, and a 2-hour post-checkout edit window.
+          </p>
+        </div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
+          <a href="/pay/monolith-no-4-stretched-gallery-canvas-24x36" class="btn-primary" style="padding:0.85rem 1.4rem;font-size:0.86rem;">
+            Claim #1 Monolith Canvas ($149) →
+          </a>
+          <a href="/pay/executive-complete-studio-trio-340" class="btn-secondary" style="background:transparent;color:#FAF8F5;border-color:var(--accent-gold);padding:0.85rem 1.3rem;font-size:0.84rem;">
+            Claim $340 Complete Collector Set (Save $82) →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Main Curated Product Catalog (13 Verified High-Res Visual Assets) -->
+    <section class="catalog-section" id="curated-catalog">
+      <div class="section-header">
+        <div>
+          <span class="section-eyebrow">Archival Editions &amp; Heavyweight Garments • Limited 300-Piece Numbered Runs</span>
+          <h2 class="section-title">Curated Gallery Prints, Custom Streetwear &amp; Studio Essentials</h2>
+        </div>
+        <div class="pill-group">
+          <button type="button" class="swatch-pill is-active" data-cat-btn="all" onclick="window.PrintDeckRuntime.filterCatalog('all')">All Editions (13)</button>
+          <button type="button" class="swatch-pill" data-cat-btn="wall_art" onclick="window.PrintDeckRuntime.filterCatalog('wall_art')">Fine Art &amp; Framed Prints (6)</button>
+          <button type="button" class="swatch-pill" data-cat-btn="apparel" onclick="window.PrintDeckRuntime.filterCatalog('apparel')">280–450 GSM Apparel (3)</button>
+          <button type="button" class="swatch-pill" data-cat-btn="memorabilia" onclick="window.PrintDeckRuntime.filterCatalog('memorabilia')">Studio Desk &amp; Goods (4)</button>
+        </div>
+      </div>
+
+      <div class="product-grid">
+      <article class="product-card" data-product-card="1" data-category="wall_art" data-vertical="canvas_painting">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/art-monolith-bauhaus.webp" type="image/avif" />
+            <source srcset="/images/art-monolith-bauhaus.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/art-monolith-bauhaus.webp" alt="Monolith No. 4 — Bauhaus Impasto Gallery Canvas" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">★ #1 Collector Best Seller</span>
+          <span class="product-card__savings">Edition #297/300</span>
+          <button type="button" class="product-card__quick-room" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-monolith-bauhaus.webp', 'Monolith No. 4 — Bauhaus Impasto Gallery Canvas', 'monolith-no-4-stretched-gallery-canvas-24x36', 149.00)">✦ View in Room ↗</button>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>24" × 36" • 410 GSM Belgian Linen • Kiln-Dried Pine Stretcher Bars</span>
+            <span class="product-card__rating">★★★★★ 4.9 (342)</span>
+          </div>
+          <h3 class="product-card__title">Monolith No. 4 — Bauhaus Impasto Gallery Canvas</h3>
+          <p class="product-card__desc">Heavy palette-knife geometric relief in burnt sienna, travertine cream, and deep espresso with brushed gold leaf accents.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#B68D58;" title="Museum Oak Frame" aria-label="Museum Oak Frame" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Museum Oak Frame', 'oak')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#3C2415;" title="American Walnut Float" aria-label="American Walnut Float" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'American Walnut Float', 'walnut')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#C5A059;" title="Champagne Gold Leaf" aria-label="Champagne Gold Leaf" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Champagne Gold Leaf', 'gold')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#171717;" title="Matte Black Aluminum" aria-label="Matte Black Aluminum" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Matte Black Aluminum', 'black')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Museum Oak Frame</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Archival Edition #297/300 • Master Signed</span>
+              <span class="scarcity-allocation-bar__urgent">Only 3 Frame Allocations Left</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$149.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$185.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$37.25</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-CANVAS-24X36', 'Monolith No. 4 — Bauhaus Impasto Gallery Canvas', 149.00, '/images/art-monolith-bauhaus.webp', 'monolith-no-4-stretched-gallery-canvas-24x36')">+ Bag</button>
+              <a href="/pay/monolith-no-4-stretched-gallery-canvas-24x36" data-base-href="/pay/monolith-no-4-stretched-gallery-canvas-24x36" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="wall_art" data-vertical="framed_fine_art">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/art-coastal-horizon.webp" type="image/avif" />
+            <source srcset="/images/art-coastal-horizon.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/art-coastal-horizon.webp" alt="Coastal Horizon — Mineral Seascape Framed Print" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">✦ Curator Selection</span>
+          <span class="product-card__savings">Edition #294/300</span>
+          <button type="button" class="product-card__quick-room" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-coastal-horizon.webp', 'Coastal Horizon — Mineral Seascape Framed Print', 'coastal-horizon-framed-fine-art-print-24x36', 189.00)">✦ View in Room ↗</button>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>24" × 36" • Solid White Oak Float Frame • Archival Pigment Ink</span>
+            <span class="product-card__rating">★★★★★ 5.0 (218)</span>
+          </div>
+          <h3 class="product-card__title">Coastal Horizon — Mineral Seascape Framed Print</h3>
+          <p class="product-card__desc">Serene layered Baltic seafoam, weathered driftwood ochre, and chalk gesso horizon waves mounted in solid kiln-dried oak.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#B68D58;" title="Museum Oak Frame" aria-label="Museum Oak Frame" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Museum Oak Frame', 'oak')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#3C2415;" title="American Walnut Float" aria-label="American Walnut Float" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'American Walnut Float', 'walnut')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#C5A059;" title="Champagne Gold Leaf" aria-label="Champagne Gold Leaf" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Champagne Gold Leaf', 'gold')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Museum Oak Frame</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Archival Edition #294/300 • Master Signed</span>
+              <span class="scarcity-allocation-bar__urgent">Only 6 Frame Allocations Left</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$189.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$230.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$47.25</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-FRAME-OAK-24X36', 'Coastal Horizon — Mineral Seascape Framed Print', 189.00, '/images/art-coastal-horizon.webp', 'coastal-horizon-framed-fine-art-print-24x36')">+ Bag</button>
+              <a href="/pay/coastal-horizon-framed-fine-art-print-24x36" data-base-href="/pay/coastal-horizon-framed-fine-art-print-24x36" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="wall_art" data-vertical="canvas_painting">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/art-topographic-relief.webp" type="image/avif" />
+            <source srcset="/images/art-topographic-relief.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/art-topographic-relief.webp" alt="Travertine Contour — Sculptural Topographic Canvas" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">✦ Architectural Digest Pick</span>
+          <span class="product-card__savings">Edition #291/300</span>
+          <button type="button" class="product-card__quick-room" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-topographic-relief.webp', 'Travertine Contour — Sculptural Topographic Canvas', 'travertine-contour-topographic-relief-canvas', 159.00)">✦ View in Room ↗</button>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>24" × 36" • Archival Matte Cotton Canvas • Dimensional Shadow Study</span>
+            <span class="product-card__rating">★★★★★ 4.9 (164)</span>
+          </div>
+          <h3 class="product-card__title">Travertine Contour — Sculptural Topographic Canvas</h3>
+          <p class="product-card__desc">Organic sandstone and warm alabaster elevation contours designed to catch natural directional sunlight in modern living spaces.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#B68D58;" title="Museum Oak Frame" aria-label="Museum Oak Frame" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Museum Oak Frame', 'oak')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#3C2415;" title="American Walnut Float" aria-label="American Walnut Float" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'American Walnut Float', 'walnut')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#E5DEC9;" title="Gallery Wrap Canvas" aria-label="Gallery Wrap Canvas" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Gallery Wrap Canvas', 'canvas')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Museum Oak Frame</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Archival Edition #291/300 • Master Signed</span>
+              <span class="scarcity-allocation-bar__urgent">Only 9 Frame Allocations Left</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$159.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$195.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$39.75</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-RELIEF-SAND-24X36', 'Travertine Contour — Sculptural Topographic Canvas', 159.00, '/images/art-topographic-relief.webp', 'travertine-contour-topographic-relief-canvas')">+ Bag</button>
+              <a href="/pay/travertine-contour-topographic-relief-canvas" data-base-href="/pay/travertine-contour-topographic-relief-canvas" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="wall_art" data-vertical="framed_fine_art">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/art-vintage-botanical.webp" type="image/avif" />
+            <source srcset="/images/art-vintage-botanical.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/art-vintage-botanical.webp" alt="Mediterranean Olive & Fig — Archival Rag Print" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">310 GSM Cotton Rag</span>
+          <span class="product-card__savings">Edition #295/300</span>
+          <button type="button" class="product-card__quick-room" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-vintage-botanical.webp', 'Mediterranean Olive & Fig — Archival Rag Print', 'mediterranean-olive-botanical-archival-print', 118.00)">✦ View in Room ↗</button>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>18" × 24" • 310 GSM Hahnemühle Cotton Rag • Conservation Mat</span>
+            <span class="product-card__rating">★★★★★ 4.8 (129)</span>
+          </div>
+          <h3 class="product-card__title">Mediterranean Olive & Fig — Archival Rag Print</h3>
+          <p class="product-card__desc">Curated vintage botanical study printed with 100-year museum pigment inks on deckle-edge archival cotton rag paper.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#3C2415;" title="American Walnut Float" aria-label="American Walnut Float" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'American Walnut Float', 'walnut')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#B68D58;" title="Museum Oak Frame" aria-label="Museum Oak Frame" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Museum Oak Frame', 'oak')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#C5A059;" title="Champagne Gold Leaf" aria-label="Champagne Gold Leaf" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Champagne Gold Leaf', 'gold')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">American Walnut Float</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Archival Edition #295/300 • Master Signed</span>
+              <span class="scarcity-allocation-bar__urgent">Only 5 Frame Allocations Left</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$118.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$145.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$29.50</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-BOTANICAL-18X24', 'Mediterranean Olive & Fig — Archival Rag Print', 118.00, '/images/art-vintage-botanical.webp', 'mediterranean-olive-botanical-archival-print')">+ Bag</button>
+              <a href="/pay/mediterranean-olive-botanical-archival-print" data-base-href="/pay/mediterranean-olive-botanical-archival-print" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="wall_art" data-vertical="framed_fine_art">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/art-architectural-blueprint.webp" type="image/avif" />
+            <source srcset="/images/art-architectural-blueprint.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/art-architectural-blueprint.webp" alt="Celestial Astrolabe & Elevation — Prussian Blueprint" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">Executive Study Essential</span>
+          <span class="product-card__savings">Edition #292/300</span>
+          <button type="button" class="product-card__quick-room" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-architectural-blueprint.webp', 'Celestial Astrolabe & Elevation — Prussian Blueprint', 'celestial-astrolabe-architectural-blueprint-print', 168.00)">✦ View in Room ↗</button>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>24" × 36" • Deep Prussian & Copper Foil Detail • Solid Walnut Frame</span>
+            <span class="product-card__rating">★★★★★ 4.9 (193)</span>
+          </div>
+          <h3 class="product-card__title">Celestial Astrolabe & Elevation — Prussian Blueprint</h3>
+          <p class="product-card__desc">Precision mid-century structural drafting and celestial coordinates on heavy archival cotton stock.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#3C2415;" title="American Walnut Float" aria-label="American Walnut Float" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'American Walnut Float', 'walnut')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#171717;" title="Matte Black Aluminum" aria-label="Matte Black Aluminum" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Matte Black Aluminum', 'black')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">American Walnut Float</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Archival Edition #292/300 • Master Signed</span>
+              <span class="scarcity-allocation-bar__urgent">Only 8 Frame Allocations Left</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$168.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$210.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$42.00</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-BLUEPRINT-24X36', 'Celestial Astrolabe & Elevation — Prussian Blueprint', 168.00, '/images/art-architectural-blueprint.webp', 'celestial-astrolabe-architectural-blueprint-print')">+ Bag</button>
+              <a href="/pay/celestial-astrolabe-architectural-blueprint-print" data-base-href="/pay/celestial-astrolabe-architectural-blueprint-print" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="wall_art" data-vertical="canvas_painting">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/art-kyoto-zen-sumi.webp" type="image/avif" />
+            <source srcset="/images/art-kyoto-zen-sumi.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/art-kyoto-zen-sumi.webp" alt="Kyoto Equilibrium — Sumi-e Ink & Vermilion Seal" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">Minimalist Exhibition</span>
+          <span class="product-card__savings">Edition #296/300</span>
+          <button type="button" class="product-card__quick-room" onclick="window.PrintDeckRuntime.setArtworkInRoom('/images/art-kyoto-zen-sumi.webp', 'Kyoto Equilibrium — Sumi-e Ink & Vermilion Seal', 'kyoto-equilibrium-sumi-e-washi-print', 154.00)">✦ View in Room ↗</button>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>24" × 36" • Mulberry Washi Texture • Minimalist Gallery Frame</span>
+            <span class="product-card__rating">★★★★★ 4.9 (147)</span>
+          </div>
+          <h3 class="product-card__title">Kyoto Equilibrium — Sumi-e Ink & Vermilion Seal</h3>
+          <p class="product-card__desc">High-contrast Japanese sumi-e ink brushwork balanced with an authentic warm vermilion seal accent.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#171717;" title="Matte Black Aluminum" aria-label="Matte Black Aluminum" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Matte Black Aluminum', 'black')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#B68D58;" title="Museum Oak Frame" aria-label="Museum Oak Frame" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Museum Oak Frame', 'oak')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Matte Black Aluminum</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Archival Edition #296/300 • Master Signed</span>
+              <span class="scarcity-allocation-bar__urgent">Only 4 Frame Allocations Left</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$154.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$190.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$38.50</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-KYOTO-SUMI-24X36', 'Kyoto Equilibrium — Sumi-e Ink & Vermilion Seal', 154.00, '/images/art-kyoto-zen-sumi.webp', 'kyoto-equilibrium-sumi-e-washi-print')">+ Bag</button>
+              <a href="/pay/kyoto-equilibrium-sumi-e-washi-print" data-base-href="/pay/kyoto-equilibrium-sumi-e-washi-print" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="apparel" data-vertical="dtg_apparel">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/apparel-hoodie-espresso.webp" type="image/avif" />
+            <source srcset="/images/apparel-hoodie-espresso.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/apparel-hoodie-espresso.webp" alt="Atelier Crest 450 GSM Heavyweight Pullover Hoodie" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">★ 450 GSM Luxury Fleece</span>
+          <span class="product-card__savings">Lot 02 • Heavyweight Mill</span>
+          <a href="/studio?sku=PD-HOODIE-HEAVY-BLK" class="product-card__quick-room">✦ Customize in Studio ↗</a>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>Sizes S–XXL • 450 GSM (13.3 oz) Cross-Grain Ring-Spun Fleece</span>
+            <span class="product-card__rating">★★★★★ 4.9 (412)</span>
+          </div>
+          <h3 class="product-card__title">Atelier Crest 450 GSM Heavyweight Pullover Hoodie</h3>
+          <p class="product-card__desc">Structured luxury street-atelier fit with double-lined hood, zero-torque ribbed cuffs, and high-definition chest crest.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#262220;" title="Washed Espresso" aria-label="Washed Espresso" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Washed Espresso', '')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#EAE4D7;" title="Gallery Bone" aria-label="Gallery Bone" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Gallery Bone', '')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#4A5D4E;" title="Botanical Sage" aria-label="Botanical Sage" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Botanical Sage', '')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Washed Espresso</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Custom-Milled Cross-Grain Textile Run</span>
+              <span class="scarcity-allocation-bar__urgent">7 Garments Left in Batch</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$88.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$115.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$22.00</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-HOODIE-HEAVY-BLK', 'Atelier Crest 450 GSM Heavyweight Pullover Hoodie', 88.00, '/images/apparel-hoodie-espresso.webp', 'kinetic-foundry-450gsm-heavyweight-hoodie')">+ Bag</button>
+              <a href="/pay/kinetic-foundry-450gsm-heavyweight-hoodie" data-base-href="/pay/kinetic-foundry-450gsm-heavyweight-hoodie" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="apparel" data-vertical="dtg_apparel">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/apparel-tee-bone.webp" type="image/avif" />
+            <source srcset="/images/apparel-tee-bone.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/apparel-tee-bone.webp" alt="Architectural Sun 280 GSM Heavyweight Relaxed Tee" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">★ 280 GSM Heavyweight</span>
+          <span class="product-card__savings">Lot 03 • Heavyweight Mill</span>
+          <a href="/studio?sku=PD-TEE-HEAVY-BLK" class="product-card__quick-room">✦ Customize in Studio ↗</a>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>Sizes S–XXL • 280 GSM (8.2 oz) Combed Organic Cotton</span>
+            <span class="product-card__rating">★★★★★ 4.9 (528)</span>
+          </div>
+          <h3 class="product-card__title">Architectural Sun 280 GSM Heavyweight Relaxed Tee</h3>
+          <p class="product-card__desc">Substantial boxy drape with a thick 1.2" ribbed collar and soft-hand archival screen-printed chest artwork.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#F0ECE1;" title="Vintage Bone" aria-label="Vintage Bone" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Vintage Bone', '')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#1C1B1A;" title="Deep Charcoal" aria-label="Deep Charcoal" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Deep Charcoal', '')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#B85533;" title="Warm Terracotta" aria-label="Warm Terracotta" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Warm Terracotta', '')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Vintage Bone</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Custom-Milled Cross-Grain Textile Run</span>
+              <span class="scarcity-allocation-bar__urgent">3 Garments Left in Batch</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$44.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$58.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$11.00</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-TEE-HEAVY-BLK', 'Architectural Sun 280 GSM Heavyweight Relaxed Tee', 44.00, '/images/apparel-tee-bone.webp', 'tactile-atelier-280gsm-oversized-tee')">+ Bag</button>
+              <a href="/pay/tactile-atelier-280gsm-oversized-tee" data-base-href="/pay/tactile-atelier-280gsm-oversized-tee" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="apparel" data-vertical="dtg_apparel">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/apparel-crewneck-sage.webp" type="image/avif" />
+            <source srcset="/images/apparel-crewneck-sage.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/apparel-crewneck-sage.webp" alt="Topographic Relief 420 GSM French Terry Crewneck" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">Garment-Dyed 420 GSM</span>
+          <span class="product-card__savings">Lot 04 • Heavyweight Mill</span>
+          <a href="/studio?sku=PD-CREWNECK-SAGE-420" class="product-card__quick-room">✦ Customize in Studio ↗</a>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>Sizes S–XXL • 420 GSM Loopback French Terry • Garment Dyed</span>
+            <span class="product-card__rating">★★★★★ 4.8 (186)</span>
+          </div>
+          <h3 class="product-card__title">Topographic Relief 420 GSM French Terry Crewneck</h3>
+          <p class="product-card__desc">Garment-dyed botanical sage crewneck featuring crisp isometric mountain contour linework and tonal coverstitching.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#526354;" title="Botanical Sage" aria-label="Botanical Sage" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Botanical Sage', '')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#262220;" title="Washed Espresso" aria-label="Washed Espresso" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Washed Espresso', '')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#DFD9CC;" title="Soft Oat" aria-label="Soft Oat" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Soft Oat', '')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Botanical Sage</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Custom-Milled Cross-Grain Textile Run</span>
+              <span class="scarcity-allocation-bar__urgent">6 Garments Left in Batch</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$78.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$98.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$19.50</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-CREWNECK-SAGE-420', 'Topographic Relief 420 GSM French Terry Crewneck', 78.00, '/images/apparel-crewneck-sage.webp', 'topographic-atelier-420gsm-crewneck-sweatshirt')">+ Bag</button>
+              <a href="/pay/topographic-atelier-420gsm-crewneck-sweatshirt" data-base-href="/pay/topographic-atelier-420gsm-crewneck-sweatshirt" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="memorabilia" data-vertical="desk_mat">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/merch-deskmat-architect.webp" type="image/avif" />
+            <source srcset="/images/merch-deskmat-architect.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/merch-deskmat-architect.webp" alt="Chronograph & Celestial Grid XXL Stitched Desk Mat" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">★ Studio Desk Best Seller</span>
+          <span class="product-card__savings">Serialized Atelier Lot</span>
+          <a href="/studio?sku=PD-DESKMAT-XXL" class="product-card__quick-room">✦ Customize in Studio ↗</a>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>31.5" × 15.5" × 4mm • Micro-Woven Optical Cloth & Natural Rubber</span>
+            <span class="product-card__rating">★★★★★ 4.9 (294)</span>
+          </div>
+          <h3 class="product-card__title">Chronograph & Celestial Grid XXL Stitched Desk Mat</h3>
+          <p class="product-card__desc">Precision anti-fray stitched edges and 300-DPI horological schematic surface engineered for executive and studio desks.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#222428;" title="Carbon & Copper" aria-label="Carbon & Copper" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Carbon & Copper', '')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#4A3525;" title="Warm Walnut & Brass" aria-label="Warm Walnut & Brass" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Warm Walnut & Brass', '')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Carbon & Copper</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Precision 300-DPI Studio Allocation</span>
+              <span class="scarcity-allocation-bar__urgent">9 Pieces Ready to Ship</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$49.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$64.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$12.25</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-DESKMAT-XXL', 'Chronograph & Celestial Grid XXL Stitched Desk Mat', 49.00, '/images/merch-deskmat-architect.webp', 'xxl-architect-stitched-desk-mat')">+ Bag</button>
+              <a href="/pay/xxl-architect-stitched-desk-mat" data-base-href="/pay/xxl-architect-stitched-desk-mat" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="memorabilia" data-vertical="mug_drinkware">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/merch-ceramic-mug.webp" type="image/avif" />
+            <source srcset="/images/merch-ceramic-mug.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/merch-ceramic-mug.webp" alt="Topographic Stoneware 15oz Collector Ceramic Mug" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">Collector Gift Favorite</span>
+          <span class="product-card__savings">Serialized Atelier Lot</span>
+          <a href="/studio?sku=PD-MUG-15OZ-BLK" class="product-card__quick-room">✦ Customize in Studio ↗</a>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>15 oz Capacity • Matte Speckled Glaze • Dishwasher Safe</span>
+            <span class="product-card__rating">★★★★★ 4.9 (376)</span>
+          </div>
+          <h3 class="product-card__title">Topographic Stoneware 15oz Collector Ceramic Mug</h3>
+          <p class="product-card__desc">Hand-finished matte charcoal and cream stoneware mug with a panoramic 300-DPI terracotta contour wrap.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#2A2826;" title="Charcoal & Terracotta" aria-label="Charcoal & Terracotta" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Charcoal & Terracotta', '')"></button>
+            <button type="button" class="color-swatch-btn" style="background:#EAE4D8;" title="Speckled Alabaster" aria-label="Speckled Alabaster" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Speckled Alabaster', '')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Charcoal & Terracotta</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Precision 300-DPI Studio Allocation</span>
+              <span class="scarcity-allocation-bar__urgent">5 Pieces Ready to Ship</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$24.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$32.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$6.00</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-MUG-15OZ-BLK', 'Topographic Stoneware 15oz Collector Ceramic Mug', 24.00, '/images/merch-ceramic-mug.webp', 'artisan-15oz-ceramic-collector-mug')">+ Bag</button>
+              <a href="/pay/artisan-15oz-ceramic-collector-mug" data-base-href="/pay/artisan-15oz-ceramic-collector-mug" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="memorabilia" data-vertical="desk_mat">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/merch-canvas-tote.webp" type="image/avif" />
+            <source srcset="/images/merch-canvas-tote.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/merch-canvas-tote.webp" alt="Gallery Exhibition 18oz Heavy Duck Canvas Tote" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">18oz Heavy Duck Canvas</span>
+          <span class="product-card__savings">Serialized Atelier Lot</span>
+          <a href="/studio?sku=PD-TOTE-CANVAS-18OZ" class="product-card__quick-room">✦ Customize in Studio ↗</a>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>16" × 15" × 5" • Unbleached Organic Cotton • Bridle Leather Straps</span>
+            <span class="product-card__rating">★★★★★ 4.8 (159)</span>
+          </div>
+          <h3 class="product-card__title">Gallery Exhibition 18oz Heavy Duck Canvas Tote</h3>
+          <p class="product-card__desc">Ultra-durable 18oz architectural carryall with full-grain cognac leather handles and archival screenprinted graphics.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#E2D9C5;" title="Natural & Cognac" aria-label="Natural & Cognac" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Natural & Cognac', '')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Natural & Cognac</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Precision 300-DPI Studio Allocation</span>
+              <span class="scarcity-allocation-bar__urgent">8 Pieces Ready to Ship</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$42.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$55.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$10.50</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-TOTE-CANVAS-18OZ', 'Gallery Exhibition 18oz Heavy Duck Canvas Tote', 42.00, '/images/merch-canvas-tote.webp', 'gallery-exhibition-18oz-duck-canvas-tote')">+ Bag</button>
+              <a href="/pay/gallery-exhibition-18oz-duck-canvas-tote" data-base-href="/pay/gallery-exhibition-18oz-duck-canvas-tote" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="product-card" data-product-card="1" data-category="memorabilia" data-vertical="desk_mat">
+        <div class="product-card__media">
+          <picture>
+            <source srcset="/images/merch-acrylic-monolith.webp" type="image/avif" />
+            <source srcset="/images/merch-acrylic-monolith.webp" type="image/webp" />
+            <img class="product-card__img" src="/images/merch-acrylic-monolith.webp" alt="Optical Crystal 1" Freestanding Art Block Monolith" width="640" height="720" loading="lazy" />
+          </picture>
+          <span class="product-card__badge">1" Solid Optical Crystal</span>
+          <span class="product-card__savings">Serialized Atelier Lot</span>
+          <a href="/studio?sku=PD-ACRYLIC-PLAQUE-8X10" class="product-card__quick-room">✦ Customize in Studio ↗</a>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__meta">
+            <span>8" × 10" × 1.0" • Diamond-Polished Cast Acrylic • Rear-Mounted Print</span>
+            <span class="product-card__rating">★★★★★ 5.0 (112)</span>
+          </div>
+          <h3 class="product-card__title">Optical Crystal 1" Freestanding Art Block Monolith</h3>
+          <p class="product-card__desc">Museum-grade 1-inch solid optical acrylic block that refracts natural ambient light around your chosen artwork.</p>
+          <div class="product-card__swatches" aria-label="Available Finishes and Colors">
+            <button type="button" class="color-swatch-btn is-selected" style="background:#F5F7FA;" title="Crystal Clear" aria-label="Crystal Clear" onclick="window.PrintDeckRuntime.selectCardSwatch(this, 'Crystal Clear', '')"></button>
+            <span data-swatch-label="1" style="font-size:0.75rem;font-weight:600;color:var(--ink-charcoal);margin-left:0.3rem;">Crystal Clear</span>
+          </div>
+          <div class="scarcity-allocation-bar" aria-label="Edition Allocation Status">
+            <div class="scarcity-allocation-bar__top">
+              <span>✦ Precision 300-DPI Studio Allocation</span>
+              <span class="scarcity-allocation-bar__urgent">4 Pieces Ready to Ship</span>
+            </div>
+            <div class="scarcity-progress-track">
+              <div class="scarcity-progress-fill" style="width:96%;"></div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--accent-sage);font-weight:700;margin-top:0.1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span>✓ Printed to order at 300 DPI • 100-Yr Certificate</span>
+            <button type="button" onclick="window.PrintDeckRuntime.openAtelierModal('macro-loupe-modal')" style="background:none;border:none;color:var(--ink-graphite);text-decoration:underline;font-size:0.71rem;font-weight:700;cursor:pointer;padding:0;">Inspect Weave</button>
+          </div>
+          <div class="product-card__footer">
+            <div>
+              <div>
+                <span class="product-card__price">$96.00</span>
+                <span style="font-size:0.76rem;color:var(--ink-muted);margin-left:0.35rem;">Gallery Value <s>$125.00</s></span>
+              </div>
+              <div style="font-size:0.7rem;color:var(--ink-graphite);margin-top:0.18rem;font-weight:600;">
+                Or 4 interest-free payments of <strong>$24.00</strong>
+              </div>
+            </div>
+            <div class="product-card__actions">
+              <button type="button" class="btn-card-add" onclick="window.PrintDeckRuntime.addToCart('PD-ACRYLIC-PLAQUE-8X10', 'Optical Crystal 1" Freestanding Art Block Monolith', 96.00, '/images/merch-acrylic-monolith.webp', 'optical-crystal-acrylic-art-monolith-8x10')">+ Bag</button>
+              <a href="/pay/optical-crystal-acrylic-art-monolith-8x10" data-base-href="/pay/optical-crystal-acrylic-art-monolith-8x10" class="btn-card-buy">Claim This Edition →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <!-- 4B. Interactive 4-Step Curator's Space & Style Advisory Consultation Quiz -->
+    <section class="curator-quiz-section" id="curator-quiz-section" aria-label="Curator Space and Style Advisory Quiz">
+      <div class="curator-quiz-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+          <div>
+            <span class="section-eyebrow">Private Art Advisory Consultation • Unlocks 15% Privilege (CURATOR15)</span>
+            <h2 class="section-title" style="margin:0.2rem 0 0.4rem;">Not Sure Which Piece or Scale Anchors Your Space?</h2>
+            <p style="font-size:0.9rem;color:var(--ink-graphite);max-width:65ch;">
+              Configure your architectural setting, tonal mood, wall span, and molding below. Our Curatorial Engine immediately pairs your ideal edition with a 15% Advisory Privilege.
+            </p>
+          </div>
+          <button type="button" class="btn-secondary" style="font-size:0.78rem;padding:0.55rem 0.95rem;" onclick="window.PrintDeckRuntime.openAtelierModal('provenance-cert-modal')">
+            📜 Preview Signed Certificate of Provenance
+          </button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1.25rem;margin-bottom:1.5rem;">
+          <div data-quiz-group="space">
+            <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-charcoal);">01 / Architectural Setting</div>
+            <div class="quiz-options-grid" style="grid-template-columns:1fr;">
+              <button type="button" class="quiz-option-btn is-selected" onclick="window.PrintDeckRuntime.selectQuizOption('space','living',this)"><span>Living Salon / Above Sofa</span><span>→</span></button>
+              <button type="button" class="quiz-option-btn" onclick="window.PrintDeckRuntime.selectQuizOption('space','executive_study',this)"><span>Executive Study / Founder Office</span><span>→</span></button>
+              <button type="button" class="quiz-option-btn" onclick="window.PrintDeckRuntime.selectQuizOption('space','bedroom',this)"><span>Primary Suite / Sunroom</span><span>→</span></button>
+            </div>
+          </div>
+
+          <div data-quiz-group="mood">
+            <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-charcoal);">02 / Tonal Palette &amp; Mood</div>
+            <div class="quiz-options-grid" style="grid-template-columns:1fr;">
+              <button type="button" class="quiz-option-btn is-selected" onclick="window.PrintDeckRuntime.selectQuizOption('mood','warm_minimal',this)"><span>Warm Bauhaus Terracotta &amp; Ochre</span><span>→</span></button>
+              <button type="button" class="quiz-option-btn" onclick="window.PrintDeckRuntime.selectQuizOption('mood','coastal_mineral',this)"><span>Coastal Mineral &amp; Nordic Mist</span><span>→</span></button>
+              <button type="button" class="quiz-option-btn" onclick="window.PrintDeckRuntime.selectQuizOption('mood','dark_architectural',this)"><span>Prussian Blueprint &amp; Gold Leaf</span><span>→</span></button>
+            </div>
+          </div>
+
+          <div data-quiz-group="span">
+            <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-charcoal);">03 / Wall Span &amp; Proportion</div>
+            <div class="quiz-options-grid" style="grid-template-columns:1fr;">
+              <button type="button" class="quiz-option-btn" onclick="window.PrintDeckRuntime.selectQuizOption('span','18x24',this)"><span>18"×24" Study / Console Accent</span><span>→</span></button>
+              <button type="button" class="quiz-option-btn is-selected" onclick="window.PrintDeckRuntime.selectQuizOption('span','24x36',this)"><span>24"×36" Statement (★ 2× Area)</span><span>→</span></button>
+              <button type="button" class="quiz-option-btn" onclick="window.PrintDeckRuntime.selectQuizOption('span','36x48',this)"><span>36"×48" Grand Architectural</span><span>→</span></button>
+            </div>
+          </div>
+
+          <div data-quiz-group="molding">
+            <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-charcoal);">04 / Hardwood Frame Molding</div>
+            <div class="quiz-options-grid" style="grid-template-columns:1fr;">
+              <button type="button" class="quiz-option-btn is-selected" onclick="window.PrintDeckRuntime.selectQuizOption('molding','oak',this)"><span>Kiln-Dried Museum White Oak</span><span>→</span></button>
+              <button type="button" class="quiz-option-btn" onclick="window.PrintDeckRuntime.selectQuizOption('molding','walnut',this)"><span>American Walnut Float Frame</span><span>→</span></button>
+              <button type="button" class="quiz-option-btn" onclick="window.PrintDeckRuntime.selectQuizOption('molding','gold',this)"><span>Brushed Champagne Gold Leaf</span><span>→</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div id="curator-quiz-result" style="padding:1.35rem 1.5rem;background:var(--bg-white);border:1px solid var(--accent-gold);border-radius:var(--radius-md);box-shadow:0 10px 26px rgba(20,20,19,0.06);"></div>
+      </div>
+    </section>
+
+    <!-- 5. Asymmetric 2-Tier Collector Bundle Showcase ($173.84 Desk Trio vs $340 Complete Executive Studio Set) -->
+    <section class="bundle-showcase" aria-label="Curated Architectural Studio Bundles">
+      <div class="bundle-card">
+        <div style="display:flex;flex-direction:column;gap:1.1rem;">
+          <span style="font-size:0.76rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-gold-bright);">
+            ✦ Private Collector Allocations • Save Up to $82 + Complimentary White-Glove Express Courier
+          </span>
+          <h2 style="font-family:var(--font-display);font-size:clamp(2.1rem,3.2vw,2.95rem);font-weight:400;line-height:1.08;color:#FAF8F5;">
+            Choose Your Curated Studio &amp; Gallery Allocation
+          </h2>
+          <p style="font-size:0.94rem;color:#D8D2C5;line-height:1.6;">
+            Acquire our coordinated 3-piece desk ensemble or step up to the complete 4-piece Executive Collector Allocation with solid hardwood framing and 450 GSM heavyweight apparel.
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1rem;">
+            <!-- Option A: $173.84 Studio Desk Trio -->
+            <div style="padding:1.25rem;background:rgba(255,255,255,0.05);border:1px solid rgba(197,160,89,0.38);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:0.65rem;">
+              <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#D8D2C5;">Option I • 3-Piece Desk Trio</div>
+              <div style="font-family:var(--font-display);font-size:1.45rem;color:#FAF8F5;">The Architectural Studio Trio</div>
+              <ul style="list-style:none;display:grid;gap:0.35rem;font-size:0.8rem;color:#EAE3D2;">
+                <li>✓ 24"×36" Stretched Gallery Canvas ($149)</li>
+                <li>✓ XXL 31.5"×15.5" Stitched Desk Mat ($49)</li>
+                <li>✓ 15oz Topographic Stoneware Mug ($24)</li>
+              </ul>
+              <div style="margin-top:auto;padding-top:0.65rem;border-top:1px solid rgba(255,255,255,0.12);">
+                <div>
+                  <span style="font-family:var(--font-display);font-size:1.95rem;color:#FFFFFF;">$173.84</span>
+                  <span style="font-size:0.8rem;color:#B8B0A2;margin-left:0.35rem;"><s>$212.00</s> (Save $38.16)</span>
+                </div>
+                <div style="font-size:0.7rem;color:#DFBA73;margin:0.2rem 0 0.65rem;">Or 4 interest-free payments of $43.46</div>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                  <a href="/pay/quant-trader-executive-desk-setup-bundle" class="btn-primary" style="flex:1;padding:0.65rem 0.9rem;font-size:0.78rem;">Claim Studio Trio →</a>
+                  <button type="button" class="btn-secondary" style="background:transparent;color:#FAF8F5;border-color:var(--accent-gold);padding:0.65rem 0.85rem;font-size:0.76rem;" onclick="window.PrintDeckRuntime.addToCart('PD-STUDIO-TRIO', 'Architectural Studio & Executive Desk Trio (Canvas + XXL Desk Mat + Mug)', 173.84, '/images/merch-deskmat-architect.webp', 'quant-trader-executive-desk-setup-bundle')">+ Bag</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Option B: $340 Complete Executive Studio & Apparel Collector Set -->
+            <div style="padding:1.25rem;background:linear-gradient(180deg,rgba(200,90,50,0.18) 0%,rgba(197,160,89,0.12) 100%);border:2px solid var(--accent-gold-bright);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:0.65rem;position:relative;">
+              <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-gold-bright);">★ Collector's Choice • 4-Piece Flagship Allocation</div>
+              <div style="font-family:var(--font-display);font-size:1.45rem;color:#FAF8F5;">Complete Executive Studio &amp; Apparel Set</div>
+              <ul style="list-style:none;display:grid;gap:0.35rem;font-size:0.8rem;color:#FAF8F5;">
+                <li>✦ 24"×36" Solid Oak/Walnut Framed Art ($189)</li>
+                <li>✦ 450 GSM Heavyweight Atelier Hoodie ($88)</li>
+                <li>✦ XXL 31.5"×15.5" Stitched Desk Mat ($49)</li>
+                <li>✦ 1" Optical Crystal Art Monolith ($96)</li>
+              </ul>
+              <div style="margin-top:auto;padding-top:0.65rem;border-top:1px solid rgba(255,255,255,0.18);">
+                <div>
+                  <span style="font-family:var(--font-display);font-size:1.95rem;color:#FFFFFF;">$340.00</span>
+                  <span style="font-size:0.8rem;color:#FFE5A3;margin-left:0.35rem;"><s>$422.00</s> (Save $82.00)</span>
+                </div>
+                <div style="font-size:0.7rem;color:#FFE5A3;margin:0.2rem 0 0.65rem;">Or 4 interest-free payments of $85.00 + Free $24 Mug</div>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                  <a href="/pay/executive-complete-studio-trio-340" class="btn-primary" style="flex:1;padding:0.65rem 0.9rem;font-size:0.78rem;">Claim $340 Set →</a>
+                  <button type="button" class="btn-secondary" style="background:transparent;color:#FAF8F5;border-color:var(--accent-gold);padding:0.65rem 0.85rem;font-size:0.76rem;" onclick="window.PrintDeckRuntime.addToCart('PD-EXECUTIVE-SET-340', 'Complete Executive Studio & Apparel Collector Set (Framed Art + 450 GSM Hoodie + XXL Desk Mat + Crystal Monolith)', 340.00, '/images/art-coastal-horizon.webp', 'executive-complete-studio-trio-340')">+ Bag</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bundle-visual-collage">
+          <img src="/images/merch-deskmat-architect.webp" alt="Executive Walnut Desk Setup with Stitched Desk Mat" width="640" height="480" loading="lazy" />
+          <div style="display:grid;gap:1rem;">
+            <img src="/images/art-monolith-bauhaus.webp" alt="24x36 Bauhaus Impasto Canvas" width="380" height="240" loading="lazy" />
+            <img src="/images/merch-ceramic-mug.webp" alt="15oz Stoneware Collector Mug" width="380" height="240" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5B. Verified Collector Reviews & Installation Stories -->
+    <section class="reviews-section" aria-label="Verified Collector Reviews">
+      <div class="section-header">
+        <div>
+          <span class="section-eyebrow">Verified Collector Installations</span>
+          <h2 class="section-title">Why 4,200+ Collectors &amp; Designers Choose PrintDeck</h2>
+        </div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <a href="#curated-catalog" class="btn-primary" style="padding:0.72rem 1.35rem;font-size:0.86rem;">Claim Your Numbered Edition →</a>
+          <a href="/trade" class="btn-secondary" style="padding:0.72rem 1.25rem;font-size:0.86rem;">Interior Designer 20% Trade Portal →</a>
+        </div>
+      </div>
+      <div class="reviews-grid">
+        <article class="review-card">
+          <div style="color:#D4882A;font-weight:800;font-size:0.9rem;">★★★★★ • Verified Gallery Purchase</div>
+          <h3 style="font-family:var(--font-display);font-size:1.45rem;font-weight:400;">“Looks like a $1,200 piece from a Tribeca gallery.”</h3>
+          <p style="font-size:0.88rem;color:var(--ink-graphite);line-height:1.6;">
+            We hung the 24"×36" Monolith No. 4 in the Solid White Oak frame above our cognac leather sofa. The linen texture and pigment depth in morning sunlight are extraordinary.
+          </p>
+          <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:0.65rem;border-top:1px solid var(--border-stone);font-size:0.78rem;font-weight:700;color:var(--ink-espresso);">
+            <span>Marcus &amp; Claire H. — Tribeca, NY</span>
+            <a href="/pay/monolith-no-4-stretched-gallery-canvas-24x36" style="color:var(--cta-terracotta);font-weight:800;">Claim This Edition ($149) →</a>
+          </div>
+        </article>
+
+        <article class="review-card">
+          <div style="color:#D4882A;font-weight:800;font-size:0.9rem;">★★★★★ • Verified Apparel Collector</div>
+          <h3 style="font-family:var(--font-display);font-size:1.45rem;font-weight:400;">“Heaviest, best-draping hoodie I own.”</h3>
+          <p style="font-size:0.88rem;color:var(--ink-graphite);line-height:1.6;">
+            The 450 GSM cross-grain fleece feels identical to $250 luxury streetwear labels. Zero shrinkage after washing, and the print clarity on the washed espresso fabric is razor sharp.
+          </p>
+          <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:0.65rem;border-top:1px solid var(--border-stone);font-size:0.78rem;font-weight:700;color:var(--ink-espresso);">
+            <span>Devon K. — Creative Director, LA</span>
+            <a href="/pay/kinetic-foundry-450gsm-heavyweight-hoodie" style="color:var(--cta-terracotta);font-weight:800;">Claim 450 GSM Hoodie ($88) →</a>
+          </div>
+        </article>
+
+        <article class="review-card">
+          <div style="color:#D4882A;font-weight:800;font-size:0.9rem;">★★★★★ • Verified Studio Setup</div>
+          <h3 style="font-family:var(--font-display);font-size:1.45rem;font-weight:400;">“Used the 2-hour edit window to upgrade to Walnut Float.”</h3>
+          <p style="font-size:0.88rem;color:var(--ink-graphite);line-height:1.6;">
+            Right after ordering I tested the Executive Study view in the visualizer and realized American Walnut matched my credenza better. Swapped frames in one click—arrived in 3 days!
+          </p>
+          <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:0.65rem;border-top:1px solid var(--border-stone);font-size:0.78rem;font-weight:700;color:var(--ink-espresso);">
+            <span>Dr. Julian S. — Boston, MA</span>
+            <a href="/pay/celestial-astrolabe-architectural-blueprint-print" style="color:var(--cta-terracotta);font-weight:800;">Claim Blueprint ($168) →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 6. Interactive Collector Guides: Gallery Wall Calculator, GSM Fabric Comparator & Corporate Volume Allocator -->
+    <section class="tools-section" aria-label="Interactive Collector Sizing and Fabric Guides">
+      <div class="micro-tool-card" id="gallery-wall-calculator">
+        <span class="section-eyebrow">Interior Designer Sizing Guide</span>
+        <h2 style="font-family:var(--font-display);font-size:1.85rem;font-weight:400;margin-bottom:0.5rem;">Gallery Wall Ratio &amp; Sofa Spacing Calculator</h2>
+        <p style="font-size:0.9rem;color:var(--ink-graphite);margin-bottom:1rem;">
+          Interior architects use the <strong>0.66–0.75 Golden Ratio</strong> to proportion artwork above a sofa, console, or headboard, hung at a 57" gallery eye-level center.
+        </p>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+          <label for="sofa-width-input" style="font-weight:700;font-size:0.86rem;">Your Sofa or Console Width (inches):</label>
+          <input id="sofa-width-input" type="number" inputmode="numeric" value="72" min="48" max="120" onchange="window.PrintDeckRuntime.updateSofaCalc(this.value)" style="width:90px;padding:0.48rem 0.65rem;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-size:0.9rem;font-weight:700;" />
+        </div>
+        <div id="sofa-calc-output" style="font-size:0.86rem;font-weight:600;padding:0.95rem 1rem;background:var(--bg-soft-stone);border-left:4px solid var(--cta-terracotta);border-radius:4px;margin-top:1rem;color:var(--ink-charcoal);">
+          Sofa Width: 72" → Ideal Artwork Span: 48"–54" (2/3 Golden Ratio) • Recommended: 24"×36" Museum Gallery Canvas or Solid Oak Float Frame hung 57" on-center.
+        </div>
+        <div style="margin-top:1.25rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <a href="/pay/monolith-no-4-stretched-gallery-canvas-24x36" class="btn-primary" style="padding:0.68rem 1.2rem;font-size:0.84rem;">Claim Recommended 24"×36" Canvas ($149) →</a>
+          <a href="#spatial-mockup-studio" class="btn-secondary" style="padding:0.68rem 1.1rem;font-size:0.84rem;">Test Size in Room Visualizer ↑</a>
+        </div>
+      </div>
+
+      <div class="micro-tool-card" id="gsm-fabric-comparator">
+        <span class="section-eyebrow">Garment &amp; Corporate Studio Estimator</span>
+        <h2 style="font-family:var(--font-display);font-size:1.85rem;font-weight:400;margin-bottom:0.5rem;">GSM Textile Spec &amp; Team Volume Allocator</h2>
+        <p style="font-size:0.9rem;color:var(--ink-graphite);margin-bottom:0.85rem;">
+          Compare our custom-milled 280–450 GSM heavyweight garments and calculate instant studio/corporate volume pricing (15%–25% off):
+        </p>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:0.75rem;">
+          <label for="volume-units-slider" style="font-weight:700;font-size:0.84rem;">Team / Hospitality Quantity:</label>
+          <input id="volume-units-slider" type="range" min="5" max="100" step="5" value="10" oninput="window.PrintDeckRuntime.updateVolumeCalc(this.value)" style="flex:1;accent-color:var(--cta-terracotta);" />
+        </div>
+        <div id="volume-calc-output" style="font-size:0.84rem;font-weight:600;padding:0.85rem 1rem;background:var(--bg-soft-stone);border-left:4px solid var(--accent-gold);border-radius:4px;color:var(--ink-charcoal);">
+          <strong>10 Collector Pieces</strong> → Tier Privilege: <strong>15% Off ($74.80/unit)</strong> • Total Allocation: <strong>$748.00 USD</strong> (Save $132.00 + Dedicated Master Framer)
+        </div>
+        <div style="margin-top:1.15rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <a id="volume-calc-claim-link" href="/pay/start?offer=b2b-studio-corporate-tier10&sku=PD-HOODIE-HEAVY-BLK&qty=10&promo=TRADE20" class="btn-primary" style="padding:0.68rem 1.2rem;font-size:0.84rem;">Lock Volume Allocation →</a>
+          <a href="/pay/kinetic-foundry-450gsm-heavyweight-hoodie" class="btn-secondary" style="padding:0.68rem 1.1rem;font-size:0.84rem;">Claim Single 450 GSM Hoodie ($88) →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 6B. Floating Bottom Collector Quick-Claim Urgency Bar -->
+  <aside class="floating-claim-bar" aria-label="Express Collector Allocation Bar">
+    <div>
+      <div style="font-size:0.78rem;font-weight:800;color:var(--ink-espresso);">
+        <span style="color:var(--cta-terracotta);">●</span> Framing Cutoff in <span data-batch-countdown="1" style="color:var(--cta-terracotta);">03h : 41m : 19s</span>
+      </div>
+      <div class="floating-claim-bar__subtext" style="font-size:0.72rem;color:var(--ink-graphite);">
+        Free Insured Courier Over $120 • 2-Hour Post-Order Edit Guarantee
+      </div>
+    </div>
+    <div style="display:flex;gap:0.5rem;align-items:center;">
+      <a href="/pay/monolith-no-4-stretched-gallery-canvas-24x36" class="btn-primary" style="padding:0.56rem 1rem;font-size:0.78rem;">
+        Claim #1 Canvas ($149) →
+      </a>
+      <button type="button" class="btn-secondary" style="padding:0.54rem 0.85rem;font-size:0.76rem;" onclick="window.PrintDeckRuntime.toggleCartDrawer(true)">
+        Bag
+      </button>
+    </div>
+  </aside>
+
+  <!-- 7. Slide-Out Instant Collector Bag Drawer (3-Tier Milestone Bar + 1-Tap Privilege Pills + Companion Cross-Sell) -->
+  <div id="cart-drawer-backdrop" class="drawer-backdrop" onclick="window.PrintDeckRuntime.toggleCartDrawer(false)"></div>
+  <aside class="cart-drawer-gpu" id="instant-cart-drawer" aria-label="Collector Shopping Bag">
+    <div style="padding:1.15rem 1.4rem;border-bottom:1px solid var(--border-stone);display:flex;justify-content:space-between;align-items:center;background:var(--bg-white);">
+      <div>
+        <h2 style="font-family:var(--font-display);font-size:1.6rem;font-weight:400;">Your Collector Bag</h2>
+        <div style="font-size:0.74rem;color:var(--accent-sage);font-weight:700;" id="free-shipping-msg">✓ Free Express Courier Unlocked! Add $51.00 for Wax-Stamped Provenance Folio</div>
+      </div>
+      <button type="button" onclick="window.PrintDeckRuntime.toggleCartDrawer(false)" style="background:var(--bg-soft-stone);border:1px solid var(--border-stone);width:44px;height:44px;border-radius:50%;font-size:0.95rem;cursor:pointer;" aria-label="Close Collector Bag">✕</button>
+    </div>
+
+    <div style="padding:0.45rem 1.4rem;background:#FAF3E6;border-bottom:1px solid #E2D5BE;font-size:0.74rem;font-weight:700;color:var(--ink-espresso);display:flex;justify-content:space-between;">
+      <span>✦ Edition Allocation Reserved in Your Name:</span>
+      <span style="color:var(--cta-terracotta);font-weight:800;font-variant-numeric:tabular-nums;" id="cart-reservation-timer">14:58</span>
+    </div>
+
+    <div style="height:6px;background:var(--bg-warm-linen);width:100%;position:relative;">
+      <div id="free-shipping-bar-fill" style="height:100%;width:53%;background:linear-gradient(90deg,var(--accent-gold) 0%,var(--accent-sage) 100%);transition:width 0.3s ease;"></div>
+    </div>
+
+    <div id="cart-items-container" style="flex:1;overflow-y:auto;padding:0.5rem 1.4rem;"></div>
+
+    <div style="padding:1rem 1.4rem;background:var(--bg-soft-stone);border-top:1px solid var(--border-stone);">
+      <div style="font-size:0.71rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-graphite);margin-bottom:0.35rem;">
+        1-Click Curatorial Enhancements
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;margin-bottom:0.75rem;">
+        <button type="button" onclick="window.PrintDeckRuntime.addToCart('PD-DESKMAT-36X18', 'XXL Architect Stitched Desk Mat (31.5\x22×15.5\x22)', 49.00, '/images/merch-deskmat-architect.webp', 'xxl-architect-stitched-desk-mat')" style="background:#fff;border:1px solid var(--border-strong);border-radius:6px;padding:0.42rem 0.55rem;font-size:0.73rem;font-weight:700;color:var(--ink-espresso);text-align:left;cursor:pointer;">
+          + XXL Desk Mat <span style="color:var(--cta-terracotta);">($49)</span>
+        </button>
+        <button type="button" onclick="window.PrintDeckRuntime.addToCart('PD-EXECUTIVE-SET-340', 'Complete 4-Piece Executive Collector Set (Save $82)', 340.00, '/images/art-coastal-horizon.webp', 'executive-complete-studio-trio-340')" style="background:#fff;border:1px solid var(--accent-gold);border-radius:6px;padding:0.42rem 0.55rem;font-size:0.73rem;font-weight:700;color:var(--ink-espresso);text-align:left;cursor:pointer;">
+          + $340 Full Set <span style="color:var(--accent-sage);">(-$82)</span>
+        </button>
+      </div>
+
+      <div style="margin-bottom:0.7rem;">
+        <div style="font-size:0.71rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-graphite);">
+          1-Tap Collector Privileges (No Coupon Hunting Required)
+        </div>
+        <div class="privilege-pill-group">
+          <button type="button" class="privilege-pill" data-promo-pill="ATELIER15" onclick="window.PrintDeckRuntime.applyPromoCode('ATELIER15')">✦ ATELIER15 (-15%)</button>
+          <button type="button" class="privilege-pill" data-promo-pill="STUDIO36" onclick="window.PrintDeckRuntime.applyPromoCode('STUDIO36')">✦ STUDIO36 (-$36)</button>
+          <button type="button" class="privilege-pill" data-promo-pill="TRADE20" onclick="window.PrintDeckRuntime.applyPromoCode('TRADE20')">✦ TRADE20 (-20% $200+)</button>
+        </div>
+      </div>
+
+      <div id="cart-discount-row" style="display:none;justify-content:space-between;align-items:center;font-size:0.78rem;color:var(--accent-sage);font-weight:700;margin-bottom:0.35rem;"></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.25rem;">
+        <span style="font-size:0.88rem;color:var(--ink-graphite);font-weight:700;">Allocation Total</span>
+        <strong id="cart-subtotal-value" style="font-family:var(--font-display);font-size:1.8rem;">$149.00 USD</strong>
+      </div>
+      <div id="cart-bnpl-installments" style="font-size:0.72rem;color:var(--ink-graphite);text-align:right;margin-bottom:0.75rem;font-weight:600;">
+        Or 4 interest-free collector installments of $37.25 with Klarna / Affirm
+      </div>
+
+      <a id="cart-drawer-checkout-btn" href="/pay/monolith-no-4-stretched-gallery-canvas-24x36?sku=PD-CANVAS-24X36&qty=1&size=24x36&frame=oak" class="btn-primary" style="width:100%;text-align:center;padding:0.95rem;">
+        Proceed to Express Checkout ($149.00) →
+      </a>
+      <div style="text-align:center;font-size:0.72rem;color:var(--ink-muted);margin-top:0.5rem;">
+        ✓ 30-Day In-Home Trial • 2-Hour Post-Order Edit • Instant Damage Replacement
+      </div>
+    </div>
+  </aside>
+
+  <!-- 7B. Macro Substrate & Joinery Loupe Modal -->
+  <div id="macro-loupe-modal" class="atelier-modal-backdrop" onclick="if(event.target===this)window.PrintDeckRuntime.closeAllModals()">
+    <div class="atelier-modal-card" role="dialog" aria-modal="true" aria-labelledby="macro-loupe-title">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <span class="section-eyebrow" style="margin:0;">Optical Loupe Specimen Sheet • ISO 9706 Museum Permanence</span>
+        <button type="button" onclick="window.PrintDeckRuntime.closeAllModals()" style="background:var(--bg-soft-stone);border:1px solid var(--border-stone);width:40px;height:40px;border-radius:50%;cursor:pointer;">✕</button>
+      </div>
+      <h2 id="macro-loupe-title" style="font-family:var(--font-display);font-size:2rem;font-weight:400;margin-bottom:0.75rem;">
+        410 GSM Belgian Linen, Kiln-Dried Hardwood &amp; 450 GSM Cross-Grain Fleece
+      </h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:1rem;margin-bottom:1.25rem;">
+        <div style="background:var(--bg-white);border:1px solid var(--border-stone);border-radius:8px;padding:1rem;">
+          <img src="/images/art-monolith-bauhaus.webp" alt="410 GSM Belgian Linen Weave" style="width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:0.6rem;" />
+          <strong style="font-size:0.84rem;display:block;">01. 410 GSM Belgian Linen &amp; 310 GSM Rag</strong>
+          <p style="font-size:0.77rem;color:var(--ink-graphite);margin-top:0.25rem;">Acid-free pH-neutral coating with 12-color archival pigment penetration rated for 100+ years of indoor lightfastness.</p>
+        </div>
+        <div style="background:var(--bg-white);border:1px solid var(--border-stone);border-radius:8px;padding:1rem;">
+          <img src="/images/art-coastal-horizon.webp" alt="Hardwood Float Frame Joinery" style="width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:0.6rem;" />
+          <strong style="font-size:0.84rem;display:block;">02. 1.75" Kiln-Dried Oak &amp; Walnut Float</strong>
+          <p style="font-size:0.77rem;color:var(--ink-graphite);margin-top:0.25rem;">Hand-sanded hardwood moldings with reinforced corner splines and a signature 0.25" gallery shadow-gap reveal.</p>
+        </div>
+        <div style="background:var(--bg-white);border:1px solid var(--border-stone);border-radius:8px;padding:1rem;">
+          <img src="/images/apparel-hoodie-espresso.webp" alt="450 GSM Heavyweight French Terry" style="width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:0.6rem;" />
+          <strong style="font-size:0.84rem;display:block;">03. 450 GSM Cross-Grain Fleece</strong>
+          <p style="font-size:0.77rem;color:var(--ink-graphite);margin-top:0.25rem;">13.3 oz custom-milled combed organic cotton with double-ribbed side gussets—nearly triple the weight of promo blanks.</p>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;padding-top:1rem;border-top:1px solid var(--border-stone);">
+        <span style="font-size:0.8rem;font-weight:700;color:var(--accent-sage);">✓ Every Piece Inspected at 300 DPI Before Framing</span>
+        <a href="/pay/monolith-no-4-stretched-gallery-canvas-24x36?promo=ATELIER15" class="btn-primary" style="padding:0.7rem 1.25rem;font-size:0.82rem;">Claim Flagship Edition w/ 15% Privilege →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7C. Certificate of Provenance Preview Modal -->
+  <div id="provenance-cert-modal" class="atelier-modal-backdrop" onclick="if(event.target===this)window.PrintDeckRuntime.closeAllModals()">
+    <div class="atelier-modal-card" role="dialog" aria-modal="true" aria-labelledby="provenance-cert-title" style="background:#F6F2E9;border:2px solid var(--accent-gold);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+        <span style="font-size:0.74rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--cta-terracotta);">✦ PRINTDECK ARCHIVAL REGISTRY • EMBOSSED FOLIO SPECIMEN</span>
+        <button type="button" onclick="window.PrintDeckRuntime.closeAllModals()" style="background:var(--bg-white);border:1px solid var(--border-stone);width:40px;height:40px;border-radius:50%;cursor:pointer;">✕</button>
+      </div>
+      <div style="border:1px solid var(--accent-gold);padding:1.5rem;border-radius:8px;background:#FAF8F5;">
+        <h2 id="provenance-cert-title" style="font-family:var(--font-display);font-size:1.95rem;font-weight:400;text-align:center;margin-bottom:0.35rem;">
+          Certificate of Archival Provenance &amp; Edition Registry
+        </h2>
+        <p style="text-align:center;font-size:0.82rem;color:var(--ink-graphite);margin-bottom:1.15rem;">
+          Accompanies every PrintDeck framed canvas, fine-art rag print, and serialized collector set in an acid-free glassine envelope.
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.85rem;font-size:0.8rem;padding:1rem;background:var(--bg-soft-stone);border-radius:6px;margin-bottom:1rem;">
+          <div><strong>Edition Allocation:</strong> Hand-Numbered #294 / 300</div>
+          <div><strong>Optical Resolution:</strong> Verified 300-DPI Giclée</div>
+          <div><strong>Archival Permanence:</strong> 100+ Yr Wilhelm Rating</div>
+          <div><strong>Master Framer Sign-Off:</strong> Atelier Lot #PD-2026-XI</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;">
+          <span style="font-size:0.78rem;color:var(--ink-graphite);">✦ Includes 2-Hour Post-Order Edit Protection &amp; Lifetime Frame Warranty</span>
+          <a href="/pay/monolith-no-4-stretched-gallery-canvas-24x36" class="btn-primary" style="padding:0.7rem 1.25rem;font-size:0.82rem;">Acquire Numbered Edition ($149) →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7D. Client-Side Concierge Error-Recovery & VIP Allocation Modal -->
+  <div id="error-recovery-modal" class="atelier-modal-backdrop" onclick="if(event.target===this)window.PrintDeckRuntime.closeAllModals()">
+    <div class="atelier-modal-card" role="dialog" aria-modal="true" aria-labelledby="error-recovery-title">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+        <span class="section-eyebrow" style="margin:0;">✦ Private Curatorial Allocation Override</span>
+        <button type="button" onclick="window.PrintDeckRuntime.closeAllModals()" style="background:var(--bg-soft-stone);border:1px solid var(--border-stone);width:40px;height:40px;border-radius:50%;cursor:pointer;">✕</button>
+      </div>
+      <h2 id="error-recovery-title" style="font-family:var(--font-display);font-size:1.95rem;font-weight:400;margin-bottom:0.4rem;">
+        We Have Unlocked Your 15% Private Collector Privilege (ATELIER15)
+      </h2>
+      <p id="recovery-modal-reason" style="font-size:0.88rem;color:var(--ink-graphite);margin-bottom:1.15rem;">
+        Our Curatorial Desk has reserved direct express access to our #1 Flagship Editions below with your 15% privilege automatically applied.
+      </p>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <a href="/pay/monolith-no-4-stretched-gallery-canvas-24x36?promo=ATELIER15" class="btn-primary">Claim #1 Monolith Canvas ($126.65 w/ ATELIER15) →</a>
+        <a href="/pay/executive-complete-studio-trio-340?promo=ATELIER15" class="btn-secondary">Claim $340 Collector Set (-15%) →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Clean, Minimizable Atelier Design Advisor Widget -->
+  <aside id="printdeck-concierge-chat" data-testid="printdeck-concierge-chat" class="concierge-widget">
+    <div id="concierge-chat-panel" class="concierge-panel">
+      <div style="padding:0.85rem 1.1rem;background:var(--ink-espresso);color:#FAF8F5;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <strong style="font-size:0.92rem;display:block;">✦ PrintDeck Framing &amp; Sizing Advisor</strong>
+          <span style="font-size:0.72rem;color:#DFBA73;">Live Curatorial &amp; Order Support</span>
+        </div>
+        <button type="button" onclick="window.PrintDeckRuntime.toggleConcierge()" style="background:none;border:none;color:#FAF8F5;font-size:0.95rem;width:36px;height:36px;cursor:pointer;">✕</button>
+      </div>
+      <div id="concierge-chat-messages" style="max-height:230px;overflow-y:auto;padding:0.9rem;display:flex;flex-direction:column;gap:0.55rem;background:var(--bg-alabaster);">
+        <div style="background:var(--bg-white);padding:0.65rem 0.85rem;border-radius:10px;font-size:0.82rem;line-height:1.45;border:1px solid var(--border-stone);">
+          Welcome to PrintDeck! Ask me to recommend a frame molding for your room, size artwork for your sofa, or customize heavyweight apparel.
+        </div>
+      </div>
+      <div style="padding:0.65rem;border-top:1px solid var(--border-stone);display:flex;gap:0.45rem;background:var(--bg-white);">
+        <input id="concierge-chat-input" type="text" placeholder="Ask about frame sizes, fabrics, or orders..." onkeydown="if(event.key==='Enter')window.PrintDeckRuntime.sendConciergeChat()" style="flex:1;background:var(--bg-soft-stone);color:var(--ink-espresso);border:1px solid var(--border-strong);border-radius:6px;padding:0.5rem 0.7rem;font-size:1rem;" />
+        <button data-testid="concierge-launcher-btn" type="button" onclick="window.PrintDeckRuntime.sendConciergeChat()" class="btn-primary" style="padding:0.5rem 0.9rem;font-size:0.8rem;">Send</button>
+      </div>
+    </div>
+
+    <button type="button" class="concierge-launcher-pill" onclick="window.PrintDeckRuntime.toggleConcierge()">
+      <span style="color:var(--accent-gold-bright);">✦</span>
+      <span>Framing &amp; Sizing Advisor</span>
+    </button>
+  </aside>
+
+  <!-- 9. Editorial Gallery Footer -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div>
+        <div style="font-family:var(--font-display);font-size:2.1rem;color:#FAF8F5;margin-bottom:0.5rem;">PrintDeck</div>
+        <p style="font-size:0.86rem;color:#C7C1B5;max-width:38ch;line-height:1.6;margin-bottom:1rem;">
+          Museum-grade 300-DPI archival canvas paintings, solid hardwood framing, heavyweight street-atelier garments, and precision studio goods.
+        </p>
+        <a href="#curated-catalog" class="btn-primary" style="padding:0.6rem 1.15rem;font-size:0.8rem;">Claim Autumn Exhibition Edition →</a>
+      </div>
+      <div>
+        <div class="footer-heading">Collections &amp; Guides</div>
+        <ul class="footer-links">
+          <li><a href="#curated-catalog" onclick="window.PrintDeckRuntime.filterCatalog('wall_art')">Archival Canvas &amp; Framed Art</a></li>
+          <li><a href="#curated-catalog" onclick="window.PrintDeckRuntime.filterCatalog('apparel')">280–450 GSM Custom Apparel</a></li>
+          <li><a href="/articles/">Editorial Journal &amp; Buyer Guides</a></li>
+          <li><a href="/compare/">Substrate Comparison Matrix</a></li>
+          <li><a href="/gifts/">Curated Collector Gift Guides</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Collector Care &amp; Trade</div>
+        <ul class="footer-links">
+          <li><a href="/sign-in.html">Sign In with Authentik SSO</a></li>
+          <li><a href="/trade">Interior Designer Trade Portal (20%)</a></li>
+          <li><a href="/tools/">Interactive Sizing Calculators</a></li>
+          <li><a href="/shipping.html">Shipping &amp; 2-Hour Edit Guarantee</a></li>
+          <li><a href="/refunds.html">Conservation &amp; Returns Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Hardware &amp; Telemetry</div>
+        <ul class="footer-links">
+          <li><a href="/hardware">Bambu Lab 4.3" Touchscreen (/hardware)</a></li>
+          <li><a href="/simulator">Touchscreen Firmware Simulator</a></li>
+          <li><a href="/metrics">Live Prometheus Telemetry (/metrics)</a></li>
+          <li><a href="/llms-full.txt">Catalog Index (/llms-full.txt)</a></li>
+          <li><a href="/sitemap-index.xml">XML Sitemap</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/spatial-studio.js?v=20261107lux" defer></script>
+</body>
+</html>

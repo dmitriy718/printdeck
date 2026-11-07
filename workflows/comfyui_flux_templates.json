@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "engine": "ComfyUI Flux.1-dev + 4x-UltraSharp 300-DPI Pipeline",
+  "compute_nodes": {
+    "primary": {
+      "hostname": "omnibook-spark",
+      "ip": "192.168.0.152",
+      "comfyui_url": "http://192.168.0.152:8188",
+      "gpu": "CUDA Flux Worker"
+    },
+    "heavy_fallback": {
+      "hostname": "aidev",
+      "ip": "100.103.12.38",
+      "comfyui_url": "http://100.103.12.38:8188",
+      "gpu": "NVIDIA RTX 5090 32GB"
+    },
+    "lease_scheduler": {
+      "hostname": "homeserv",
+      "lease_url": "http://127.0.0.1:8077"
+    }
+  },
+  "vertical_templates": {
+    "wall_art": {
+      "default_sku": "PD-CANVAS-24X36",
+      "latent_width": 1024,
+      "latent_height": 1536,
+      "target_300dpi_width_px": 7200,
+      "target_300dpi_height_px": 10800,
+      "flux_guidance": 3.5,
+      "steps": 28,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "upscale_model": "4x-UltraSharp.pth"
+    },
+    "apparel": {
+      "default_sku": "PD-HOODIE-HEAVY",
+      "latent_width": 1024,
+      "latent_height": 1360,
+      "target_300dpi_width_px": 3600,
+      "target_300dpi_height_px": 4800,
+      "flux_guidance": 3.2,
+      "steps": 24,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "upscale_model": "4x-UltraSharp.pth"
+    },
+    "memorabilia": {
+      "default_sku": "PD-DESKMAT-XXL",
+      "latent_width": 1536,
+      "latent_height": 704,
+      "target_300dpi_width_px": 10800,
+      "target_300dpi_height_px": 4800,
+      "flux_guidance": 3.5,
+      "steps": 26,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "upscale_model": "4x-UltraSharp.pth"
+    }
+  }
+}

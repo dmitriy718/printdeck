@@ -1,0 +1,11 @@
+[Unit]
+Description=Run PrintDeck Phase 5 Governance & Herdr Control Tower Sync every 30 minutes (aligned with para-commander.timer)
+
+[Timer]
+OnCalendar=*:0/30
+Persistent=true
+RandomizedDelaySec=15
+Unit=printdeck-para-commander.service
+
+[Install]
+WantedBy=timers.target

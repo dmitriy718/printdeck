@@ -1,0 +1,13 @@
+{
+  "output_path": "/home/dima/Projects/printdeck/fine_tune_concierge/data/printdeck_concierge_sft_2520.jsonl",
+  "total_dialogues": 2520,
+  "category_breakdown": {
+    "consultative_selling": 700,
+    "custom_order_in_chat": 650,
+    "grace_window_and_order_support": 620,
+    "adversarial_prompt_injection_refusal": 550
+  },
+  "target_base_model": "qwen3:32b",
+  "target_adapter_name": "printdeck-concierge-32b",
+  "primary_inference_node": "mbp-m5pro (192.168.0.151 / 10.99.0.2) via macmini-ops:4000"
+}

@@ -1,0 +1,18 @@
+# PrintDeck (https://printdeck.net) — Tactile Atelier & 300-DPI Precision Print Foundry
+> Autonomous dual-provider Print-on-Demand storefront (Printify + Printful API v2), 300-DPI Real-ESRGAN/Flux pre-flight lab, Spatial Mockup Studio (/studio), and Bambu Lab 4.3-inch ESP32-P4 touchscreen hardware controller (/hardware).
+
+## Core Storefront & Interactive Endpoints
+- [Storefront Home](https://printdeck.net/)
+- [Spatial Mockup Studio (4-Mode Room Lighting & Garment Drape)](https://printdeck.net/studio)
+- [Atelier Journal & 1,800-Word Buyer Guides](https://printdeck.net/articles/)
+- [Substrate Comparison Matrix](https://printdeck.net/compare/)
+- [Curated Niche Gift Guides](https://printdeck.net/gifts/)
+- [Interactive Answered-Forge Calculators](https://printdeck.net/tools/)
+- [Interior Designer & Realtor Trade Portal (20% Commission)](https://printdeck.net/trade)
+- [Bambu Lab 4.3-inch ESP32-P4 Touchscreen Controller](https://printdeck.net/hardware)
+- [Full Machine-Readable Product & Spec Catalog](https://printdeck.net/llms-full.txt)
+
+## Latest Published Buyer Monographs
+- [The Collector's Guide to 300-DPI Museum-Grade Archival Canvas vs. Standard Poster Prints](https://printdeck.net/articles/museum-grade-300-dpi-archival-canvas-vs-poster-prints/) — Featured SKU: `PD-CANVAS-24X36` | 1-Click Checkout: https://printdeck.net/pay/start?offer=printdeck-canvas-24x36&sku=PD-CANVAS-24X36&amount_cents=14900
+- [Designing the High-Conviction Quant & Engineering Workspace: Stitched Micro-Weave Desk Mats & Patent Wall Art](https://printdeck.net/articles/quantitative-trading-desk-ergonomics-and-patent-wall-art/) — Featured SKU: `PD-DESKMAT-36X18` | 1-Click Checkout: https://printdeck.net/pay/start?offer=printdeck-deskmat-36x18&sku=PD-DESKMAT-36X18&amount_cents=4400
+- [Inside the 450 GSM Heavyweight Street-Atelier Standard: Alpha-Channel Sanitized DTG vs. Traditional Merch](https://printdeck.net/articles/heavyweight-450-gsm-street-atelier-apparel-dtg-vs-screen-print/) — Featured SKU: `PD-HOODIE-450GSM` | 1-Click Checkout: https://printdeck.net/pay/start?offer=printdeck-hoodie-450gsm&sku=PD-HOODIE-450GSM&amount_cents=8800

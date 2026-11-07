@@ -1,0 +1,18 @@
+{
+  "model_name": "printdeck-concierge-32b",
+  "litellm_params": {
+    "model": "ollama/printdeck-concierge-32b",
+    "api_base": "http://192.168.0.151:11434",
+    "timeout": 30
+  },
+  "fallbacks": [
+    {
+      "model": "ollama/qwen3:14b",
+      "api_base": "http://192.168.0.150:11434"
+    },
+    {
+      "model": "ollama/qwen2.5:14b",
+      "api_base": "http://192.168.0.148:11434"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+[Unit]
+Description=PrintDeck 2-Minute SSOT Stale-Lock Healer
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/dima/Projects/printdeck
+EnvironmentFile=-/home/dima/Projects/printdeck/.env.cluster
+EnvironmentFile=-/home/dima/Projects/printdeck/.env.automations
+ExecStart=/home/dima/Projects/printdeck/.venv/bin/python3 /home/dima/Projects/printdeck/autonomous_empire_daemon.py --ssot-healer

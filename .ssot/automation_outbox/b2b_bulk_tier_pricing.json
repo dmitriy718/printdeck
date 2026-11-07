@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-11-07T20:20:47.429383+00:00",
+  "tiers": {
+    "tier_10_plus": {
+      "discount_pct": 15.0,
+      "verified_net_margin_pct": 44.2,
+      "passes_35pct_floor": true
+    },
+    "tier_50_plus": {
+      "discount_pct": 25.0,
+      "verified_net_margin_pct": 39.8,
+      "passes_35pct_floor": true
+    },
+    "tier_100_plus": {
+      "discount_pct": 35.0,
+      "verified_net_margin_pct": 35.6,
+      "passes_35pct_floor": true
+    }
+  }
+}

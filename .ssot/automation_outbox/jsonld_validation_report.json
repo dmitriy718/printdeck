@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-11-07T20:20:40.752313+00:00",
+  "validated_schemas": [
+    "Product",
+    "AggregateOffer",
+    "MerchantReturnPolicy",
+    "OfferShippingDetails",
+    "BreadcrumbList",
+    "FAQPage",
+    "Article"
+  ],
+  "routes_verified": 18,
+  "errors": 0
+}

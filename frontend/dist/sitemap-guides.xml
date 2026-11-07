@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://printdeck.net/guides/gallery-wall-ratio-and-spacing-calculator</loc>
+    <lastmod>2026-11-07T04:27:34Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://printdeck.net/guides/instant-fit-and-gsm-fabric-weight-comparator</loc>
+    <lastmod>2026-11-07T04:27:34Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://printdeck.net/guides/300-dpi-print-resolution-and-bleed-engineering-guide</loc>
+    <lastmod>2026-11-07T04:27:34Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://printdeck.net/llms.txt</loc>
+    <lastmod>2026-11-07T04:27:34Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://printdeck.net/llms-full.txt</loc>
+    <lastmod>2026-11-07T04:27:34Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.80</priority>
+  </url>
+</urlset>

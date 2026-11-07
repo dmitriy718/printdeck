@@ -1,0 +1,11 @@
+[Unit]
+Description=PrintDeck 2-Minute SSOT Stale-Lock Healer Timer
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=2m
+Persistent=true
+Unit=printdeck-ssot-healer.service
+
+[Install]
+WantedBy=timers.target

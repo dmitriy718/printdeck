@@ -1,0 +1,10 @@
+[Unit]
+Description=PrintDeck 3x-Daily Omnichannel SEO Article, 10-Domain Backlink & Social Publisher
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/dima/Projects/printdeck
+EnvironmentFile=-/home/dima/Projects/printdeck/.env.cluster
+EnvironmentFile=-/home/dima/Projects/printdeck/.env.automations
+ExecStart=/home/dima/Projects/printdeck/.venv/bin/python3 /home/dima/Projects/printdeck/autonomous_empire_daemon.py --3x-publisher

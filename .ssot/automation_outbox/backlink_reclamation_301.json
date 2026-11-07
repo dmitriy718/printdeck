@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-11-07T20:20:26.116896+00:00",
+  "verified_301_rules": {
+    "/blog/*": "/articles/",
+    "/walkthrough": "/simulator.html",
+    "/pricing": "/order.html"
+  },
+  "broken_links_found": 0
+}

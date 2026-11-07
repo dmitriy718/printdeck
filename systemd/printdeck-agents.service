@@ -1,0 +1,15 @@
+[Unit]
+Description=PrintDeck Autonomous Manager & Specialist Agent Fleet Daemon
+After=network.target printdeck-backend.service
+
+[Service]
+Type=simple
+User=dima
+WorkingDirectory=/home/dima/Projects/printdeck
+EnvironmentFile=/home/dima/Projects/printdeck/.env.cluster
+ExecStart=/home/dima/Projects/printdeck/.venv/bin/python /home/dima/Projects/printdeck/manager_biz_elena.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

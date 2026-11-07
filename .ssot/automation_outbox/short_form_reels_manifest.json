@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-11-07T20:20:26.116896+00:00",
+  "compute_node": "192.168.0.152",
+  "comfyui_endpoint": "http://192.168.0.152:8188",
+  "duration_sec": 15,
+  "fps": 60,
+  "resolution": "1080x1920",
+  "transitions": [
+    "3200K_Loft",
+    "4000K_Office",
+    "5600K_Coastal",
+    "2700K_DarkStudio"
+  ]
+}

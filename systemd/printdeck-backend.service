@@ -1,0 +1,15 @@
+[Unit]
+Description=PrintDeck (printdeck.net) FastAPI Storefront, Arbitrage & Concierge Backend (:8040)
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/dima/Projects/printdeck
+EnvironmentFile=-/home/dima/Projects/printdeck/.env.cluster
+EnvironmentFile=-/home/dima/Projects/printdeck/.env.automations
+ExecStart=/home/dima/Projects/printdeck/.venv/bin/uvicorn app:app --host 127.0.0.1 --port 8040 --workers 2
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
